@@ -15,5 +15,8 @@
     {
       "path": "./apps/backend"
     }
-  ]
+  ],
+  "compilerOptions": {
+    "strictPropertyInitialization": false
+  }
 }
