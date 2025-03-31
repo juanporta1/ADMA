@@ -25,7 +25,7 @@ export class Appoinment{
     @Column({type: "varchar", length: 20})
     phone!: string;
 
-    @Column({type: "int", length: 10})
+    @Column({type: "int"})
     dni!: number;
 
     @Column({type: "date"})
