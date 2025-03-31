@@ -1,0 +1,40 @@
+import { Injectable } from '@nestjs/common';
+import { DataSource, Repository } from 'typeorm';
+import { CreateAppoinmentDTO } from '../appoinment-DTOs/create-appoinment.dto';
+import { Appoinment } from '../appoinment.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { UpdateAppoinmentDto } from '../appoinment-DTOs/update-appoinment.dto';
+
+@Injectable()
+export class AppoinmentService {
+
+    constructor(@InjectRepository(Appoinment) private appoinmentRepository: Repository<Appoinment>){}
+    async getAll(){
+        return await this.appoinmentRepository.find();
+    }
+    async createAppoinment(appoinment: CreateAppoinmentDTO): Promise<Appoinment>{
+        try{
+            const newAppoinment = this.appoinmentRepository.create(appoinment);
+            return await this.appoinmentRepository.save(newAppoinment);
+        }catch(error){
+            throw error;
+        }
+    }
+
+    async deleteAppoinment(id: number){
+        try{
+            return await this.appoinmentRepository.delete(id);
+        }catch(error){
+            throw error
+        }
+    }
+
+    async updateAppoinment(id: number, updatedAppoinment: UpdateAppoinmentDto){
+        try{
+            return await this.appoinmentRepository.update(id, updatedAppoinment);
+        }catch(error){
+            throw error;
+        }
+    }
+
+}
