@@ -14,7 +14,7 @@ export class AppoinmentController {
     }
 
     @Post("create")
-    async createAnAppoinment(@Body() body: CreateAppoinmentDTO){
+    async createAnAppoinment(@Body() body: CreateAppoinmentDTO[]){
         return await this.appoinmentService.createAppoinment(body);
     }
 

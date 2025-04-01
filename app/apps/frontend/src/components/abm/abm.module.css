@@ -4,18 +4,94 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    
 }
 
 .interactionBox{
-    width: 1000px;
+    display: flex;
+    width: 1200px;
     height: 600px;
-    border: 1px black solid;
+    z-index: 10;
+    position: relative;
 }
 
 .buttonBox{
     display: flex;
+    flex-direction: column;
+    padding-top: 25px;
+    gap: 20px;
     align-items: center;
-    width: 30%;
+    width: 20%;
     height: 100%;
+    background-color: #8f1981;
 }
+
+.registersBox{
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid gray;
+    width: 80%;
+    height: 100%;
+    overflow-y: scroll;
+}
+
+
+.registers{
+    
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    
+}
+
+.firstColumns{
+    box-sizing: content-box;
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100%;
+    
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    
+}
+.firstColumns span {
+    background-color: white;
+    border-left: 1px solid gray;
+    border-right: 1px solid gray;
+    border-bottom: 1px solid gray;
+}
+
+
+.register{
+    
+    box-sizing: content-box;
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    transition: all .3s;
+}
+
+.register span{
+    border-left: 1px solid gray;
+    border-right: 1px solid gray;
+    border-bottom: 1px solid gray;
+    padding-left: 5px;
+}
+
+.register:hover{
+    background-color: #ccc;
+    transition: all .3s;
+}
+
+.registerFocus{
+    
+    box-sizing: content-box;
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    transition: all .3s;
+}
+
+
+  
 

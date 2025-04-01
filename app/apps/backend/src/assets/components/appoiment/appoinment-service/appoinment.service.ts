@@ -4,6 +4,7 @@ import { CreateAppoinmentDTO } from '../appoinment-DTOs/create-appoinment.dto';
 import { Appoinment } from '../appoinment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateAppoinmentDto } from '../appoinment-DTOs/update-appoinment.dto';
+import { all } from 'axios';
 
 @Injectable()
 export class AppoinmentService {
@@ -12,13 +13,19 @@ export class AppoinmentService {
     async getAll(){
         return await this.appoinmentRepository.find();
     }
-    async createAppoinment(appoinment: CreateAppoinmentDTO): Promise<Appoinment>{
-        try{
-            const newAppoinment = this.appoinmentRepository.create(appoinment);
-            return await this.appoinmentRepository.save(newAppoinment);
-        }catch(error){
-            throw error;
-        }
+    async createAppoinment(appoinments: CreateAppoinmentDTO[]): Promise<Appoinment[]>{
+        
+            const allAppoinments: Appoinment[] = [];
+            appoinments.forEach(async (appoinment) => {
+                try{
+                    const newAppoinment = this.appoinmentRepository.create(appoinment);
+                    await this.appoinmentRepository.save(newAppoinment);
+                    allAppoinments.push(newAppoinment);
+                }catch(error){
+                    throw error;
+                }
+            })
+            return allAppoinments;
     }
 
     async deleteAppoinment(id: number){
