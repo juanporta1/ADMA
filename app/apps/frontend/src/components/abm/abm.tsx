@@ -19,7 +19,7 @@ class Appoinment{
 export function Abm() {
 
   const [data, setData] = useState<Appoinment[]>([]);
-  const [registers, setRegisters] = useState<JSX.Element[]>([]);
+  const [registersAll, setRegisters] = useState<JSX.Element[]>([]);
   const [actualRegister, setActualRegister] = useState<Appoinment | null>(null);
   
 
@@ -40,10 +40,20 @@ export function Abm() {
   },[])
 
   useEffect(() => {
+    console.log(actualRegister)
+  }, [actualRegister])
+
+  useEffect(() => {
     setRegisters(data.map((register: Appoinment) => (
-      <div onClick={() => {
+      
+      <div onBlur={(e) => {
+        e.currentTarget.classList.add(styles.register);
+        e.currentTarget.classList.remove(styles.registerOnFocus);
+      }} onClick={async (e) => {
+        e.currentTarget.classList.remove(styles.register);
+        e.currentTarget.classList.add(styles.registerOnFocus);
         setActualRegister(register);
-      }} className={styles.register}>  
+      }} className={styles.register} tabIndex={0}>  
         <span>{register.ID_appoinment}</span>
         <span>{register.owner}</span>
         <span>{register.home}</span>
@@ -80,7 +90,7 @@ export function Abm() {
             <span>Tamaño</span>
           </div>
           <div className={styles.registers}>
-            {data.length > 0 ? registers : <></>}
+            {data.length > 0 ? registersAll : <></>}
           </div>
         </div>
       </div>

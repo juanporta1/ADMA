@@ -80,16 +80,23 @@
 }
 
 .register:hover{
-    background-color: #ccc;
+    background-color: #ddd;
     transition: all .3s;
 }
 
-.registerFocus{
-    
-    box-sizing: content-box;
+.registerOnFocus{
+    background-color: #aaa;
     display: grid;
+    box-sizing: content-box;
     grid-template-columns: repeat(9, 1fr);
     transition: all .3s;
+}
+
+.registerOnFocus span{
+    border-left: 1px solid gray;
+    border-right: 1px solid gray;
+    border-bottom: 1px solid gray;
+    padding-left: 5px;
 }
 
 
