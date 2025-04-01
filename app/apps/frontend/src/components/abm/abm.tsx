@@ -43,13 +43,41 @@ export function Abm() {
     console.log(actualRegister)
   }, [actualRegister])
 
+  const remove = () => {
+    data.splice(0, 1)
+    setData([...data])
+  }
+
+  const Rows = () => {
+    return data.map((register: Appoinment) => (
+      
+      <div onBlur={(e) => {
+        e.currentTarget.classList.add(styles.register);
+        e.currentTarget.classList.remove(styles.registerOnFocus);
+      }} onClick={(e) => {
+        e.currentTarget.classList.remove(styles.register);
+        e.currentTarget.classList.add(styles.registerOnFocus);
+        setActualRegister(register);
+      }} className={styles.register} tabIndex={0}>  
+        <span>{register.ID_appoinment}</span>
+        <span>{register.owner}</span>
+        <span>{register.home}</span>
+        <span>{register.neighborhood}</span>
+        <span>{register.phone}</span>
+        <span>{register.dni}</span>
+        <span>{register.date}</span>
+        <span>{register.hour}</span>
+        <span>{register.size}</span>
+      </div>
+    ))
+  }
   useEffect(() => {
     setRegisters(data.map((register: Appoinment) => (
       
       <div onBlur={(e) => {
         e.currentTarget.classList.add(styles.register);
         e.currentTarget.classList.remove(styles.registerOnFocus);
-      }} onClick={async (e) => {
+      }} onClick={(e) => {
         e.currentTarget.classList.remove(styles.register);
         e.currentTarget.classList.add(styles.registerOnFocus);
         setActualRegister(register);
@@ -74,7 +102,7 @@ export function Abm() {
       <div className={styles.interactionBox}>
         <div className={styles.buttonBox}>
           <Button w="150px" variant="filled" color="#d326c4" size='md'>Alta</Button>
-          <Button w="150px" variant="filled" color="#d326c4" size='md'>Baja</Button>
+          <Button onClick={() => {remove()}} w="150px" variant="filled" color="#d326c4" size='md'>Baja</Button>
           <Button w="150px" variant="filled" color="#d326c4" size='md'>Modificacion</Button>
         </div>
         <div className={styles.registersBox}>
@@ -90,7 +118,7 @@ export function Abm() {
             <span>Tamaño</span>
           </div>
           <div className={styles.registers}>
-            {data.length > 0 ? registersAll : <></>}
+            {data.length > 0 ? <Rows></Rows> : <></>}
           </div>
         </div>
       </div>
