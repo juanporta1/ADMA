@@ -1,7 +1,9 @@
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import styles from './abm.module.css';
-import { Button } from '@mantine/core';
-import { error } from 'console';
+import { Button, Table, Paper, Modal, Flex} from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { notifications } from "@mantine/notifications"
+
  
 class Appoinment{
   ID_appoinment!: number;
@@ -19,9 +21,12 @@ class Appoinment{
 export function Abm() {
 
   const [data, setData] = useState<Appoinment[]>([]);
-  const [registersAll, setRegisters] = useState<JSX.Element[]>([]);
   const [actualRegister, setActualRegister] = useState<Appoinment | null>(null);
-  
+  const refs = useRef<Map<number , HTMLDivElement>>(new Map());
+  const [ opened, {open, close}] = useDisclosure(false)
+  const openDeleteAlert = () => {
+
+  }
 
   const getAll = async () => {
     try{
@@ -35,94 +40,117 @@ export function Abm() {
     }
   }
 
+  
+
   useEffect(() => {
     getAll();
-  },[])
+  }, [])
 
   useEffect(() => {
     console.log(actualRegister)
   }, [actualRegister])
 
-  const remove = () => {
-    data.splice(0, 1)
-    setData([...data])
+  const removeRegister = async (id: number) => {
+    const response = await fetch(`http://localhost:3000/api/appoinment/delete/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      }
+    }).catch((err) => {
+      throw err
+    });
+
+    if(response.ok){
+      const newData = data.filter((register) => register.ID_appoinment != id);
+      setData(newData);
+    }
+    return response.ok
   }
 
   const Rows = () => {
+      
+    
     return data.map((register: Appoinment) => (
       
-      <div onBlur={(e) => {
-        e.currentTarget.classList.add(styles.register);
-        e.currentTarget.classList.remove(styles.registerOnFocus);
-      }} onClick={(e) => {
-        e.currentTarget.classList.remove(styles.register);
-        e.currentTarget.classList.add(styles.registerOnFocus);
+      <Table.Tr ref={(div) => refs.current.set(register.ID_appoinment, div!)} onClick={(e) => {
         setActualRegister(register);
-      }} className={styles.register} tabIndex={0}>  
-        <span>{register.ID_appoinment}</span>
-        <span>{register.owner}</span>
-        <span>{register.home}</span>
-        <span>{register.neighborhood}</span>
-        <span>{register.phone}</span>
-        <span>{register.dni}</span>
-        <span>{register.date}</span>
-        <span>{register.hour}</span>
-        <span>{register.size}</span>
-      </div>
+      }} className={styles.register}>  
+        <Table.Td>{register.ID_appoinment}</Table.Td>
+        <Table.Td>{register.owner}</Table.Td>
+        <Table.Td>{register.home}</Table.Td>
+        <Table.Td>{register.neighborhood}</Table.Td>
+        <Table.Td>{register.phone}</Table.Td>
+        <Table.Td>{register.dni}</Table.Td>
+        <Table.Td>{register.date}</Table.Td>
+        <Table.Td>{register.hour}</Table.Td>
+        <Table.Td>{register.size}</Table.Td>
+      </Table.Tr>
     ))
   }
+
   useEffect(() => {
-    setRegisters(data.map((register: Appoinment) => (
-      
-      <div onBlur={(e) => {
-        e.currentTarget.classList.add(styles.register);
-        e.currentTarget.classList.remove(styles.registerOnFocus);
-      }} onClick={(e) => {
-        e.currentTarget.classList.remove(styles.register);
-        e.currentTarget.classList.add(styles.registerOnFocus);
-        setActualRegister(register);
-      }} className={styles.register} tabIndex={0}>  
-        <span>{register.ID_appoinment}</span>
-        <span>{register.owner}</span>
-        <span>{register.home}</span>
-        <span>{register.neighborhood}</span>
-        <span>{register.phone}</span>
-        <span>{register.dni}</span>
-        <span>{register.date}</span>
-        <span>{register.hour}</span>
-        <span>{register.size}</span>
-      </div>
-    )))
-  },[data])
-
-
+    if (actualRegister){
+      refs.current.get(actualRegister.ID_appoinment)!.style = "background-color: #ccc";
+    }
+  }, [actualRegister])
 
   return (
     <div className={styles.mainBox}>
-      <div className={styles.interactionBox}>
-        <div className={styles.buttonBox}>
-          <Button w="150px" variant="filled" color="#d326c4" size='md'>Alta</Button>
-          <Button onClick={() => {remove()}} w="150px" variant="filled" color="#d326c4" size='md'>Baja</Button>
-          <Button w="150px" variant="filled" color="#d326c4" size='md'>Modificacion</Button>
-        </div>
-        <div className={styles.registersBox}>
-          <div className={styles.firstColumns} >
-            <span>ID</span>
-            <span>Dueño</span>
-            <span>Domicilio</span>
-            <span>Barrio</span>
-            <span>Telefono</span>
-            <span>DNI</span>
-            <span>Fecha</span>
-            <span>Hora</span>
-            <span>Tamaño</span>
+      <Paper shadow="lg" radius="xs">
+        <div className={styles.interactionBox}>
+          <div className={styles.buttonBox}>
+            <Button w="150px" variant="filled" color="#d326c4" size='md'>Alta</Button>
+            <Button onClick={() => {
+              if (actualRegister !== null){
+                open()
+              }
+            }} w="150px" variant="filled" color="#d326c4" size='md'>Baja</Button>
+            <Button w="150px" variant="filled" color="#d326c4" size='md'>Modificacion</Button>
           </div>
-          <div className={styles.registers}>
-            {data.length > 0 ? <Rows></Rows> : <></>}
+          <div className={styles.registersBox}>
+            
+            <Table stickyHeader>
+              <Table.Thead>
+                <Table.Tr>
+                  <Table.Th>ID</Table.Th>
+                  <Table.Th>Dueño</Table.Th>
+                  <Table.Th>Domicilio</Table.Th>
+                  <Table.Th>Barrio</Table.Th>
+                  <Table.Th>Telefono</Table.Th>
+                  <Table.Th>DNI</Table.Th>
+                  <Table.Th>Fecha</Table.Th>
+                  <Table.Th>Hora</Table.Th>
+                  <Table.Th>Tamaño</Table.Th>
+                </Table.Tr>
+              </Table.Thead>
+              
+                {data.length > 0 ? <Rows></Rows> : <></>}
+            </Table>
           </div>
         </div>
-      </div>
-      
+      </Paper>
+      <Modal centered onClose={close} opened={opened} title="¿Seguro quieres borrar este registro?">
+        <Flex  miw={100} mih={50} gap="sm" justify="center" align="center" direction="row" wrap="nowrap">
+          <Button w="150px" variant="filled" color="#d326c4" size='md' onClick={async () => {
+            if (actualRegister !== null){
+              const ok = await removeRegister(actualRegister.ID_appoinment);
+              if(ok){
+                notifications.show({
+                  title: 'El registro se ha borrado con exito.',
+                  message: 'Pueds cerrar esta notificacion.',
+                })
+              }else{
+                notifications.show({
+                  title: 'No se ha podido eliminar este registro.',
+                  message: 'Reintena en un momento.',
+                })
+              }
+              close();
+            }
+          }}>Si</Button>
+          <Button w="150px" variant="filled" color="#d326c4" size='md' onClick={close}>No</Button>
+        </Flex>
+      </Modal>
     </div>
   );
 }
