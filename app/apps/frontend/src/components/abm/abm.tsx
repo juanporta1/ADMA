@@ -163,8 +163,10 @@ export function Abm() {
         </Flex>
       </Modal>
       
-      <Modal  miw={100} mih={50} gap="sm" justify="center" align="center" direction="row" wrap="nowrap">
+      <Modal  centered onClose={closeCreate} opened={createModalValue} title="Agendar nuevo Turno">
+          <Flex gap="sm" justify="center" align="center" direction="row" >
 
+          </Flex>
       </Modal>
 
     </div>
