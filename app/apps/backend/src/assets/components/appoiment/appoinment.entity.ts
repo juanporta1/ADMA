@@ -28,14 +28,17 @@ export class Appoinment{
     @Column({type: "int"})
     dni!: number;
 
-    @Column({type: "date"})
-    date!: string;
-
-    @Column({type: "time"})
-    hour!: string; 
+    @Column({type: "timestamp"})
+    date!: Date;
 
     @Column({type: "varchar", enum: DogSize})
     size!: string;
+
+    @Column({type: "varchar"})
+    sex!: string;
+
+    @Column({type: "varchar"})
+    race!: string;
     
 
 }

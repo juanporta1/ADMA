@@ -5,7 +5,9 @@ export class CreateAppoinmentDTO{
     phone!:string;
     neighborhood!: string;
     dni!: number;
-    date!: string;
-    hour!: string;
+    date!: Date;
+    
     size!: "Pequeño" | "Mediano" | "Grande";
+    sex!: "Macho" | "Hembra";
+    race!: "Perro" | "Gato";
 }

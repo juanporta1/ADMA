@@ -5,7 +5,10 @@ import { BrowserRouter } from 'react-router-dom';
 import { MantineProvider } from '@mantine/core';
 import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
+import '@mantine/dates/styles.css'
 import { Notifications } from '@mantine/notifications';
+import { DatesProvider } from '@mantine/dates';
+import 'dayjs/locale/es';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
@@ -13,11 +16,13 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <StrictMode>
-    <MantineProvider>
-      <Notifications />
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </MantineProvider>
+    <DatesProvider settings={{ locale: 'es', firstDayOfWeek: 0, weekendDays: [0, 6], timezone: 'America/Argentina/Buenos_Aires'}}>
+      <MantineProvider>
+        <Notifications />
+        <BrowserRouter>
+          <App />
+        </BrowserRouter>
+      </MantineProvider>
+    </DatesProvider>
   </StrictMode>
 );
