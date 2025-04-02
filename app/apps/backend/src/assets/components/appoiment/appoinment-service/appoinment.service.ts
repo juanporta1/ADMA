@@ -13,7 +13,7 @@ export class AppoinmentService {
     async getAll(){
         return await this.appoinmentRepository.find();
     }
-    async createAppoinment(appoinments: CreateAppoinmentDTO[]): Promise<Appoinment[]>{
+    async createAppoinmentsBulk(appoinments: CreateAppoinmentDTO[]): Promise<Appoinment[]>{
         
             const allAppoinments: Appoinment[] = [];
             appoinments.forEach(async (appoinment) => {
@@ -26,6 +26,16 @@ export class AppoinmentService {
                 }
             })
             return allAppoinments;
+    }
+
+    async createOneAppoinment(appoinment: CreateAppoinmentDTO): Promise<Appoinment>{
+        try{
+            const newAppoinment = await this.appoinmentRepository.create(appoinment);
+            return await this.appoinmentRepository.save(newAppoinment);
+            
+        }catch(error){
+            throw error
+        }
     }
 
     async deleteAppoinment(id: number){

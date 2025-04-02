@@ -1,6 +1,6 @@
-import { ReactNode, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styles from './abm.module.css';
-import { Button, Table, Paper, Modal, Flex} from '@mantine/core';
+import { Button, Table, Paper, Modal, Flex, List, Container} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from "@mantine/notifications"
 
@@ -23,7 +23,10 @@ export function Abm() {
   const [data, setData] = useState<Appoinment[]>([]);
   const [actualRegister, setActualRegister] = useState<Appoinment | null>(null);
   const refs = useRef<Map<number , HTMLDivElement>>(new Map());
-  const [ opened, {open, close}] = useDisclosure(false)
+  const [ deleteModalValue, {open: openDelete, close: closeDelete}] = useDisclosure(false);
+  const [ createModalValue, {open: openCreate, close: closeCreate}] = useDisclosure(false);
+
+
   const openDeleteAlert = () => {
 
   }
@@ -42,14 +45,6 @@ export function Abm() {
 
   
 
-  useEffect(() => {
-    getAll();
-  }, [])
-
-  useEffect(() => {
-    console.log(actualRegister)
-  }, [actualRegister])
-
   const removeRegister = async (id: number) => {
     const response = await fetch(`http://localhost:3000/api/appoinment/delete/${id}`, {
       method: "DELETE",
@@ -66,6 +61,28 @@ export function Abm() {
     }
     return response.ok
   }
+
+  const deleteNotificationHandler =  async () => {
+    if (actualRegister !== null){
+      const ok = await removeRegister(actualRegister.ID_appoinment);
+      if(ok){
+        notifications.show({
+          position: "top-left",
+          title: 'El registro se ha borrado con exito.',
+          message: 'Puedes cerrar esta notificacion.',
+          color: "green"
+        })
+      }else{
+        notifications.show({
+          position: "top-left",
+          title: 'No se ha podido eliminar este registro.',
+          message: 'Reintena en un momento.',
+          color: "red"
+
+        })
+      }
+      close();
+    }}
 
   const Rows = () => {
       
@@ -94,18 +111,27 @@ export function Abm() {
     }
   }, [actualRegister])
 
+  useEffect(() => {
+    getAll();
+  }, [])
+
+  useEffect(() => {
+    console.log(actualRegister)
+  }, [actualRegister])
   return (
+    
     <div className={styles.mainBox}>
+      
       <Paper shadow="lg" radius="xs">
         <div className={styles.interactionBox}>
           <div className={styles.buttonBox}>
-            <Button w="150px" variant="filled" color="#d326c4" size='md'>Alta</Button>
+            <Button w="150px" variant="filled" color="#86457c" size='md'>Alta</Button>
             <Button onClick={() => {
               if (actualRegister !== null){
-                open()
+                openDelete()
               }
-            }} w="150px" variant="filled" color="#d326c4" size='md'>Baja</Button>
-            <Button w="150px" variant="filled" color="#d326c4" size='md'>Modificacion</Button>
+            }} w="150px" variant="filled" color="#86457c" size='md'>Baja</Button>
+            <Button w="150px" variant="filled" color="#86457c" size='md'>Modificacion</Button>
           </div>
           <div className={styles.registersBox}>
             
@@ -129,29 +155,21 @@ export function Abm() {
           </div>
         </div>
       </Paper>
-      <Modal centered onClose={close} opened={opened} title="¿Seguro quieres borrar este registro?">
+      <Modal centered onClose={closeDelete} opened={deleteModalValue} title="¿Seguro quieres borrar este registro?" w={100}>
+      
         <Flex  miw={100} mih={50} gap="sm" justify="center" align="center" direction="row" wrap="nowrap">
-          <Button w="150px" variant="filled" color="#d326c4" size='md' onClick={async () => {
-            if (actualRegister !== null){
-              const ok = await removeRegister(actualRegister.ID_appoinment);
-              if(ok){
-                notifications.show({
-                  title: 'El registro se ha borrado con exito.',
-                  message: 'Pueds cerrar esta notificacion.',
-                })
-              }else{
-                notifications.show({
-                  title: 'No se ha podido eliminar este registro.',
-                  message: 'Reintena en un momento.',
-                })
-              }
-              close();
-            }
-          }}>Si</Button>
-          <Button w="150px" variant="filled" color="#d326c4" size='md' onClick={close}>No</Button>
+          <Button w="150px" variant="filled" color="#86457c" size='md' onClick={deleteNotificationHandler}>Si</Button>
+          <Button w="150px" variant="filled" color="#86457c" size='md' onClick={closeDelete}>No</Button>
         </Flex>
       </Modal>
+      
+      <Modal  miw={100} mih={50} gap="sm" justify="center" align="center" direction="row" wrap="nowrap">
+
+      </Modal>
+
     </div>
+
+    
   );
 }
 

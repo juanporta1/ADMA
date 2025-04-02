@@ -4,6 +4,9 @@ import App from './app/app';
 import { BrowserRouter } from 'react-router-dom';
 import { MantineProvider } from '@mantine/core';
 import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
+import { Notifications } from '@mantine/notifications';
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
@@ -11,6 +14,7 @@ const root = ReactDOM.createRoot(
 root.render(
   <StrictMode>
     <MantineProvider>
+      <Notifications />
       <BrowserRouter>
         <App />
       </BrowserRouter>

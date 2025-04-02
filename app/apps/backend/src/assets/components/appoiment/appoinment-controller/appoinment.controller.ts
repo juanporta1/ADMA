@@ -13,9 +13,14 @@ export class AppoinmentController {
         return await this.appoinmentService.getAll()
     }
 
-    @Post("create")
-    async createAnAppoinment(@Body() body: CreateAppoinmentDTO[]){
-        return await this.appoinmentService.createAppoinment(body);
+    @Post("create/bulk")
+    async createAppoinments(@Body() body: CreateAppoinmentDTO[]){
+        return await this.appoinmentService.createAppoinmentsBulk(body);
+    }
+
+    @Post("create/one")
+    async createAnAppoinment(@Body() body: CreateAppoinmentDTO){
+        return await this.appoinmentService.createOneAppoinment(body);
     }
 
     @Delete("delete/:id")
