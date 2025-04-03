@@ -14,6 +14,7 @@ import {
   LoadingOverlay,
   Loader,
   ScrollArea,
+  Tooltip,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
@@ -294,8 +295,15 @@ export function Abm() {
         <Table.Tr
           key={register.ID_appoinment}
           onClick={(e) => {
-            setSelectedId(register.ID_appoinment);
-            setActualRegister(register);
+            if (actualRegister && selectedId === register.ID_appoinment){
+              setSelectedId(null);
+              setActualRegister(null);
+              
+            }else{
+              setSelectedId(register.ID_appoinment);
+              setActualRegister(register);
+            }
+            
           }}
 
           onMouseEnter={(e) => {
@@ -373,6 +381,7 @@ export function Abm() {
       <Paper shadow="lg" radius="xs">
         <div className={styles.interactionBox}>
           <div className={styles.buttonBox}>
+            
             <Button
               onClick={() => {
                 openPostModal();
@@ -381,6 +390,7 @@ export function Abm() {
               variant="filled"
               color="#86457c"
               size="md"
+             
             >
               Alta
             </Button>
@@ -390,6 +400,7 @@ export function Abm() {
               variant="filled"
               color="#86457c"
               size="md"
+              disabled={!actualRegister}
             >
               Baja
             </Button>
@@ -399,6 +410,7 @@ export function Abm() {
               variant="filled"
               color="#86457c"
               size="md"
+              disabled={!actualRegister}
             >
               Modificacion
             </Button>
