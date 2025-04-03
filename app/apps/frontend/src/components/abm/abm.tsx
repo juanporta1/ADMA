@@ -20,6 +20,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { useForm } from '@mantine/form';
 import { DateTimePicker } from '@mantine/dates';
+import App from '../../app/app';
 
 class Appoinment {
   ID_appoinment!: number;
@@ -27,14 +28,14 @@ class Appoinment {
   home!: string;
   neighborhood!: string;
   phone!: string;
-  dni!: number;
+  dni!: string;
   date!: Date;
   size!: 'Grande' | 'Pequeño' | 'Mediano';
   sex!: 'Macho' | 'Hembra';
   race!: 'Perro' | 'Gato';
 }
 
-interface formValues {
+type formValues = {
   date: Date | null;
   owner: string;
   neighborhood: string;
@@ -50,7 +51,7 @@ export function Abm() {
   const form = useForm({
     mode: 'controlled',
     initialValues: {
-      date: null,
+      date: new Date,
       owner: '',
       neighborhood: '',
       home: '',
@@ -91,7 +92,7 @@ export function Abm() {
         value === '' ? 'Debe seleccionar un barrio' : null,
       race: (value: string) =>
         value === '' ? 'Debe seleccionar una raza' : null,
-      date: (value) => (value ? null : 'Debe ingresar una fecha.'),
+      date: (value: Date | null) => (value ? null : 'Debe ingresar una fecha.'),
     },
   });
   const neighborhoodInputData: string[] = [
@@ -130,13 +131,21 @@ export function Abm() {
   const [postModalVar, { open: openPostModal, close: closePostModal }] =
     useDisclosure(false);
   const [loaderVar, { open: makeLoaderVisible, close: makeLoaderInvisible }] = useDisclosure(false);
-  
+  const [patchModalVar, {open: openPatchModal, close: closePatchModal}] = useDisclosure(false);
+  const [canEdit, setCanEdit] = useState(false);
+
 
   const openDeleteAlert = () => {
     if (actualRegister !== null) {
       openDeleteModal();
     }
   };
+
+  const onClickModify = () => {
+    if(actualRegister){
+      openPatchModal()
+    }
+  }
 
   const getAll = async () => {
     try {
@@ -198,6 +207,41 @@ export function Abm() {
       throw err;
     }
   };
+
+  const handleOnEdit = async (values: formValues) => {
+    try{
+      makeLoaderInvisible();
+
+      const newColumns = {}
+
+
+      
+
+      const response = await fetch(`http://localhost:3000/api/appoinment/update/${actualRegister?.ID_appoinment}`,{
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body : JSON.stringify({
+          ...values
+        })
+      });
+
+      if(!response.ok){
+        const data = await response.json();
+        console.log("La edicion se realizo con exit: ", data)
+      }
+      makeLoaderInvisible();
+      closePatchModal();
+      getAll();
+      
+    }catch(err){
+      makeLoaderInvisible();
+      throw err
+
+    }
+
+  }
 
   const postNotificationHandler= async () => {
     notifications.show({
@@ -271,6 +315,27 @@ export function Abm() {
     });
   };
 
+  const SubmitButton = () => (
+              <Button
+                variant="filled"
+                color="#86457c"
+                style={{ width: '100%' }}
+                type='submit'
+              >
+               Completar Edicion
+              </Button>
+  );
+  const StartEditionButton = () => (
+    <Button
+      variant="filled"
+      color="#86457c"
+      style={{ width: '100%' }}
+      onClick={() => setCanEdit(canEdit ? false : true)}
+    >
+     Editar
+    </Button>
+);
+
   useEffect(() => {
     if (actualRegister) {
       refs.current.get(actualRegister.ID_appoinment)!.style =
@@ -283,10 +348,19 @@ export function Abm() {
   }, []);
 
   useEffect(() => {
-    if (!postModalVar) {
+    if (!postModalVar || !patchModalVar) {
       form.reset();
+      setCanEdit(false);
     }
-  }, [postModalVar]);
+  
+    if(patchModalVar){
+      if(actualRegister){
+        const {ID_appoinment, ...objectWithoutId} = actualRegister
+        form.setValues(objectWithoutId)
+      }
+    }
+
+  }, [postModalVar, patchModalVar]);
 
   // useEffect(() => {
   //   console.log(actualRegister)
@@ -316,7 +390,7 @@ export function Abm() {
             >
               Baja
             </Button>
-            <Button w="150px" variant="filled" color="#86457c" size="md">
+            <Button onClick={onClickModify} w="150px" variant="filled" color="#86457c" size="md">
               Modificacion
             </Button>
           </div>
@@ -514,6 +588,135 @@ export function Abm() {
                 variant="default"
                 style={{ width: '100%' }}
                 onClick={closePostModal}
+              >
+                Cancelar
+              </Button>
+            </Grid.Col>
+          </Grid>
+        </form>
+      </Modal>
+      <Modal
+        centered
+        onClose={closePatchModal}
+        opened={patchModalVar}
+        title="Modificar Turno"
+        withCloseButton={false}
+        mah="100vh"
+        scrollAreaComponent={ScrollArea.Autosize}
+        size="lg"
+      >
+        
+        <LoadingOverlay
+          visible={loaderVar}
+          loaderProps={{ children: <Loader color="#86457c" /> }}
+        />
+        <form onSubmit={form.onSubmit(handleOnEdit)} aria-disabled={canEdit}>
+          <Grid gutter="xs">
+            <Grid.Col span={12}>
+              <DateTimePicker
+                key={form.key('date')}
+                {...form.getInputProps('date')}
+                label="Fecha"
+                placeholder="DD/MM/YYYY HH:MM"
+                minDate={new Date()}
+                {...{"disabled": canEdit ? false : true}}/>
+            </Grid.Col>
+
+            <Grid.Col span={12}>
+              <TextInput
+                key={form.key('owner')}
+                {...form.getInputProps('owner')}
+                placeholder="Ingrese Nombre y Apellido"
+                label="Dueño"
+                {...{"disabled": canEdit ? false : true}}/>
+            </Grid.Col>
+            <Grid.Col span={12}>
+              <TextInput
+                key={form.key('home')}
+                {...form.getInputProps('home')}
+                placeholder="Ingrese un Domicilio"
+                label="Domicilio"
+                {...{"disabled": canEdit ? false : true}}/>
+            </Grid.Col>
+            <Grid.Col span={12}>
+              <NativeSelect
+                key={form.key('neighborhood')}
+                {...form.getInputProps('neighborhood')}
+                label="Barrio"
+                {...{"disabled": canEdit ? false : true}}>
+                <option value="" disabled>
+                  Seleccione un barrio
+                </option>
+                {neighborhoodOptions()}
+              </NativeSelect>
+            </Grid.Col>
+            <Grid.Col span={12}>
+              <TextInput
+                key={form.key('dni')}
+                {...form.getInputProps('dni')}
+                placeholder="Ingrese DNI"
+                label="DNI"
+                {...{"disabled": canEdit ? false : true}}/>
+            </Grid.Col>
+            <Grid.Col span={12}>
+              <TextInput
+                key={form.key('phone')}
+                {...form.getInputProps('phone')}
+                placeholder="Ingrese un Telefono"
+                label="Teléfono"
+                {...{"disabled": canEdit ? false : true}}/>
+            </Grid.Col>
+            <Grid.Col span={12}>
+              <NativeSelect
+                key={form.key('size')}
+                {...form.getInputProps('size')}
+                label="Tamaño"
+              {...{"disabled": canEdit ? false : true}}>
+                <option value="" disabled>
+                  Seleccione un tamaño
+                </option>
+
+                <option value="Grande">Grande</option>
+                <option value="Mediano">Mediano</option>
+                <option value="Pequeño">Pequeño</option>
+              </NativeSelect>
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <NativeSelect
+                label="Sexo"
+                key={form.key('sex')}
+                {...form.getInputProps('sex')}
+                {...{"disabled": canEdit ? false : true}}>
+                <option value="" disabled>
+                  Seleccione un sexo
+                </option>
+
+                <option value="Macho">Macho</option>
+                <option value="Hembra">Hembra</option>
+              </NativeSelect>
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <NativeSelect
+                label="Raza"
+                key={form.key('race')}
+                {...form.getInputProps('race')}
+              {...{"disabled": canEdit ? false : true}}>
+                <option value="" disabled>
+                  Seleccione una raza
+                </option>
+
+                <option value="Perro">Perro</option>
+                <option value="Gato">Gato</option>
+              </NativeSelect>
+            </Grid.Col>
+            <Grid.Col span={12}>
+              {canEdit  ?  <SubmitButton /> : <StartEditionButton />}
+            </Grid.Col>
+            <Grid.Col span={12}>
+              <Button
+                variant="default"
+                style={{ width: '100%' }}
+                onClick={closePatchModal}
               >
                 Cancelar
               </Button>
