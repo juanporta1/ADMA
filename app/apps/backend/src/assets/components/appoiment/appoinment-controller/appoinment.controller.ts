@@ -1,34 +1,37 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { CreateAppoinmentDTO } from '../appoinment-DTOs/create-appoinment.dto';
 import { AppoinmentService } from '../appoinment-service/appoinment.service';
 import { UpdateAppoinmentDto } from '../appoinment-DTOs/update-appoinment.dto';
+import { FilterAppoinmentDto } from '../appoinment-DTOs/filter-appoinment.dto';
 
 @Controller('appoinment')
 export class AppoinmentController {
 
     constructor(private appoinmentService: AppoinmentService){}
 
-    @Get("get-all")
-    async getAllAppoinments(){
-        return await this.appoinmentService.getAll()
+    @Get("")
+    async getAppoinments(@Query() querys: FilterAppoinmentDto){
+        return await this.appoinmentService.getAll(querys); 
     }
 
-    @Post("create/bulk")
+    
+
+    @Post("bulk")
     async createAppoinments(@Body() body: CreateAppoinmentDTO[]){
         return await this.appoinmentService.createAppoinmentsBulk(body);
     }
 
-    @Post("create/one")
+    @Post("")
     async createAnAppoinment(@Body() body: CreateAppoinmentDTO){
         return await this.appoinmentService.createOneAppoinment(body);
     }
 
-    @Delete("delete/:id")
+    @Delete(":id")
     async deleteAnAppoinment(@Param("id") id: string){
         return await this.appoinmentService.deleteAppoinment(Number(id))
     }
 
-    @Patch("update/:id")
+    @Patch(":id")
     async updateAnAppoiment(@Param("id") id: number ,@Body() body: UpdateAppoinmentDto){
         return await this.appoinmentService.updateAppoinment(Number(id), body);
     }

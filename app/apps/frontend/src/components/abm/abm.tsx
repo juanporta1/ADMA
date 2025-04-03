@@ -151,7 +151,7 @@ export function Abm() {
   const getAll = async () => {
     try {
       const response = await fetch(
-        'http://localhost:3000/api/appoinment/get-all'
+        'http://localhost:3000/api/appoinment/'
       );
       if (!response.ok) throw new Error('Ha ocurrido un error con la API');
       const result: Appoinment[] = await response.json();
@@ -168,7 +168,7 @@ export function Abm() {
 
   const removeRegister = async (id: number) => {
     const response = await fetch(
-      `http://localhost:3000/api/appoinment/delete/${id}`,
+      `http://localhost:3000/api/appoinment/${id}`,
       {
         method: 'DELETE',
         headers: {
@@ -190,7 +190,7 @@ export function Abm() {
     try {
       makeLoaderVisible();
       const response = await fetch(
-        'http://localhost:3000/api/appoinment/create/one',
+        'http://localhost:3000/api/appoinment/',
         {
           method: 'POST',
           headers: {
@@ -225,7 +225,7 @@ export function Abm() {
     try {
       makeLoaderVisible();
       const response = await fetch(
-        `http://localhost:3000/api/appoinment/update/${actualRegister?.ID_appoinment}`,
+        `http://localhost:3000/api/appoinment/${actualRegister?.ID_appoinment}`,
         {
           method: 'PATCH',
           headers: {
