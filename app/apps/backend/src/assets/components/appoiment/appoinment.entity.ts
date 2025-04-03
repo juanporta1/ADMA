@@ -1,12 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
 
-
-export enum DogSize{
-  BIG= "Grande",
-  MEDIUM= "Mediano",
-  SMALL= "Pequeño"
-}
-
 @Entity( {name: "Appoinment"} )
 export class Appoinment{
 
@@ -31,7 +24,7 @@ export class Appoinment{
     @Column({type: "timestamp"})
     date!: Date;
 
-    @Column({type: "varchar", enum: DogSize})
+    @Column({type: "varchar"})
     size!: string;
 
     @Column({type: "varchar"})

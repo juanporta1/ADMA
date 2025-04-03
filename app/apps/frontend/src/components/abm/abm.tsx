@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import styles from './abm.module.css';
 import { format } from 'date-fns';
-import { es } from 'date-fns/locale'
+import { es } from 'date-fns/locale';
 import {
   Button,
   Table,
@@ -14,13 +14,12 @@ import {
   LoadingOverlay,
   Loader,
   ScrollArea,
-  Box,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { useForm } from '@mantine/form';
 import { DateTimePicker } from '@mantine/dates';
-import App from '../../app/app';
+ 
 
 class Appoinment {
   ID_appoinment!: number;
@@ -32,7 +31,7 @@ class Appoinment {
   date!: Date;
   size!: 'Grande' | 'Pequeño' | 'Mediano';
   sex!: 'Macho' | 'Hembra';
-  race!: 'Perro' | 'Gato';
+  race!: 'Canino' | 'Felino';
 }
 
 type formValues = {
@@ -45,13 +44,13 @@ type formValues = {
   dni: string;
   sex: string;
   race: string;
-}
+};
 
 export function Abm() {
   const form = useForm({
     mode: 'controlled',
     initialValues: {
-      date: new Date,
+      date: new Date(),
       owner: '',
       neighborhood: '',
       home: '',
@@ -123,17 +122,18 @@ export function Abm() {
     'Liniers',
   ];
 
-  const refs = useRef<Map<number, HTMLDivElement>>(new Map());
+  const [selectedId, setSelectedId] = useState<number | null>(null);
   const [data, setData] = useState<Appoinment[]>([]);
   const [actualRegister, setActualRegister] = useState<Appoinment | null>(null);
   const [deleteModalVar, { open: openDeleteModal, close: closeDeleteModal }] =
     useDisclosure(false);
   const [postModalVar, { open: openPostModal, close: closePostModal }] =
     useDisclosure(false);
-  const [loaderVar, { open: makeLoaderVisible, close: makeLoaderInvisible }] = useDisclosure(false);
-  const [patchModalVar, {open: openPatchModal, close: closePatchModal}] = useDisclosure(false);
+  const [loaderVar, { open: makeLoaderVisible, close: makeLoaderInvisible }] =
+    useDisclosure(false);
+  const [patchModalVar, { open: openPatchModal, close: closePatchModal }] =
+    useDisclosure(false);
   const [canEdit, setCanEdit] = useState(false);
-
 
   const openDeleteAlert = () => {
     if (actualRegister !== null) {
@@ -142,10 +142,10 @@ export function Abm() {
   };
 
   const onClickModify = () => {
-    if(actualRegister){
-      openPatchModal()
+    if (actualRegister) {
+      openPatchModal();
     }
-  }
+  };
 
   const getAll = async () => {
     try {
@@ -159,6 +159,7 @@ export function Abm() {
         const newDate = new Date(appoinment.date);
         appoinment.date = newDate;
       });
+      result.sort((a, b) => a.ID_appoinment - b.ID_appoinment)
       setData(result);
     } catch (error) {
       throw error;
@@ -188,72 +189,95 @@ export function Abm() {
   const handleOnSubmit = async (values: formValues) => {
     try {
       makeLoaderVisible();
-      const response = await fetch("http://localhost:3000/api/appoinment/create/one",{
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(values)
-      });
-      
+      const response = await fetch(
+        'http://localhost:3000/api/appoinment/create/one',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(values),
+        }
+      );
+
       makeLoaderInvisible();
       closePostModal();
-      if(response.ok) getAll();
+      postNotificationHandler(true);
+      if (response.ok) getAll();
       const data = await response.json();
       console.log('Respuesta del servidor: ', data);
-      postNotificationHandler();
     } catch (err) {
       makeLoaderInvisible();
+      postNotificationHandler(false);
+
       throw err;
     }
   };
 
   const handleOnEdit = async (values: formValues) => {
-    try{
-      makeLoaderInvisible();
+    try {
+      makeLoaderVisible();
+      const response = await fetch(
+        `http://localhost:3000/api/appoinment/update/${actualRegister?.ID_appoinment}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            ...values,
+          }),
+        }
+      );
 
-      const newColumns = {}
-
-
-      
-
-      const response = await fetch(`http://localhost:3000/api/appoinment/update/${actualRegister?.ID_appoinment}`,{
-        method: "PATCH",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body : JSON.stringify({
-          ...values
-        })
-      });
-
-      if(!response.ok){
+      if (!response.ok) {
         const data = await response.json();
-        console.log("La edicion se realizo con exit: ", data)
+        console.log('La edicion se realizo con exit: ', data);
+        patchNotificationHandler(true);
       }
       makeLoaderInvisible();
       closePatchModal();
+
       getAll();
-      
-    }catch(err){
+    } catch (err) {
       makeLoaderInvisible();
-      throw err
-
+      patchNotificationHandler(false);
+      throw err;
     }
+  };
 
-  }
-
-  const postNotificationHandler= async () => {
-    notifications.show({
-      position: 'top-left',
-      title: 'El registro se ha creado con exito.',
-      message: 'Puedes cerrar esta notificacion.',
-      color: 'green',
-    });
-  }
+  const postNotificationHandler = async (ok: boolean) => {
+    ok
+      ? notifications.show({
+          position: 'top-left',
+          title: 'El registro se ha creado con exito.',
+          message: 'Puedes cerrar esta notificacion.',
+          color: 'green',
+        })
+      : notifications.show({
+          position: 'top-left',
+          title: 'Ha ocurriod un error creando el registro.',
+          message: 'Intentelo de nuevo mas tarde.',
+          color: 'red',
+        });
+  };
+  const patchNotificationHandler = async (ok: boolean) => {
+    ok
+      ? notifications.show({
+          position: 'top-left',
+          title: 'El registro se ha actualizado con exito.',
+          message: 'Puedes cerrar esta notificacion.',
+          color: 'green',
+        })
+      : notifications.show({
+          position: 'top-left',
+          title: 'Ha ocurriod un error actualizando el registro.',
+          message: 'Intentelo de nuevo mas tarde.',
+          color: 'red',
+        });
+  };
 
   const deleteNotificationHandler = async () => {
-    
     if (actualRegister !== null) {
       const ok = await removeRegister(actualRegister.ID_appoinment);
       if (ok) {
@@ -272,9 +296,8 @@ export function Abm() {
           color: 'red',
         });
       }
-      
+
       closeDeleteModal();
-       
     }
   };
 
@@ -288,16 +311,33 @@ export function Abm() {
 
   const Rows = () => {
     return data.map((register: Appoinment) => {
-      const day = `${register.date.getDay()}/${register.date.getMonth()}/${register.date.getFullYear()}`;
-      const hour = format(register.date, "HH:mm")
-
+      const day = `${register.date.getDate()}/${
+        register.date.getMonth() + 1
+      }/${register.date.getFullYear()}`;
+      const hour = format(register.date, 'HH:mm');
       return (
         <Table.Tr
-          ref={(div) => refs.current.set(register.ID_appoinment, div!)}
+          key={register.ID_appoinment}
           onClick={(e) => {
+            setSelectedId(register.ID_appoinment);
             setActualRegister(register);
+            console.log(actualRegister?.ID_appoinment);
+            console.log(selectedId);
+          }}
+
+          onMouseEnter={(e) => {
+            if(!(selectedId === register.ID_appoinment)){
+              e.currentTarget.style.backgroundColor = "#eee"
+            }
+          }}
+
+          onMouseLeave={(e) => {
+            if(!(selectedId === register.ID_appoinment)){
+              e.currentTarget.style.backgroundColor = "#fff"
+            }
           }}
           className={styles.register}
+          bg={selectedId === register.ID_appoinment ? "#bbb" : "#fff"}
         >
           <Table.Td>{register.ID_appoinment}</Table.Td>
           <Table.Td>{register.owner}</Table.Td>
@@ -316,14 +356,14 @@ export function Abm() {
   };
 
   const SubmitButton = () => (
-              <Button
-                variant="filled"
-                color="#86457c"
-                style={{ width: '100%' }}
-                type='submit'
-              >
-               Completar Edicion
-              </Button>
+    <Button
+      variant="filled"
+      color="#86457c"
+      style={{ width: '100%' }}
+      type="submit"
+    >
+      Completar Edicion
+    </Button>
   );
   const StartEditionButton = () => (
     <Button
@@ -332,16 +372,9 @@ export function Abm() {
       style={{ width: '100%' }}
       onClick={() => setCanEdit(canEdit ? false : true)}
     >
-     Editar
+      Editar
     </Button>
-);
-
-  useEffect(() => {
-    if (actualRegister) {
-      refs.current.get(actualRegister.ID_appoinment)!.style =
-        'background-color: #ccc';
-    }
-  }, [actualRegister]);
+  );
 
   useEffect(() => {
     getAll();
@@ -352,14 +385,13 @@ export function Abm() {
       form.reset();
       setCanEdit(false);
     }
-  
-    if(patchModalVar){
-      if(actualRegister){
-        const {ID_appoinment, ...objectWithoutId} = actualRegister
-        form.setValues(objectWithoutId)
+
+    if (patchModalVar) {
+      if (actualRegister) {
+        const { ID_appoinment, ...objectWithoutId } = actualRegister;
+        form.setValues(objectWithoutId);
       }
     }
-
   }, [postModalVar, patchModalVar]);
 
   // useEffect(() => {
@@ -390,7 +422,13 @@ export function Abm() {
             >
               Baja
             </Button>
-            <Button onClick={onClickModify} w="150px" variant="filled" color="#86457c" size="md">
+            <Button
+              onClick={onClickModify}
+              w="150px"
+              variant="filled"
+              color="#86457c"
+              size="md"
+            >
               Modificacion
             </Button>
           </div>
@@ -417,48 +455,43 @@ export function Abm() {
           </div>
         </div>
       </Paper>
-      
-      
-        
-        <Modal
-          centered
-          onClose={closeDeleteModal}
-          opened={deleteModalVar}
-          title="¿Seguro quieres borrar este registro?"
-          w={100}
-          style={{height: "500px"}}
+
+      <Modal
+        centered
+        onClose={closeDeleteModal}
+        opened={deleteModalVar}
+        title="¿Seguro quieres borrar este registro?"
+      >
+        <Flex
+          miw={100}
+          mih={50}
+          gap="sm"
+          justify="center"
+          align="center"
+          direction="row"
+          wrap="nowrap"
         >
-          
-          <Flex
-            miw={100}
-            mih={50}
-            gap="sm"
-            justify="center"
-            align="center"
-            direction="row"
-            wrap="nowrap"
+          <Button
+            w="150px"
+            variant="filled"
+            color="#86457c"
+            size="md"
+            onClick={deleteNotificationHandler}
           >
-            <Button
-              w="150px"
-              variant="filled"
-              color="#86457c"
-              size="md"
-              onClick={deleteNotificationHandler}
-            >
-              Si
-            </Button>
-            <Button
-              w="150px"
-              variant="filled"
-              color="#86457c"
-              size="md"
-              onClick={closeDeleteModal}
-            >
-              No
-            </Button>
-          </Flex>
-        </Modal>
-      
+            Si
+          </Button>
+          <Button
+            w="150px"
+            variant="filled"
+            color="#86457c"
+            size="md"
+            onClick={closeDeleteModal}
+          >
+            No
+          </Button>
+        </Flex>
+      </Modal>
+
       <Modal
         centered
         onClose={closePostModal}
@@ -469,7 +502,6 @@ export function Abm() {
         scrollAreaComponent={ScrollArea.Autosize}
         size="lg"
       >
-        
         <LoadingOverlay
           visible={loaderVar}
           loaderProps={{ children: <Loader color="#86457c" /> }}
@@ -569,8 +601,8 @@ export function Abm() {
                   Seleccione una raza
                 </option>
 
-                <option value="Perro">Perro</option>
-                <option value="Gato">Gato</option>
+                <option value="Canino">Canino</option>
+                <option value="Felino">Felino</option>
               </NativeSelect>
             </Grid.Col>
             <Grid.Col span={12}>
@@ -578,7 +610,7 @@ export function Abm() {
                 variant="filled"
                 color="#86457c"
                 style={{ width: '100%' }}
-                type='submit'
+                type="submit"
               >
                 Cargar Turno
               </Button>
@@ -605,7 +637,6 @@ export function Abm() {
         scrollAreaComponent={ScrollArea.Autosize}
         size="lg"
       >
-        
         <LoadingOverlay
           visible={loaderVar}
           loaderProps={{ children: <Loader color="#86457c" /> }}
@@ -619,7 +650,8 @@ export function Abm() {
                 label="Fecha"
                 placeholder="DD/MM/YYYY HH:MM"
                 minDate={new Date()}
-                {...{"disabled": canEdit ? false : true}}/>
+                {...{ disabled: canEdit ? false : true }}
+              />
             </Grid.Col>
 
             <Grid.Col span={12}>
@@ -628,7 +660,8 @@ export function Abm() {
                 {...form.getInputProps('owner')}
                 placeholder="Ingrese Nombre y Apellido"
                 label="Dueño"
-                {...{"disabled": canEdit ? false : true}}/>
+                {...{ disabled: canEdit ? false : true }}
+              />
             </Grid.Col>
             <Grid.Col span={12}>
               <TextInput
@@ -636,14 +669,16 @@ export function Abm() {
                 {...form.getInputProps('home')}
                 placeholder="Ingrese un Domicilio"
                 label="Domicilio"
-                {...{"disabled": canEdit ? false : true}}/>
+                {...{ disabled: canEdit ? false : true }}
+              />
             </Grid.Col>
             <Grid.Col span={12}>
               <NativeSelect
                 key={form.key('neighborhood')}
                 {...form.getInputProps('neighborhood')}
                 label="Barrio"
-                {...{"disabled": canEdit ? false : true}}>
+                {...{ disabled: canEdit ? false : true }}
+              >
                 <option value="" disabled>
                   Seleccione un barrio
                 </option>
@@ -656,7 +691,8 @@ export function Abm() {
                 {...form.getInputProps('dni')}
                 placeholder="Ingrese DNI"
                 label="DNI"
-                {...{"disabled": canEdit ? false : true}}/>
+                {...{ disabled: canEdit ? false : true }}
+              />
             </Grid.Col>
             <Grid.Col span={12}>
               <TextInput
@@ -664,14 +700,16 @@ export function Abm() {
                 {...form.getInputProps('phone')}
                 placeholder="Ingrese un Telefono"
                 label="Teléfono"
-                {...{"disabled": canEdit ? false : true}}/>
+                {...{ disabled: canEdit ? false : true }}
+              />
             </Grid.Col>
             <Grid.Col span={12}>
               <NativeSelect
                 key={form.key('size')}
                 {...form.getInputProps('size')}
                 label="Tamaño"
-              {...{"disabled": canEdit ? false : true}}>
+                {...{ disabled: canEdit ? false : true }}
+              >
                 <option value="" disabled>
                   Seleccione un tamaño
                 </option>
@@ -686,7 +724,8 @@ export function Abm() {
                 label="Sexo"
                 key={form.key('sex')}
                 {...form.getInputProps('sex')}
-                {...{"disabled": canEdit ? false : true}}>
+                {...{ disabled: canEdit ? false : true }}
+              >
                 <option value="" disabled>
                   Seleccione un sexo
                 </option>
@@ -700,17 +739,18 @@ export function Abm() {
                 label="Raza"
                 key={form.key('race')}
                 {...form.getInputProps('race')}
-              {...{"disabled": canEdit ? false : true}}>
+                {...{ disabled: canEdit ? false : true }}
+              >
                 <option value="" disabled>
                   Seleccione una raza
                 </option>
 
-                <option value="Perro">Perro</option>
-                <option value="Gato">Gato</option>
+                <option value="Canino">Canino</option>
+                <option value="Felino">Felino</option>
               </NativeSelect>
             </Grid.Col>
             <Grid.Col span={12}>
-              {canEdit  ?  <SubmitButton /> : <StartEditionButton />}
+              {canEdit ? <SubmitButton /> : <StartEditionButton />}
             </Grid.Col>
             <Grid.Col span={12}>
               <Button
