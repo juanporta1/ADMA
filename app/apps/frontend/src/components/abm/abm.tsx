@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import styles from './abm.module.css';
 import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
+import { es, faIR } from 'date-fns/locale';
 import {
   Button,
   Table,
@@ -154,7 +154,6 @@ export function Abm() {
       );
       if (!response.ok) throw new Error('Ha ocurrido un error con la API');
       const result: Appoinment[] = await response.json();
-      console.log(result);
       result.forEach((appoinment) => {
         const newDate = new Date(appoinment.date);
         appoinment.date = newDate;
@@ -202,17 +201,24 @@ export function Abm() {
 
       makeLoaderInvisible();
       closePostModal();
-      postNotificationHandler(true);
-      if (response.ok) getAll();
-      const data = await response.json();
-      console.log('Respuesta del servidor: ', data);
+      postNotificationHandler(true)
+      getAll();
     } catch (err) {
       makeLoaderInvisible();
-      postNotificationHandler(false);
-
+      
+      postNotificationHandler(false)
       throw err;
     }
+    
   };
+
+  const handleOnDelete = async () => {
+    if (actualRegister !== null) {
+      const ok = await removeRegister(actualRegister.ID_appoinment);
+      deleteNotificationHandler(ok)
+      closeDeleteModal();
+    }
+  }
 
   const handleOnEdit = async (values: formValues) => {
     try {
@@ -230,11 +236,9 @@ export function Abm() {
         }
       );
 
-      if (!response.ok) {
-        const data = await response.json();
-        console.log('La edicion se realizo con exit: ', data);
-        patchNotificationHandler(true);
-      }
+      
+      patchNotificationHandler(true);
+      
       makeLoaderInvisible();
       closePatchModal();
 
@@ -246,61 +250,32 @@ export function Abm() {
     }
   };
 
-  const postNotificationHandler = async (ok: boolean) => {
-    ok
+  
+  const notificationHandlerCreator = (titles: string[], messages: string[]) => {
+    return (ok: boolean) => {
+      ok
       ? notifications.show({
           position: 'top-left',
-          title: 'El registro se ha creado con exito.',
-          message: 'Puedes cerrar esta notificacion.',
+          title: titles[0],
+          message: messages[0],
           color: 'green',
         })
       : notifications.show({
           position: 'top-left',
-          title: 'Ha ocurriod un error creando el registro.',
-          message: 'Intentelo de nuevo mas tarde.',
+          title: titles[1],
+          message: messages[1],
           color: 'red',
         });
-  };
-  const patchNotificationHandler = async (ok: boolean) => {
-    ok
-      ? notifications.show({
-          position: 'top-left',
-          title: 'El registro se ha actualizado con exito.',
-          message: 'Puedes cerrar esta notificacion.',
-          color: 'green',
-        })
-      : notifications.show({
-          position: 'top-left',
-          title: 'Ha ocurriod un error actualizando el registro.',
-          message: 'Intentelo de nuevo mas tarde.',
-          color: 'red',
-        });
-  };
-
-  const deleteNotificationHandler = async () => {
-    if (actualRegister !== null) {
-      const ok = await removeRegister(actualRegister.ID_appoinment);
-      if (ok) {
-        notifications.show({
-          position: 'top-left',
-          title: 'El registro se ha borrado con exito.',
-          message: 'Puedes cerrar esta notificacion.',
-          color: 'green',
-        });
-        setActualRegister(null);
-      } else {
-        notifications.show({
-          position: 'top-left',
-          title: 'No se ha podido eliminar este registro.',
-          message: 'Reintena en un momento.',
-          color: 'red',
-        });
-      }
-
-      closeDeleteModal();
     }
-  };
+  }
+  
+  const postNotificationHandler = notificationHandlerCreator(['El registro se ha creado con exito.','Ha ocurrido un error creando el registro.'],['Puedes cerrar esta notificacion.','Intentelo de nuevo mas tarde.'])
+  const patchNotificationHandler = notificationHandlerCreator(['El registro se ha actualizado con exito.','Ha ocurrrido un error actualizando el registro.'],['Puedes cerrar esta notificacion.','Intentelo de nuevo mas tarde.'])
+  const deleteNotificationHandler = notificationHandlerCreator(['El registro se ha eliminando con exito.','Ha ocurrido un error eliminando el registro.'],['Puedes cerrar esta notificacion.','Intentelo de nuevo mas tarde.'])
 
+
+  
+  
   const neighborhoodOptions = () => {
     return neighborhoodInputData.map((value, key) => (
       <option value={value} key={key}>
@@ -321,8 +296,6 @@ export function Abm() {
           onClick={(e) => {
             setSelectedId(register.ID_appoinment);
             setActualRegister(register);
-            console.log(actualRegister?.ID_appoinment);
-            console.log(selectedId);
           }}
 
           onMouseEnter={(e) => {
@@ -394,9 +367,7 @@ export function Abm() {
     }
   }, [postModalVar, patchModalVar]);
 
-  // useEffect(() => {
-  //   console.log(actualRegister)
-  // }, [actualRegister])
+
   return (
     <div className={styles.mainBox}>
       <Paper shadow="lg" radius="xs">
@@ -476,7 +447,7 @@ export function Abm() {
             variant="filled"
             color="#86457c"
             size="md"
-            onClick={deleteNotificationHandler}
+            onClick={handleOnDelete}
           >
             Si
           </Button>
