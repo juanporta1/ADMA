@@ -1,7 +1,6 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import styles from './abm.module.css';
 import { format } from 'date-fns';
-import { es, faIR } from 'date-fns/locale';
 import {
   Button,
   Table,
@@ -14,13 +13,11 @@ import {
   LoadingOverlay,
   Loader,
   ScrollArea,
-  Tooltip,
 } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import { notifications } from '@mantine/notifications';
 import { useForm } from '@mantine/form';
 import { DateTimePicker } from '@mantine/dates';
- 
 
 class Appoinment {
   ID_appoinment!: number;
@@ -64,7 +61,7 @@ export function Abm() {
     validate: {
       owner: (value: string) => {
         if (value.length === 0) return 'Este campo debe estar completo.';
-        else if (/[^a-zA-Z\s]/.test(value))
+        else if (/[^a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]/.test(value))
           return 'El nombre unicamente debe contener letras.';
         else return null;
       },
@@ -150,16 +147,14 @@ export function Abm() {
 
   const getAll = async () => {
     try {
-      const response = await fetch(
-        'http://localhost:3000/api/appoinment/'
-      );
+      const response = await fetch('http://localhost:3000/api/appoinment/');
       if (!response.ok) throw new Error('Ha ocurrido un error con la API');
       const result: Appoinment[] = await response.json();
       result.forEach((appoinment) => {
         const newDate = new Date(appoinment.date);
         appoinment.date = newDate;
       });
-      result.sort((a, b) => a.ID_appoinment - b.ID_appoinment)
+      result.sort((a, b) => a.ID_appoinment - b.ID_appoinment);
       setData(result);
     } catch (error) {
       throw error;
@@ -167,15 +162,12 @@ export function Abm() {
   };
 
   const removeRegister = async (id: number) => {
-    const response = await fetch(
-      `http://localhost:3000/api/appoinment/${id}`,
-      {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    ).catch((err) => {
+    const response = await fetch(`http://localhost:3000/api/appoinment/${id}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).catch((err) => {
       throw err;
     });
 
@@ -189,37 +181,33 @@ export function Abm() {
   const handleOnSubmit = async (values: formValues) => {
     try {
       makeLoaderVisible();
-      const response = await fetch(
-        'http://localhost:3000/api/appoinment/',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(values),
-        }
-      );
+      const response = await fetch('http://localhost:3000/api/appoinment/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(values),
+      });
 
       makeLoaderInvisible();
       closePostModal();
-      postNotificationHandler(true)
+      postNotificationHandler(true);
       getAll();
     } catch (err) {
       makeLoaderInvisible();
-      
-      postNotificationHandler(false)
+
+      postNotificationHandler(false);
       throw err;
     }
-    
   };
 
   const handleOnDelete = async () => {
     if (actualRegister !== null) {
       const ok = await removeRegister(actualRegister.ID_appoinment);
-      deleteNotificationHandler(ok)
+      deleteNotificationHandler(ok);
       closeDeleteModal();
     }
-  }
+  };
 
   const handleOnEdit = async (values: formValues) => {
     try {
@@ -227,7 +215,7 @@ export function Abm() {
       const response = await fetch(
         `http://localhost:3000/api/appoinment/${actualRegister?.ID_appoinment}`,
         {
-          method: 'PATCH',
+          method: 'PUT',
           headers: {
             'Content-Type': 'application/json',
           },
@@ -237,9 +225,8 @@ export function Abm() {
         }
       );
 
-      
       patchNotificationHandler(true);
-      
+
       makeLoaderInvisible();
       closePatchModal();
 
@@ -251,32 +238,46 @@ export function Abm() {
     }
   };
 
-  
   const notificationHandlerCreator = (titles: string[], messages: string[]) => {
     return (ok: boolean) => {
       ok
-      ? notifications.show({
-          position: 'top-left',
-          title: titles[0],
-          message: messages[0],
-          color: 'green',
-        })
-      : notifications.show({
-          position: 'top-left',
-          title: titles[1],
-          message: messages[1],
-          color: 'red',
-        });
-    }
-  }
-  
-  const postNotificationHandler = notificationHandlerCreator(['El registro se ha creado con exito.','Ha ocurrido un error creando el registro.'],['Puedes cerrar esta notificacion.','Intentelo de nuevo mas tarde.'])
-  const patchNotificationHandler = notificationHandlerCreator(['El registro se ha actualizado con exito.','Ha ocurrrido un error actualizando el registro.'],['Puedes cerrar esta notificacion.','Intentelo de nuevo mas tarde.'])
-  const deleteNotificationHandler = notificationHandlerCreator(['El registro se ha eliminando con exito.','Ha ocurrido un error eliminando el registro.'],['Puedes cerrar esta notificacion.','Intentelo de nuevo mas tarde.'])
+        ? notifications.show({
+            position: 'top-left',
+            title: titles[0],
+            message: messages[0],
+            color: 'green',
+          })
+        : notifications.show({
+            position: 'top-left',
+            title: titles[1],
+            message: messages[1],
+            color: 'red',
+          });
+    };
+  };
 
+  const postNotificationHandler = notificationHandlerCreator(
+    [
+      'El registro se ha creado con exito.',
+      'Ha ocurrido un error creando el registro.',
+    ],
+    ['Puedes cerrar esta notificacion.', 'Intentelo de nuevo mas tarde.']
+  );
+  const patchNotificationHandler = notificationHandlerCreator(
+    [
+      'El registro se ha actualizado con exito.',
+      'Ha ocurrrido un error actualizando el registro.',
+    ],
+    ['Puedes cerrar esta notificacion.', 'Intentelo de nuevo mas tarde.']
+  );
+  const deleteNotificationHandler = notificationHandlerCreator(
+    [
+      'El registro se ha eliminando con exito.',
+      'Ha ocurrido un error eliminando el registro.',
+    ],
+    ['Puedes cerrar esta notificacion.', 'Intentelo de nuevo mas tarde.']
+  );
 
-  
-  
   const neighborhoodOptions = () => {
     return neighborhoodInputData.map((value, key) => (
       <option value={value} key={key}>
@@ -295,30 +296,29 @@ export function Abm() {
         <Table.Tr
           key={register.ID_appoinment}
           onClick={(e) => {
-            if (actualRegister && selectedId === register.ID_appoinment){
+            if (actualRegister && selectedId === register.ID_appoinment) {
               setSelectedId(null);
               setActualRegister(null);
-              
-            }else{
+            } else {
               setSelectedId(register.ID_appoinment);
               setActualRegister(register);
             }
-            
           }}
-
           onMouseEnter={(e) => {
-            if(!(selectedId === register.ID_appoinment)){
-              e.currentTarget.style.backgroundColor = "#eee"
+            if (!(selectedId === register.ID_appoinment)) {
+              e.currentTarget.style.backgroundColor = '#eee';
             }
           }}
-
           onMouseLeave={(e) => {
-            if(!(selectedId === register.ID_appoinment)){
-              e.currentTarget.style.backgroundColor = "#fff"
+            if (!(selectedId === register.ID_appoinment)) {
+              e.currentTarget.style.backgroundColor = '#fff';
             }
           }}
           className={styles.register}
-          bg={selectedId === register.ID_appoinment ? "#bbb" : "#fff"}
+          style={{
+            backgroundColor:
+              selectedId === register.ID_appoinment ? '#bbb' : '#fff',
+          }}
         >
           <Table.Td>{register.ID_appoinment}</Table.Td>
           <Table.Td>{register.owner}</Table.Td>
@@ -375,13 +375,11 @@ export function Abm() {
     }
   }, [postModalVar, patchModalVar]);
 
-
   return (
     <div className={styles.mainBox}>
       <Paper shadow="lg" radius="xs">
         <div className={styles.interactionBox}>
           <div className={styles.buttonBox}>
-            
             <Button
               onClick={() => {
                 openPostModal();
@@ -390,7 +388,6 @@ export function Abm() {
               variant="filled"
               color="#86457c"
               size="md"
-             
             >
               Alta
             </Button>

@@ -1,8 +1,9 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Patch, Post, Put, Query } from '@nestjs/common';
 import { CreateAppoinmentDTO } from '../appoinment-DTOs/create-appoinment.dto';
 import { AppoinmentService } from '../appoinment-service/appoinment.service';
 import { UpdateAppoinmentDto } from '../appoinment-DTOs/update-appoinment.dto';
 import { FilterAppoinmentDto } from '../appoinment-DTOs/filter-appoinment.dto';
+import { QueryBuilder, ReturnDocument } from 'typeorm';
 
 @Controller('appoinment')
 export class AppoinmentController {
@@ -11,10 +12,9 @@ export class AppoinmentController {
 
     @Get("")
     async getAppoinments(@Query() querys: FilterAppoinmentDto){
+        console.log("Query Params:", querys);
         return await this.appoinmentService.getAll(querys); 
     }
-
-    
 
     @Post("bulk")
     async createAppoinments(@Body() body: CreateAppoinmentDTO[]){
@@ -31,7 +31,7 @@ export class AppoinmentController {
         return await this.appoinmentService.deleteAppoinment(Number(id))
     }
 
-    @Patch(":id")
+    @Put(":id")
     async updateAnAppoiment(@Param("id") id: number ,@Body() body: UpdateAppoinmentDto){
         return await this.appoinmentService.updateAppoinment(Number(id), body);
     }

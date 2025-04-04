@@ -15,6 +15,7 @@ export class AppoinmentService {
     async getAll(querys: FilterAppoinmentDto | null = null){
         
         if (querys){
+            
             return await this.appoinmentRepository.findBy({...querys})
         }else{
             return await this.appoinmentRepository.find();
