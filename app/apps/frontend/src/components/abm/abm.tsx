@@ -30,19 +30,8 @@ class Appoinment {
   size!: 'Grande' | 'Pequeño' | 'Mediano';
   sex!: 'Macho' | 'Hembra';
   race!: 'Canino' | 'Felino';
+  status!: 'Pendiente' | "Cancelado" | "Ausentado" | "Realizado";
 }
-
-type postValues = {
-  date: Date | null;
-  owner: string;
-  neighborhood: string;
-  home: string;
-  phone: string;
-  size: string;
-  dni: string;
-  sex: string;
-  race: string;
-};
 
 type formValues = {
   date: Date | null;
@@ -55,6 +44,7 @@ type formValues = {
   dni: string;
   sex: string;
   race: string;
+  status: string;
 };
 
 export function Abm() {
@@ -71,6 +61,7 @@ export function Abm() {
       dni: '',
       sex: '',
       race: '',
+      status: ""
     },
     validate: {
       ownerName: (value: string) => {
@@ -359,6 +350,7 @@ export function Abm() {
           <Table.Td>{register.size}</Table.Td>
           <Table.Td>{register.sex}</Table.Td>
           <Table.Td>{register.race}</Table.Td>
+          <Table.Td>{register.status}</Table.Td>
         </Table.Tr>
       );
     });

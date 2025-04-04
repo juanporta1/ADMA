@@ -58,7 +58,8 @@ export class AppoinmentService {
         });
       if (querys.orderByName)
         fliterQueryBuilder.orderBy('a.owner', querys.orderByName);
-      
+      if (querys.status)
+        fliterQueryBuilder.andWhere("a.status = :status", { status: querys.status})
       return await fliterQueryBuilder.getMany();
     } else {
       return await this.appoinmentRepository.find();

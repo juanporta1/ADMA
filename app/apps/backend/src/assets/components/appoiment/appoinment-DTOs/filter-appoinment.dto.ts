@@ -12,4 +12,5 @@ export class FilterAppoinmentDto{
     startDate?: Date;
     endDate?: Date;
     orderByName?: "ASC" | "DESC";
+    status?: "Pendiente" | "Cancelado" | "Realizado";
 }

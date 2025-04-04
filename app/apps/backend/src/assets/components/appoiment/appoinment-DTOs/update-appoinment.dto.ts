@@ -6,7 +6,6 @@ export class UpdateAppoinmentDto{
     neighborhood?: string;
     dni?: string;
     date?: Date;
- 
     size?: "Pequeño" | "Mediano" | "Grande";
     sex?: "Macho" | "Hembra" ;
     race?: "Perro" | "Gato" ;
