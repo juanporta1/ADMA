@@ -18,8 +18,8 @@ export class Appoinment{
     @Column({type: "varchar", length: 20})
     phone!: string;
 
-    @Column({type: "int"})
-    dni!: number;
+    @Column({type: "varchar"})
+    dni!: string;
 
     @Column({type: "timestamp"})
     date!: Date;

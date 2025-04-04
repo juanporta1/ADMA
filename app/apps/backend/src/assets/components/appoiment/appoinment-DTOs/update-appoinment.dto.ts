@@ -4,7 +4,7 @@ export class UpdateAppoinmentDto{
     home?: string;
     phone?:string;
     neighborhood?: string;
-    dni?: number;
+    dni?: string;
     date?: Date;
  
     size?: "Pequeño" | "Mediano" | "Grande";

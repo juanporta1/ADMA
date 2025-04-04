@@ -4,24 +4,12 @@ export class FilterAppoinmentDto{
     home?: string;
     phone?:string;
     neighborhood?: string;
-    dni?: number;
+    dni?: string;
     date?: Date;
- 
     size?: "Pequeño" | "Mediano" | "Grande";
     sex?: "Macho" | "Hembra" ;
     race?: "Perro" | "Gato" ;
-}
-
-export class FilterByFeaturesAppoinmentDto{
-    ID_appoinment?:number;
-    owner?: string;
-    home?: string;
-    phone?:string;
-    neighborhood?: string;
-    dni?: number;
-    date?: Date;
- 
-    size?: "Pequeño" | "Mediano" | "Grande";
-    sex?: "Macho" | "Hembra" ;
-    race?: "Perro" | "Gato" ;
+    startDate?: Date;
+    endDate?: Date;
+    orderByName?: "ASC" | "DESC";
 }
