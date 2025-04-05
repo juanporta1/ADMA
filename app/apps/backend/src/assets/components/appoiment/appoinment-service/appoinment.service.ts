@@ -1,11 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import { DataSource, Filter, Repository } from 'typeorm';
 import { CreateAppoinmentDTO } from '../appoinment-DTOs/create-appoinment.dto';
 import { Appoinment } from '../appoinment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateAppoinmentDto } from '../appoinment-DTOs/update-appoinment.dto';
 import { FilterAppoinmentDto } from '../appoinment-DTOs/filter-appoinment.dto';
-import { filter } from 'rxjs';
+
 
 @Injectable()
 export class AppoinmentService {
@@ -93,6 +93,13 @@ export class AppoinmentService {
   }
 
   async deleteAppoinment(id: number) {
+    const appoinment = await this.appoinmentRepository.findOne({where: {ID_appoinment: id}});
+    if (!appoinment)
+      return new HttpException("No se encontro el recurso solicitado.", 404);
+  
+    if (appoinment.date <= new Date()) 
+      return new HttpException("No se puede borrar este recurso", 403);
+
     try {
       return await this.appoinmentRepository.delete(id);
     } catch (error) {
