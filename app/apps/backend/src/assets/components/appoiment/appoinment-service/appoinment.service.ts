@@ -4,7 +4,6 @@ import { CreateAppoinmentDTO } from '../appoinment-DTOs/create-appoinment.dto';
 import { Appoinment } from '../appoinment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateAppoinmentDto } from '../appoinment-DTOs/update-appoinment.dto';
-import { all } from 'axios';
 import { FilterAppoinmentDto } from '../appoinment-DTOs/filter-appoinment.dto';
 
 @Injectable()
@@ -15,7 +14,7 @@ export class AppoinmentService {
     async getAll(querys: FilterAppoinmentDto | null = null){
         
         if (querys){
-            
+            if(querys)
             return await this.appoinmentRepository.findBy({...querys})
         }else{
             return await this.appoinmentRepository.find();
