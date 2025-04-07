@@ -1,0 +1,12 @@
+.control{
+    
+    background-color: #6e3a65;
+}
+
+.navLink{
+    border: none;
+}
+
+.navLink:hover{
+    background-color: #6e3a65;
+}
