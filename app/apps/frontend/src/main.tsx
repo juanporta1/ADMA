@@ -8,6 +8,13 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <StrictMode>
-    <App />
+      <MantineProvider>
+        <DatesProvider settings={{ locale: 'es', firstDayOfWeek: 0, weekendDays: [0, 6], timezone: 'America/Argentina/Buenos_Aires'}}>
+            <Notifications />
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+        </DatesProvider>
+      </MantineProvider>
   </StrictMode>
 );
