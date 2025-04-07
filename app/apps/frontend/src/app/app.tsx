@@ -9,8 +9,8 @@ export function App() {
   return (
     <Routes>
       <Route path='/' element={<Layout/>}>
-        <Route index path='/turnos/filtrar' element={<Suspense fallback={<LoadingOverlay visible />}><FilterAppoinments /></Suspense>}/>
-        <Route index path='/turnos/cargar' element={<Suspense fallback={<LoadingOverlay visible />}><CreateAppoinment /></Suspense>}/>
+        <Route path='/turnos/filtrar' element={<Suspense fallback={<LoadingOverlay visible />}><FilterAppoinments /></Suspense>}/>
+        <Route path='/turnos/cargar' element={<Suspense fallback={<LoadingOverlay visible />}><CreateAppoinment /></Suspense>}/>
       </Route>
     </Routes>
   );

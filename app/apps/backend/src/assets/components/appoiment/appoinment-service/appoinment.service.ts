@@ -22,12 +22,6 @@ export class AppoinmentService {
         fliterQueryBuilder.andWhere('a.owner ILIKE :owner', {
           owner: `${querys.owner}%`,
         });
-
-      if (querys.home)
-        fliterQueryBuilder.andWhere('a.home ILIKE :home', {
-          home: `${querys.home}%`,
-        });
-
       if (querys.neighborhood)
         fliterQueryBuilder.andWhere('a.neighborhood = :neighborhood', {
           neighborhood: querys.neighborhood,
@@ -52,10 +46,7 @@ export class AppoinmentService {
         fliterQueryBuilder.andWhere('a.dni ILIKE :dni', {
           dni: Number(`${querys.dni}%`),
         });
-      if (querys.phone)
-        fliterQueryBuilder.andWhere('a.phone ILIKE :phone', {
-          phone: `${querys.phone}%`,
-        });
+       
       if (querys.orderByName)
         fliterQueryBuilder.orderBy('a.owner', querys.orderByName);
       if (querys.status)

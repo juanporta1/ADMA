@@ -1,63 +1,103 @@
 import { useDisclosure } from '@mantine/hooks';
 import {
   Accordion,
-  AccordionItem,
   AppShell,
   Burger,
+  Center,
+  createTheme,
   Group,
-  NavLink
+  MantineProvider,
+  NavLink,
+  Text,
 } from '@mantine/core';
 import { Outlet } from 'react-router-dom';
 import styles from './layout.module.css';
 
 export function Layout() {
   const [opened, { toggle }] = useDisclosure();
+  const theme = createTheme({
+    components: {
+      Accordion: Accordion.extend({
+        classNames: {
+          control: styles.control,
+        },
+      }),
+    },
+  });
 
   return (
-    <AppShell
-      header={{ height: { base: 60, md: 70, lg: 80 } }}
-      navbar={{
-        width: { base: 200, md: 300, lg: 400 },
-        breakpoint: 'sm',
-        collapsed: { mobile: !opened },
-      }}
-      padding="md"
-    >
-      <AppShell.Header style={{ backgroundColor: '#a35699', border: 'none' }}>
-        <Group h="100%" px="md">
-          <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
-        </Group>
-      </AppShell.Header>
-      <AppShell.Navbar style={{ backgroundColor: '#c075b8' }}>
-        <Accordion>
-          <Accordion.Item
-            value="appoinments"
-            style={{ borderColor: '#5c3355' }}
+    <MantineProvider theme={theme}>
+      <AppShell
+        header={{ height: { base: 60, md: 70, lg: 80 } }}
+        navbar={{
+          width: { base: 200, md: 300, lg: 400 },
+          breakpoint: 'sm',
+          collapsed: { mobile: !opened },
+        }}
+        padding="md"
+      >
+        <AppShell.Header style={{ backgroundColor: '#66355d', border: 'none' }}>
+          <Group h="100%" px="md">
+            <Burger
+              opened={opened}
+              onClick={toggle}
+              hiddenFrom="sm"
+              size="sm"
+            />
+            
+          </Group>
+        </AppShell.Header>
+        <AppShell.Navbar style={{ backgroundColor: '#d195cc' }}>
+          <NavLink
+            label="Turnos"
+            childrenOffset={0}
+            color="#793b6d"
+            variant="filled"
+            active
           >
-            <Accordion.Control className={styles.control}>
-              Turnos
-            </Accordion.Control>
-            <Accordion.Panel>
-              {/* <NavLink
-                href='/turnos/cargar'
-                label= 'Cargar'
-                className={styles.navLink}
-              /> */}
-            </Accordion.Panel>
-          </Accordion.Item>
-
-          <Accordion.Item value="bundles" style={{ borderColor: '#5c3355' }}>
-            <Accordion.Control className={styles.control}>
-              Legajos
-            </Accordion.Control>
-            <Accordion.Panel></Accordion.Panel>
-          </Accordion.Item>
-        </Accordion>
-      </AppShell.Navbar>
-      <AppShell.Main>
-        <Outlet></Outlet>
-      </AppShell.Main>
-    </AppShell>
+            <NavLink
+              label="Cargar"
+              href="/turnos/cargar"
+              color="#aa589d"
+              variant="filled"
+              active
+            />
+            <NavLink
+              label="Filtrar"
+              href="/turnos/filtrar"
+              color="#aa589d"
+              variant="filled"
+              active
+            />
+          </NavLink>
+          <NavLink
+            label="Legajos"
+            childrenOffset={0}
+            color="#793b6d"
+            variant="filled"
+            active
+          >
+            <NavLink
+              label="Cargar"
+              href="/turnos/cargar"
+              color="#aa589d"
+              variant="filled"
+              active
+            />
+            <NavLink
+              label="Filtrar"
+              href="/turnos/filtrar"
+              color="#aa589d"
+              variant="filled"
+              active
+            />
+          </NavLink>
+        </AppShell.Navbar>
+        <AppShell.Main>
+          <Outlet></Outlet>
+        </AppShell.Main>
+      </AppShell>
+    </MantineProvider>
   );
 }
 
