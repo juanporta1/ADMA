@@ -30,11 +30,13 @@ class Appoinment {
   size!: 'Grande' | 'Pequeño' | 'Mediano';
   sex!: 'Macho' | 'Hembra';
   race!: 'Canino' | 'Felino';
+  status!: 'Pendiente' | "Cancelado" | "Ausentado" | "Realizado";
 }
 
 type formValues = {
   date: Date | null;
-  owner: string;
+  ownerName: string;
+  ownerLastname: string;
   neighborhood: string;
   home: string;
   phone: string;
@@ -42,6 +44,7 @@ type formValues = {
   dni: string;
   sex: string;
   race: string;
+  status: string;
 };
 
 export function Abm() {
@@ -49,7 +52,8 @@ export function Abm() {
     mode: 'controlled',
     initialValues: {
       date: new Date(),
-      owner: '',
+      ownerName: '',
+      ownerLastname: '',
       neighborhood: '',
       home: '',
       phone: '',
@@ -57,12 +61,19 @@ export function Abm() {
       dni: '',
       sex: '',
       race: '',
+      status: ""
     },
     validate: {
-      owner: (value: string) => {
+      ownerName: (value: string) => {
         if (value.length === 0) return 'Este campo debe estar completo.';
         else if (/[^a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]/.test(value))
           return 'El nombre unicamente debe contener letras.';
+        else return null;
+      },
+      ownerLastname: (value: string) => {
+        if (value.length === 0) return 'Este campo debe estar completo.';
+        else if (/[^a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]/.test(value))
+          return 'El apellido unicamente debe contener letras.';
         else return null;
       },
       home: (value: string) => {
@@ -181,12 +192,20 @@ export function Abm() {
   const handleOnSubmit = async (values: formValues) => {
     try {
       makeLoaderVisible();
+
+      
+      const {ownerName, ownerLastname, ...newValues} = values;
+      const postData = {
+        ...newValues,
+        owner: `${ownerLastname} ${ownerName}`
+      }
+
       const response = await fetch('http://localhost:3000/api/appoinment/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(values),
+        body: JSON.stringify(postData),
       });
 
       makeLoaderInvisible();
@@ -331,6 +350,7 @@ export function Abm() {
           <Table.Td>{register.size}</Table.Td>
           <Table.Td>{register.sex}</Table.Td>
           <Table.Td>{register.race}</Table.Td>
+          <Table.Td>{register.status}</Table.Td>
         </Table.Tr>
       );
     });
@@ -498,12 +518,20 @@ export function Abm() {
               />
             </Grid.Col>
 
-            <Grid.Col span={12}>
+            <Grid.Col span={6}>
               <TextInput
-                key={form.key('owner')}
-                {...form.getInputProps('owner')}
-                placeholder="Ingrese Nombre y Apellido"
-                label="Dueño"
+                key={form.key('ownerLastname')}
+                {...form.getInputProps('ownerLastname')}
+                placeholder="Ingrese Apellido"
+                label="Apellido"
+              />
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <TextInput
+                key={form.key('ownerName')}
+                {...form.getInputProps('ownerName')}
+                placeholder="Ingrese Nombre"
+                label="Nombre"
               />
             </Grid.Col>
             <Grid.Col span={12}>
