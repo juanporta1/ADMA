@@ -15,7 +15,6 @@ import { useForm } from '@mantine/form';
 import 'dayjs/locale/es';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
-
 class FilterParams {
   sex?: string;
   race?: string;
@@ -50,7 +49,7 @@ export function FilterAppoinments() {
       race: '',
       size: '',
       neighborhood: '',
-      startDate: null,
+      startDate: new Date(),
       endDate: null,
       input: '',
       status: '',
@@ -104,7 +103,7 @@ export function FilterAppoinments() {
       } else {
         axios
           .get('http://localhost:3000/api/appoinment', {
-            params: params,
+            params,
           })
           .then((res) => {
             setAppoinmentData(res.data);
@@ -124,14 +123,13 @@ export function FilterAppoinments() {
     ));
   };
 
-
   const handleOnReset = () => {
     form.reset();
   };
 
   const Rows = () => {
     return appoinmentData.map((appoinment) => {
-      const convertedDate = new Date(appoinment.date)
+      const convertedDate = new Date(appoinment.date);
       const formattedDate = new Intl.DateTimeFormat('es-AR', {
         year: 'numeric',
         month: '2-digit',
@@ -143,6 +141,7 @@ export function FilterAppoinments() {
         minute: '2-digit',
         hour12: false,
       }).format(convertedDate);
+      const canEdit = new Date(appoinment.date) < new Date() ? true : false;
       return (
         <Table.Tr>
           <Table.Td>{formattedDate}</Table.Td>
@@ -156,6 +155,11 @@ export function FilterAppoinments() {
           <Table.Td>{appoinment.sex}</Table.Td>
           <Table.Td>{appoinment.size}</Table.Td>
           <Table.Td>{appoinment.status}</Table.Td>
+          <Table.Td>
+            <Button color="#66355d" disabled={canEdit}>
+              Editar
+            </Button>
+          </Table.Td>
         </Table.Tr>
       );
     });
@@ -190,6 +194,7 @@ export function FilterAppoinments() {
                 <Grid gutter="10px" columns={20}>
                   <Grid.Col span={5}>
                     <DatePickerInput
+                      
                       key={form.key('startDate')}
                       {...form.getInputProps('startDate')}
                       label="Fecha:"
@@ -321,7 +326,7 @@ export function FilterAppoinments() {
                   <Table.Th>Sexo</Table.Th>
                   <Table.Th>Tamaño</Table.Th>
                   <Table.Th>Estado</Table.Th>
-                </Table.Thead>  
+                </Table.Thead>
                 <Table.Tbody>{<Rows></Rows>}</Table.Tbody>
               </Table>
             </Box>

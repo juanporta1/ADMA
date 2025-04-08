@@ -44,7 +44,7 @@ export class AppoinmentService {
         });
       if (querys.dni)
         fliterQueryBuilder.andWhere('a.dni ILIKE :dni', {
-          dni: Number(`${querys.dni}%`),
+          dni: `${querys.dni}%`,
         });
        
       if (querys.orderByName)
