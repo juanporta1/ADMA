@@ -447,6 +447,7 @@ export function Abm() {
                   <Table.Th>Tamaño</Table.Th>
                   <Table.Th>Sexo</Table.Th>
                   <Table.Th>Raza</Table.Th>
+                  <Table.Th>Estado</Table.Th>
                 </Table.Tr>
               </Table.Thead>
 
