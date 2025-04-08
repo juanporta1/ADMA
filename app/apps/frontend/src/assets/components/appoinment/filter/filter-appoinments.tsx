@@ -14,7 +14,7 @@ import { DatePickerInput, DatesProvider } from '@mantine/dates';
 import { useForm } from '@mantine/form';
 import 'dayjs/locale/es';
 import axios from 'axios';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 class FilterParams {
   sex?: string;
@@ -23,7 +23,7 @@ class FilterParams {
   neighborhood?: string;
   startDate?: Date;
   endDate?: Date;
-  findBy?: string;
+  input?: string;
 }
 
 class Appoinment {
@@ -42,7 +42,7 @@ class Appoinment {
 
 export function FilterAppoinments() {
   const [appoinmentData, setAppoinmentData] = useState<Appoinment[]>([]);
-
+  const [findBy, setFindBy] = useState<string>('owner');
   const form = useForm({
     mode: 'controlled',
     initialValues: {
@@ -50,9 +50,9 @@ export function FilterAppoinments() {
       race: '',
       size: '',
       neighborhood: '',
-      startDate: '',
-      endDate: '',
-      owner: '',
+      startDate: null,
+      endDate: null,
+      input: '',
       status: '',
     },
   });
@@ -87,6 +87,30 @@ export function FilterAppoinments() {
 
   const filterAppoinments = (params: FilterParams = {}) => {
     try {
+      if (params.input) {
+        const { input, ...otherParams } = params;
+        const newObject = {
+          [findBy]: input,
+          ...otherParams,
+        };
+        axios
+          .get('http://localhost:3000/api/appoinment', {
+            params: newObject,
+          })
+          .then((res) => {
+            setAppoinmentData(res.data);
+            console.log(res.data);
+          });
+      } else {
+        axios
+          .get('http://localhost:3000/api/appoinment', {
+            params: params,
+          })
+          .then((res) => {
+            setAppoinmentData(res.data);
+            console.log(res.data);
+          });
+      }
     } catch (err) {
       throw err;
     }
@@ -100,11 +124,52 @@ export function FilterAppoinments() {
     ));
   };
 
-  const handleOnFilter = () => {};
 
   const handleOnReset = () => {
     form.reset();
   };
+
+  const Rows = () => {
+    return appoinmentData.map((appoinment) => {
+      const convertedDate = new Date(appoinment.date)
+      const formattedDate = new Intl.DateTimeFormat('es-AR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      }).format(convertedDate);
+
+      const formattedTime = new Intl.DateTimeFormat('es-AR', {
+        hour: '2-digit',
+        minute: '2-digit',
+        hour12: false,
+      }).format(convertedDate);
+      return (
+        <Table.Tr>
+          <Table.Td>{formattedDate}</Table.Td>
+          <Table.Td>{formattedTime}</Table.Td>
+          <Table.Td>{appoinment.owner}</Table.Td>
+          <Table.Td>{appoinment.dni}</Table.Td>
+          <Table.Td>{appoinment.home}</Table.Td>
+          <Table.Td>{appoinment.phone}</Table.Td>
+          <Table.Td>{appoinment.neighborhood}</Table.Td>
+          <Table.Td>{appoinment.race}</Table.Td>
+          <Table.Td>{appoinment.sex}</Table.Td>
+          <Table.Td>{appoinment.size}</Table.Td>
+          <Table.Td>{appoinment.status}</Table.Td>
+        </Table.Tr>
+      );
+    });
+  };
+
+  useEffect(() => {
+    const params = Object.fromEntries(
+      Object.entries(form.values).filter(
+        ([key, value]) => value != null && value != ''
+      )
+    );
+    filterAppoinments(params);
+  }, [form.values]);
+
   return (
     <div>
       <DatesProvider
@@ -141,20 +206,21 @@ export function FilterAppoinments() {
                   </Grid.Col>
                   <Grid.Col span={4}>
                     <NativeSelect
-                      key={form.key('size')}
-                      {...form.getInputProps('size')}
+                      onChange={(e) => {
+                        setFindBy(e.currentTarget.value);
+                        console.log(e.currentTarget.value);
+                      }}
+                      value={findBy}
                       label="Buscar por: "
                     >
-                      <option value="DNI">DNI</option>
-                      <option value="Nombre y Apellido">
-                        Nombre y Apellido
-                      </option>
+                      <option value="dni">DNI</option>
+                      <option value="owner">Nombre y Apellido</option>
                     </NativeSelect>
                   </Grid.Col>
                   <Grid.Col span={6}>
                     <TextInput
-                      key={form.key('findBy')}
-                      {...form.getInputProps('findBy')}
+                      key={form.key('input')}
+                      {...form.getInputProps('input')}
                       placeholder="Buscar"
                       label="Ingresar: "
                     />
@@ -166,7 +232,7 @@ export function FilterAppoinments() {
                       {...form.getInputProps('sex')}
                     >
                       <option value="" style={{ color: '#aaa' }}>
-                        Ninguno
+                        Todos
                       </option>
                       <option value="Macho">Macho</option>
                       <option value="Hembra">Hembra</option>
@@ -179,7 +245,7 @@ export function FilterAppoinments() {
                       {...form.getInputProps('race')}
                     >
                       <option value="" style={{ color: '#aaa' }}>
-                        Ninguno
+                        Todas
                       </option>
                       <option value="Canino">Canino</option>
                       <option value="Felino">Felino</option>
@@ -192,7 +258,7 @@ export function FilterAppoinments() {
                       {...form.getInputProps('size')}
                     >
                       <option value="" style={{ color: '#aaa' }}>
-                        Ninguno
+                        Todos
                       </option>
                       <option value="Grande">Grande</option>
                       <option value="Mediano">Mediano</option>
@@ -206,7 +272,7 @@ export function FilterAppoinments() {
                       {...form.getInputProps('neighborhood')}
                     >
                       <option value="" style={{ color: '#aaa' }}>
-                        Ninguno
+                        Todos
                       </option>
                       {neighborhoodOptions()}
                     </NativeSelect>
@@ -218,7 +284,7 @@ export function FilterAppoinments() {
                       {...form.getInputProps('status')}
                     >
                       <option value="" style={{ color: '#aaa' }}>
-                        Ninguno
+                        Todos
                       </option>
                       <option value="Pendiente">Pendiente</option>
                       <option value="Realizado">Realizado</option>
@@ -226,12 +292,7 @@ export function FilterAppoinments() {
                       <option value="Ausentado">Ausentado</option>
                     </NativeSelect>
                   </Grid.Col>
-                  <Grid.Col span={10}></Grid.Col>
-                  <Grid.Col span={5}>
-                    <Button fullWidth color="#66355d">
-                      Filtrar
-                    </Button>
-                  </Grid.Col>
+                  <Grid.Col span={15}></Grid.Col>
                   <Grid.Col span={5}>
                     <Button
                       onClick={handleOnReset}
@@ -247,7 +308,22 @@ export function FilterAppoinments() {
             </Box>
 
             <Box>
-              <Table></Table>
+              <Table>
+                <Table.Thead>
+                  <Table.Th>Fecha</Table.Th>
+                  <Table.Th>Hora</Table.Th>
+                  <Table.Th>Dueño</Table.Th>
+                  <Table.Th>DNI</Table.Th>
+                  <Table.Th>Domicilio</Table.Th>
+                  <Table.Th>Telefono</Table.Th>
+                  <Table.Th>Barrio</Table.Th>
+                  <Table.Th>Raza</Table.Th>
+                  <Table.Th>Sexo</Table.Th>
+                  <Table.Th>Tamaño</Table.Th>
+                  <Table.Th>Estado</Table.Th>
+                </Table.Thead>  
+                <Table.Tbody>{<Rows></Rows>}</Table.Tbody>
+              </Table>
             </Box>
           </Flex>
         </Box>
