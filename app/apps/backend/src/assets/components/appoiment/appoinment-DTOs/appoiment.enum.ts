@@ -18,4 +18,5 @@ export enum Status {
   canceled = 'Cancelado',
   done = 'Realizado',
   absent = 'Ausentado',
+  pendingUpdate = 'Esperando Actualización'
 }

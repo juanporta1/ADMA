@@ -1,5 +1,5 @@
 export class FilterAppoinmentDto{
-    ID_appoinment?:number;
+    id?:number;
     owner?: string;
     home?: string;
     phone?:string;
@@ -11,6 +11,6 @@ export class FilterAppoinmentDto{
     race?: "Perro" | "Gato" ;
     startDate?: Date;
     endDate?: Date;
-    orderByName?: "ASC" | "DESC";
+    orderBy?: "owner-asc" | "owner-desc" | "date-asc" | "date-desc" | "id-asc" | "id-desc";
     status?: "Pendiente" | "Cancelado" | "Realizado";
 }

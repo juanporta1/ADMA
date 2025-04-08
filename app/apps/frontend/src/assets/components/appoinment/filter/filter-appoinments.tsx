@@ -3,8 +3,9 @@ import {
   Button,
   Flex,
   Grid,
-  GridCol,
+  LoadingOverlay,
   NativeSelect,
+  Pagination,
   Table,
   Text,
   TextInput,
@@ -16,6 +17,9 @@ import { useForm } from '@mantine/form';
 import 'dayjs/locale/es';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
+import { useDisclosure } from '@mantine/hooks';
+ 
+import { useNavigate } from 'react-router-dom';
 class FilterParams {
   sex?: string;
   race?: string;
@@ -24,6 +28,7 @@ class FilterParams {
   startDate?: Date;
   endDate?: Date;
   input?: string;
+  orderBy?: string;
 }
 
 class Appoinment {
@@ -37,12 +42,23 @@ class Appoinment {
   size!: 'Grande' | 'Pequeño' | 'Mediano';
   sex!: 'Macho' | 'Hembra';
   race!: 'Canino' | 'Felino';
-  status!: 'Pendiente' | 'Cancelado' | 'Ausentado' | 'Realizado';
+  status!:
+    | 'Pendiente'
+    | 'Cancelado'
+    | 'Ausentado'
+    | 'Realizado'
+    | 'Esperando Actualización';
 }
 
 export function FilterAppoinments() {
   const [appoinmentData, setAppoinmentData] = useState<Appoinment[]>([]);
+  const [isLoading, setIsLoading] = useState<string | null>(null);
   const [findBy, setFindBy] = useState<string>('owner');
+  const [actualPage, setPage] = useState(1);
+  const [loadingRows, { open: startLoadingRows, close: finishLoadingRows }] =
+    useDisclosure(false);
+  const navigate = useNavigate();
+  const registersPerPage = 7;
   const form = useForm({
     mode: 'controlled',
     initialValues: {
@@ -54,6 +70,7 @@ export function FilterAppoinments() {
       endDate: null,
       input: '',
       status: '',
+      orderBy: '',
     },
   });
 
@@ -84,6 +101,30 @@ export function FilterAppoinments() {
     'Don Bosco',
     'Liniers',
   ];
+
+  const handleLoadingText = () => {
+    if (isLoading === 'loading') {
+      return {
+        color: '#000',
+        text: 'Filtrando...',
+      };
+    } else if (isLoading === 'loaded') {
+      return {
+        color: '#69c266',
+        text: 'Filtrado',
+      };
+    } else if (isLoading === 'error') {
+      return {
+        color: '#e84b4b',
+        text: 'Algo salio mal... Intentalo de nuevo.',
+      };
+    } else {
+      return {
+        text: '',
+        color: '',
+      };
+    }
+  };
 
   const filterAppoinments = (params: FilterParams = {}) => {
     try {
@@ -129,7 +170,12 @@ export function FilterAppoinments() {
   };
 
   const Rows = () => {
-    return appoinmentData.map((appoinment) => {
+    const paginationData = appoinmentData.slice(
+      (actualPage - 1) * registersPerPage,
+      actualPage * registersPerPage
+    );
+
+    return paginationData.map((appoinment) => {
       const convertedDate = new Date(appoinment.date);
       const formattedDate = new Intl.DateTimeFormat('es-AR', {
         year: 'numeric',
@@ -143,18 +189,22 @@ export function FilterAppoinments() {
         hour12: false,
       }).format(convertedDate);
 
-      
-
-      const canEdit = new Date(appoinment.date) < new Date() ? true : false;
+      const canEdit =
+        appoinment.status === 'Pendiente' ||
+        appoinment.status === 'Esperando Actualización'
+          ? false
+          : true;
       const today = new Intl.DateTimeFormat('es-AR', {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit',
       }).format(new Date());
 
-      const tooltipLabel = canEdit ? `No puede editar registros anteriores al ${today}` : "Editar Registro"
+      const tooltipLabel = canEdit
+        ? `No puede editar registros anteriores al ${today}`
+        : 'Editar Registro';
       return (
-        <Table.Tr>
+        <Table.Tr style={{ maxHeight: '50px' }}>
           <Table.Td>{formattedDate}</Table.Td>
           <Table.Td>{formattedTime}</Table.Td>
           <Table.Td>{appoinment.owner}</Table.Td>
@@ -168,11 +218,12 @@ export function FilterAppoinments() {
           <Table.Td>{appoinment.status}</Table.Td>
           <Table.Td>
             <Tooltip label={tooltipLabel}>
-              <Button color="#66355d" disabled={canEdit}>
+              <Button onClick={() => {
+                navigate(`/turnos/editar/${appoinment.ID_appoinment}`)
+              }} color="#66355d" disabled={canEdit}>
                 Editar
               </Button>
             </Tooltip>
-            
           </Table.Td>
         </Table.Tr>
       );
@@ -180,14 +231,32 @@ export function FilterAppoinments() {
   };
 
   useEffect(() => {
-    const params = Object.fromEntries(
-      Object.entries(form.values).filter(
-        ([key, value]) => value != null && value != ''
-      )
-    );
-    filterAppoinments(params);
+    try {
+      startLoadingRows();
+      setIsLoading('loading');
+      const params = Object.fromEntries(
+        Object.entries(form.values).filter(
+          ([key, value]) => value != null && value != ''
+        )
+      );
+      filterAppoinments(params);
+      finishLoadingRows();
+      setIsLoading('loaded');
+    } catch (err) {
+      setIsLoading('error');
+      finishLoadingRows();
+      throw err;
+    }
   }, [form.values]);
 
+  useEffect(() => {
+    if (isLoading !== null) {
+      const timeout = setTimeout(() => {
+        setIsLoading(null);
+      }, 2000);
+      return () => clearTimeout(timeout);
+    }
+  }, [isLoading]);
   return (
     <div>
       <DatesProvider
@@ -208,7 +277,6 @@ export function FilterAppoinments() {
                 <Grid gutter="10px" columns={20}>
                   <Grid.Col span={5}>
                     <DatePickerInput
-                      
                       key={form.key('startDate')}
                       {...form.getInputProps('startDate')}
                       label="Intervalo de Fecha:"
@@ -309,40 +377,94 @@ export function FilterAppoinments() {
                       <option value="Realizado">Realizado</option>
                       <option value="Cancelado">Cancelado</option>
                       <option value="Ausentado">Ausentado</option>
+                      <option value="Esperando Actualización">
+                        Esperando Actualización
+                      </option>
                     </NativeSelect>
                   </Grid.Col>
-                  <Grid.Col span={15}></Grid.Col>
-                  <Grid.Col span={5}>
-                    <Button
-                      onClick={handleOnReset}
-                      fullWidth
-                      variant="outline"
-                      color="#66355d"
+                  <Grid.Col span={4}>
+                    <NativeSelect
+                      label="Ordenar por: "
+                      key={form.key('orderBy')}
+                      {...form.getInputProps('orderBy')}
                     >
-                      Reinciar
-                    </Button>
+                      <option value="id-asc">Fecha de carga(Ascendente)</option>
+                      <option value="id-desc">
+                        Fecha de carga(Descendente)
+                      </option>
+                      <option value="owner-asc">Dueño(A-Z)</option>
+                      <option value="owner-desc">Dueño(Z-A)</option>
+                      <option value="date-asc">Fecha(Ascendente)</option>
+                      <option value="date-desc">Fecha(Descendente)</option>
+                    </NativeSelect>
+                  </Grid.Col>
+
+                  <Grid.Col span={11}></Grid.Col>
+                  <Grid.Col span={5}>
+                    <Flex direction="column" justify="flex-end" h="100%">
+                      <Button
+                        onClick={handleOnReset}
+                        fullWidth
+                        variant="outline"
+                        color="#66355d"
+                      >
+                        Reinciar
+                      </Button>
+                    </Flex>
                   </Grid.Col>
                 </Grid>
               </form>
             </Box>
 
             <Box>
-              <Table>
-                <Table.Thead>
-                  <Table.Th>Fecha</Table.Th>
-                  <Table.Th>Hora</Table.Th>
-                  <Table.Th>Dueño</Table.Th>
-                  <Table.Th>DNI</Table.Th>
-                  <Table.Th>Domicilio</Table.Th>
-                  <Table.Th>Telefono</Table.Th>
-                  <Table.Th>Barrio</Table.Th>
-                  <Table.Th>Raza</Table.Th>
-                  <Table.Th>Sexo</Table.Th>
-                  <Table.Th>Tamaño</Table.Th>
-                  <Table.Th>Estado</Table.Th>
-                </Table.Thead>
-                <Table.Tbody>{<Rows></Rows>}</Table.Tbody>
-              </Table>
+              <Text fw={700} c={handleLoadingText().color}>
+                {handleLoadingText().text}
+              </Text>
+              <LoadingOverlay visible={loadingRows} zIndex={1000} />
+              {appoinmentData.length === 0 ? (
+                <Text fw={700} size="lg">
+                  Ningun registro coincide con los parametros
+                </Text>
+              ) : (
+                <div>
+                  <div
+                    style={{ minHeight: `${(registersPerPage + 1) * 50}px` }}
+                  >
+                    <Table>
+                      <Table.Thead>
+                        <Table.Th>Fecha</Table.Th>
+                        <Table.Th>Hora</Table.Th>
+                        <Table.Th>Dueño</Table.Th>
+                        <Table.Th>DNI</Table.Th>
+                        <Table.Th>Domicilio</Table.Th>
+                        <Table.Th>Telefono</Table.Th>
+                        <Table.Th>Barrio</Table.Th>
+                        <Table.Th>Raza</Table.Th>
+                        <Table.Th>Sexo</Table.Th>
+                        <Table.Th>Tamaño</Table.Th>
+                        <Table.Th>Estado</Table.Th>
+                      </Table.Thead>
+                      <Table.Tbody>{<Rows></Rows>}</Table.Tbody>
+                    </Table>
+                  </div>
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'center',
+                      marginTop: '10px',
+                    }}
+                  >
+                    <Pagination
+                      total={Math.ceil(
+                        appoinmentData.length / registersPerPage
+                      )}
+                      value={actualPage}
+                      onChange={setPage}
+                      color="#66355d"
+                    />
+                  </div>
+                </div>
+              )}
             </Box>
           </Flex>
         </Box>

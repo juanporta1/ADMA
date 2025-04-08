@@ -54,21 +54,8 @@ export function Layout() {
             color="#793b6d"
             variant="filled"
             active
+            href='turnos/filtrar'
           >
-            <NavLink
-              label="Cargar"
-              href="/turnos/cargar"
-              color="#aa589d"
-              variant="filled"
-              active
-            />
-            <NavLink
-              label="Filtrar"
-              href="/turnos/filtrar"
-              color="#aa589d"
-              variant="filled"
-              active
-            />
           </NavLink>
           <NavLink
             label="Legajos"
