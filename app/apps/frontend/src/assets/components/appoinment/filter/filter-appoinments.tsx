@@ -8,6 +8,7 @@ import {
   Table,
   Text,
   TextInput,
+  Tooltip,
 } from '@mantine/core';
 import styles from './filter-appoinments.module.css';
 import { DatePickerInput, DatesProvider } from '@mantine/dates';
@@ -141,7 +142,17 @@ export function FilterAppoinments() {
         minute: '2-digit',
         hour12: false,
       }).format(convertedDate);
+
+      
+
       const canEdit = new Date(appoinment.date) < new Date() ? true : false;
+      const today = new Intl.DateTimeFormat('es-AR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      }).format(new Date());
+
+      const tooltipLabel = canEdit ? `No puede editar registros anteriores al ${today}` : "Editar Registro"
       return (
         <Table.Tr>
           <Table.Td>{formattedDate}</Table.Td>
@@ -156,9 +167,12 @@ export function FilterAppoinments() {
           <Table.Td>{appoinment.size}</Table.Td>
           <Table.Td>{appoinment.status}</Table.Td>
           <Table.Td>
-            <Button color="#66355d" disabled={canEdit}>
-              Editar
-            </Button>
+            <Tooltip label={tooltipLabel}>
+              <Button color="#66355d" disabled={canEdit}>
+                Editar
+              </Button>
+            </Tooltip>
+            
           </Table.Td>
         </Table.Tr>
       );
@@ -197,7 +211,7 @@ export function FilterAppoinments() {
                       
                       key={form.key('startDate')}
                       {...form.getInputProps('startDate')}
-                      label="Fecha:"
+                      label="Intervalo de Fecha:"
                       placeholder="Desde"
                     />
                   </Grid.Col>
