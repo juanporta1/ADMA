@@ -71,7 +71,6 @@ export function EditAppoinment() {
               <option value="eight">8:00</option>
               <option value="ten">10:00</option>
               <option value="twelve">12:00</option>
-
             </NativeSelect>
           </Grid.Col>
           <Grid.Col span={6}></Grid.Col>
