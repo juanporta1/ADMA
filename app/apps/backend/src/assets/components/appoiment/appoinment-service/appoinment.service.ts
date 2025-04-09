@@ -15,59 +15,65 @@ export class AppoinmentService {
 
   async getAll(querys: FilterAppoinmentDto) {
     if (Object.keys(querys).length != 0) {
-      const fliterQueryBuilder =
+      const filterQueryBuilder =
         this.appoinmentRepository.createQueryBuilder('a');
+  
       if (querys.id)
-        fliterQueryBuilder.andWhere('a.ID_appoinment = :id', { id: querys.id });
+        filterQueryBuilder.andWhere('a.ID_appoinment = :id', { id: querys.id });
       if (querys.owner)
-        fliterQueryBuilder.andWhere('a.owner ILIKE :owner', {
+        filterQueryBuilder.andWhere('a.owner ILIKE :owner', {
           owner: `%${querys.owner}%`,
         });
       if (querys.neighborhood)
-        fliterQueryBuilder.andWhere('a.neighborhood = :neighborhood', {
+        filterQueryBuilder.andWhere('a.neighborhood = :neighborhood', {
           neighborhood: querys.neighborhood,
         });
       if (querys.size)
-        fliterQueryBuilder.andWhere('a.size = :size', { size: querys.size });
+        filterQueryBuilder.andWhere('a.size = :size', { size: querys.size });
       if (querys.sex)
-        fliterQueryBuilder.andWhere('a.sex = :sex', { sex: querys.sex });
+        filterQueryBuilder.andWhere('a.sex = :sex', { sex: querys.sex });
       if (querys.race)
-        fliterQueryBuilder.andWhere('a.race = :race', { race: querys.race });
+        filterQueryBuilder.andWhere('a.race = :race', { race: querys.race });
       if (querys.date)
-        fliterQueryBuilder.andWhere('a.date = :date', { date: querys.date });
+        filterQueryBuilder.andWhere('a.date = :date', { date: querys.date });
       if (querys.startDate)
-        fliterQueryBuilder.andWhere('a.date >= :startDate', {
+        filterQueryBuilder.andWhere('a.date >= :startDate', {
           startDate: new Date(querys.startDate),
         });
       if (querys.endDate)
-        fliterQueryBuilder.andWhere('a.date <= :endDate', {
+        filterQueryBuilder.andWhere('a.date <= :endDate', {
           endDate: new Date(querys.endDate),
         });
       if (querys.dni)
-        fliterQueryBuilder.andWhere('a.dni ILIKE :dni', {
+        filterQueryBuilder.andWhere('a.dni ILIKE :dni', {
           dni: `${querys.dni}%`,
         });
 
       if (querys.orderBy) {
         if (querys.orderBy === 'owner-asc')
-          fliterQueryBuilder.orderBy('a.owner', 'ASC');
+          filterQueryBuilder.orderBy('a.owner', 'ASC');
         else if (querys.orderBy === 'owner-desc')
-          fliterQueryBuilder.orderBy('a.owner', 'DESC');
+          filterQueryBuilder.orderBy('a.owner', 'DESC');
         else if (querys.orderBy === 'date-asc')
-          fliterQueryBuilder.orderBy('a.date', 'ASC');
+          filterQueryBuilder.orderBy('a.date', 'ASC');
         else if (querys.orderBy === 'date-desc')
-          fliterQueryBuilder.orderBy('a.date', 'DESC');
+          filterQueryBuilder.orderBy('a.date', 'DESC');
         else if (querys.orderBy === 'id-asc')
-          fliterQueryBuilder.orderBy('a.ID_appoinment', 'ASC');
+          filterQueryBuilder.orderBy('a.ID_appoinment', 'ASC');
         else if (querys.orderBy === 'id-desc')
-          fliterQueryBuilder.orderBy('a.ID_appoinment', 'DESC');
+          filterQueryBuilder.orderBy('a.ID_appoinment', 'DESC');
       }
 
       if (querys.status)
-        fliterQueryBuilder.andWhere('a.status = :status', {
+        filterQueryBuilder.andWhere('a.status = :status', {
           status: querys.status,
         });
-      return await fliterQueryBuilder.getMany();
+      if (querys.byHour)
+         
+        filterQueryBuilder.andWhere('a.date = :byHour', {
+          byHour: querys.byHour,
+        });
+      return await filterQueryBuilder.getMany();
     } else {
       return await this.appoinmentRepository.find();
     }

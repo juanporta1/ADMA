@@ -20,3 +20,12 @@ export enum Status {
   absent = 'Ausentado',
   pendingUpdate = 'Esperando Actualización'
 }
+
+export enum Reasons {
+  pregnant="Embarazada",
+  inHeat="En celo",
+  didNotCome="Se ausento",
+  deaded="Muerte del animal",
+  other="Otras razones"
+}
+

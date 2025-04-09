@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { Status, Race, Sex, Size} from './appoinment-DTOs/appoiment.enum';
+import { Status, Race, Sex, Size, Reasons} from './appoinment-DTOs/appoiment.enum';
 
 @Entity({ name: 'Appoinment' })
 export class Appoinment {
@@ -35,4 +35,10 @@ export class Appoinment {
 
   @Column({ type: 'enum', default: 'Pendiente', enum: Status })
   status!: string;
+
+  @Column({type: "varchar", length: 800, nullable: true})
+  observations?: string;
+
+  @Column({type: "enum", enum: Reasons, nullable: true})
+  reason?: string
 }

@@ -49,6 +49,8 @@ class Appoinment {
     | 'Ausentado'
     | 'Realizado'
     | 'Esperando Actualización';
+  observations!: string | null;
+  reason!: string | null;
 }
 
 export function FilterAppoinments() {
@@ -222,6 +224,7 @@ export function FilterAppoinments() {
           <Table.Td>{appoinment.sex}</Table.Td>
           <Table.Td>{appoinment.size}</Table.Td>
           <Table.Td>{appoinment.status}</Table.Td>
+          <Table.Td c={appoinment.reason ? "#000" : "#aaaa"}>{appoinment.reason ? appoinment.reason : "Sin Razon"}</Table.Td>
           <Table.Td>
             <Tooltip label={tooltipLabel}>
               <Button
@@ -466,6 +469,7 @@ export function FilterAppoinments() {
                             <Table.Th>Sexo</Table.Th>
                             <Table.Th>Tamaño</Table.Th>
                             <Table.Th>Estado</Table.Th>
+                            <Table.Th>Razón</Table.Th>
                           </Table.Tr>
                         </Table.Thead>
                         <Table.Tbody>{<Rows></Rows>}</Table.Tbody>
