@@ -18,8 +18,9 @@ import 'dayjs/locale/es';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { useDisclosure } from '@mantine/hooks';
- 
+
 import { useNavigate } from 'react-router-dom';
+import Title from '../../utilities/title/title';
 class FilterParams {
   sex?: string;
   race?: string;
@@ -60,7 +61,7 @@ export function FilterAppoinments() {
   const navigate = useNavigate();
   const registersPerPage = 7;
   const form = useForm({
-    mode: 'controlled',
+    mode: 'uncontrolled',
     initialValues: {
       sex: '',
       race: '',
@@ -169,6 +170,25 @@ export function FilterAppoinments() {
     form.reset();
   };
 
+  const handleOnSubmit = () => {
+    try {
+      startLoadingRows();
+      setIsLoading('loading');
+      const params = Object.fromEntries(
+        Object.entries(form.values).filter(
+          ([key, value]) => value != null && value != ''
+        )
+      );
+      filterAppoinments(params);
+      finishLoadingRows();
+      setIsLoading('loaded');
+    } catch (err) {
+      setIsLoading('error');
+      finishLoadingRows();
+      throw err;
+    }
+  };
+
   const Rows = () => {
     const paginationData = appoinmentData.slice(
       (actualPage - 1) * registersPerPage,
@@ -218,9 +238,13 @@ export function FilterAppoinments() {
           <Table.Td>{appoinment.status}</Table.Td>
           <Table.Td>
             <Tooltip label={tooltipLabel}>
-              <Button onClick={() => {
-                navigate(`/turnos/editar/${appoinment.ID_appoinment}`)
-              }} color="#66355d" disabled={canEdit}>
+              <Button
+                onClick={() => {
+                  navigate(`/turnos/editar/${appoinment.ID_appoinment}`);
+                }}
+                color="#66355d"
+                disabled={canEdit}
+              >
                 Editar
               </Button>
             </Tooltip>
@@ -231,23 +255,8 @@ export function FilterAppoinments() {
   };
 
   useEffect(() => {
-    try {
-      startLoadingRows();
-      setIsLoading('loading');
-      const params = Object.fromEntries(
-        Object.entries(form.values).filter(
-          ([key, value]) => value != null && value != ''
-        )
-      );
-      filterAppoinments(params);
-      finishLoadingRows();
-      setIsLoading('loaded');
-    } catch (err) {
-      setIsLoading('error');
-      finishLoadingRows();
-      throw err;
-    }
-  }, [form.values]);
+    handleOnSubmit();
+  }, []);
 
   useEffect(() => {
     if (isLoading !== null) {
@@ -269,11 +278,17 @@ export function FilterAppoinments() {
       >
         <Box>
           <Flex direction="column" gap="md">
-            <Text size="30px" c="#66355d" fw={700}>
-              Turnos
-            </Text>
+            <Flex direction="row" gap="lg">
+              <Title text='Turnos' />
+              <Button onClick={() => {
+                navigate("/turnos/cargar")
+              }} color="#66355d" variant="filled">
+                Cargar Turno
+              </Button>
+            </Flex>
+
             <Box bd="1px #aaa solid" p="sm">
-              <form action="">
+              <form onSubmit={form.onSubmit(handleOnSubmit)}>
                 <Grid gutter="10px" columns={20}>
                   <Grid.Col span={5}>
                     <DatePickerInput
@@ -399,7 +414,20 @@ export function FilterAppoinments() {
                     </NativeSelect>
                   </Grid.Col>
 
-                  <Grid.Col span={11}></Grid.Col>
+                  <Grid.Col span={6}></Grid.Col>
+                  <Grid.Col span={5}>
+                    <Flex direction="column" justify="flex-end" h="100%">
+                      <Button
+                        type="submit"
+                        fullWidth
+                        variant="filled"
+                        color="#66355d"
+                      >
+                        Filtrar
+                      </Button>
+                    </Flex>
+                  </Grid.Col>
+
                   <Grid.Col span={5}>
                     <Flex direction="column" justify="flex-end" h="100%">
                       <Button
@@ -408,7 +436,7 @@ export function FilterAppoinments() {
                         variant="outline"
                         color="#66355d"
                       >
-                        Reinciar
+                        Limpiar Filtro
                       </Button>
                     </Flex>
                   </Grid.Col>

@@ -21,7 +21,7 @@ export class AppoinmentService {
         fliterQueryBuilder.andWhere('a.ID_appoinment = :id', { id: querys.id });
       if (querys.owner)
         fliterQueryBuilder.andWhere('a.owner ILIKE :owner', {
-          owner: `${querys.owner}%`,
+          owner: `%${querys.owner}%`,
         });
       if (querys.neighborhood)
         fliterQueryBuilder.andWhere('a.neighborhood = :neighborhood', {
