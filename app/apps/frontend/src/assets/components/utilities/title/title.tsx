@@ -1,12 +1,15 @@
 import { Text } from '@mantine/core';
 import styles from './title.module.css';
 
-interface props{
-  text: string
+interface props {
+  text: string;
+  c: string;
 }
 export function Title(props: props) {
   return (
-    <Text fw={700} c="#66355d" size='30px' >{props.text}</Text>
+    <Text fw={700} c={props.c} size="30px">
+      {props.text}
+    </Text>
   );
 }
 

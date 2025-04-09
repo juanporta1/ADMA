@@ -2,31 +2,36 @@ import { useDisclosure } from '@mantine/hooks';
 import {
   Accordion,
   AppShell,
+  Avatar,
   Burger,
   Center,
   createTheme,
+  Divider,
   Group,
   MantineProvider,
   NavLink,
+  Stack,
   Text,
 } from '@mantine/core';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import styles from './layout.module.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import {
+  faGear,
+  faCalendarCheck,
+  faFilter,
+  faArrowUpFromBracket,
+} from '@fortawesome/free-solid-svg-icons';
+import NavLinksContainer from '../utilities/nav-links-containter/nav-links-container';
 export function Layout() {
   const [opened, { toggle }] = useDisclosure();
-  const theme = createTheme({
-    components: {
-      Accordion: Accordion.extend({
-        classNames: {
-          control: styles.control,
-        },
-      }),
-    },
-  });
-
+  const navigate = useNavigate();
+  const mainNavLinkColor = '#7e6c88';
+  const childNavLinkColor = '#e6e0ee';
+  const navLinkTextColor = '#3e3e3e';
   return (
-    <MantineProvider theme={theme}>
+    <MantineProvider>
       <AppShell
         header={{ height: { base: 60, md: 70, lg: 80 } }}
         navbar={{
@@ -36,7 +41,7 @@ export function Layout() {
         }}
         padding="md"
       >
-        <AppShell.Header style={{ backgroundColor: '#66355d', border: 'none' }}>
+        <AppShell.Header style={{ backgroundColor: '#6c5b7b', border: 'none' }}>
           <Group h="100%" px="md">
             <Burger
               opened={opened}
@@ -44,41 +49,55 @@ export function Layout() {
               hiddenFrom="sm"
               size="sm"
             />
-            
           </Group>
         </AppShell.Header>
-        <AppShell.Navbar style={{ backgroundColor: '#d195cc' }}>
-          <NavLink
-            label="Turnos"
-            childrenOffset={0}
-            color="#793b6d"
-            variant="filled"
-            active
-            href='turnos/filtrar'
-          >
-          </NavLink>
-          <NavLink
-            label="Legajos"
-            childrenOffset={0}
-            color="#793b6d"
-            variant="filled"
-            active
-          >
-            <NavLink
-              label="Cargar"
-              href="/turnos/cargar"
-              color="#aa589d"
-              variant="filled"
-              active
-            />
-            <NavLink
-              label="Filtrar"
-              href="/turnos/filtrar"
-              color="#aa589d"
-              variant="filled"
-              active
-            />
-          </NavLink>
+        <AppShell.Navbar style={{ backgroundColor: '#f3f0f9' }}>
+          <Stack h="100%" justify="space-between">
+            <Stack gap={0}>
+              <Text size="xl" fw={700} c="#6c5b7b" p="md" ta="center">
+                Secciones
+              </Text>
+
+              <Text size="md" fw={700} tt="uppercase" c="dimmed" p="xs">
+                Gestión
+              </Text>
+              <NavLinksContainer
+                mainNavLink={{
+                  goTo: '',
+                  label: 'Turnos',
+                  icon: <FontAwesomeIcon icon={faCalendarCheck} />,
+                }}
+                childrenNavs={[
+                  {
+                    goTo: '/turnos/filtrar',
+                    label: 'Filtrar',
+                    icon: <FontAwesomeIcon icon={faFilter} />,
+                  },
+                  {
+                    goTo: '/turnos/cargar',
+                    label: 'Cargar',
+                    icon: <FontAwesomeIcon icon={faArrowUpFromBracket} />,
+                  },
+                ]}
+              />
+
+              <Text size="md" fw={700} tt="uppercase" c="dimmed" p="xs">
+                Ajustes
+              </Text>
+              <NavLinksContainer
+                mainNavLink={{
+                  goTo: '',
+                  label: 'Configuración',
+                  icon: <FontAwesomeIcon icon={faGear} />,
+                }}
+                childrenNavs={[]}
+              />
+            </Stack>
+
+            <Text size="xs" c="dimmed" ta="center">
+              © Fundacion ADMA V0.2.0
+            </Text>
+          </Stack>
         </AppShell.Navbar>
         <AppShell.Main>
           <Outlet></Outlet>

@@ -1,7 +1,8 @@
 import { Box, Button, Flex, Grid, Text, TextInput } from '@mantine/core';
 import styles from './create-appoinment.module.css';
-import Title from '../../utilities/title/title';
+
 import { useForm } from '@mantine/form';
+import Title from '../../utilities/title/title';
 
 export function CreateAppoinment() {
   const form = useForm({
@@ -17,7 +18,7 @@ export function CreateAppoinment() {
       <form action="">
         <Grid mt="lg" p="sm">
           <Grid.Col span={12}>
-            <Title text="Cargar Turno" />
+            <Title text="Cargar Turno" c=''/>
           </Grid.Col>
           <Grid.Col span={6}>
             <TextInput

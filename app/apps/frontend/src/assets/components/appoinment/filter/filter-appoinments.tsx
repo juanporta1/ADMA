@@ -13,14 +13,14 @@ import {
 } from '@mantine/core';
 import styles from './filter-appoinments.module.css';
 import { DatePickerInput, DatesProvider } from '@mantine/dates';
-import { useForm } from '@mantine/form';
 import 'dayjs/locale/es';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useDisclosure } from '@mantine/hooks';
-
 import { useNavigate } from 'react-router-dom';
 import Title from '../../utilities/title/title';
+import { AppoinmentContext } from '../../../contexts/appoinment-context';
+import { MainColorContext } from '../../../contexts/color-context';
 class FilterParams {
   sex?: string;
   race?: string;
@@ -60,21 +60,8 @@ export function FilterAppoinments() {
     useDisclosure(false);
   const navigate = useNavigate();
   const registersPerPage = 7;
-  const form = useForm({
-    mode: 'uncontrolled',
-    initialValues: {
-      sex: '',
-      race: '',
-      size: '',
-      neighborhood: '',
-      startDate: new Date(),
-      endDate: null,
-      input: '',
-      status: '',
-      orderBy: '',
-    },
-  });
-
+  const form = useContext(AppoinmentContext);
+  const mainColor = useContext(MainColorContext);
   const neighborhoodInputData: string[] = [
     'Córdoba',
     'La Perla',
@@ -141,7 +128,6 @@ export function FilterAppoinments() {
           })
           .then((res) => {
             setAppoinmentData(res.data);
-            console.log(res.data);
           });
       } else {
         axios
@@ -150,7 +136,6 @@ export function FilterAppoinments() {
           })
           .then((res) => {
             setAppoinmentData(res.data);
-            console.log(res.data);
           });
       }
     } catch (err) {
@@ -167,15 +152,16 @@ export function FilterAppoinments() {
   };
 
   const handleOnReset = () => {
-    form.reset();
+    form!.reset();
   };
 
   const handleOnSubmit = () => {
     try {
       startLoadingRows();
       setIsLoading('loading');
+
       const params = Object.fromEntries(
-        Object.entries(form.values).filter(
+        Object.entries(form!.getValues()).filter(
           ([key, value]) => value != null && value != ''
         )
       );
@@ -224,7 +210,7 @@ export function FilterAppoinments() {
         ? `No puede editar registros anteriores al ${today}`
         : 'Editar Registro';
       return (
-        <Table.Tr style={{ maxHeight: '50px' }}>
+        <Table.Tr style={{ maxHeight: '50px' }} key={appoinment.ID_appoinment}>
           <Table.Td>{formattedDate}</Table.Td>
           <Table.Td>{formattedTime}</Table.Td>
           <Table.Td>{appoinment.owner}</Table.Td>
@@ -242,7 +228,7 @@ export function FilterAppoinments() {
                 onClick={() => {
                   navigate(`/turnos/editar/${appoinment.ID_appoinment}`);
                 }}
-                color="#66355d"
+                color={mainColor}
                 disabled={canEdit}
               >
                 Editar
@@ -256,6 +242,7 @@ export function FilterAppoinments() {
 
   useEffect(() => {
     handleOnSubmit();
+    console.log(mainColor);
   }, []);
 
   useEffect(() => {
@@ -266,239 +253,249 @@ export function FilterAppoinments() {
       return () => clearTimeout(timeout);
     }
   }, [isLoading]);
-  return (
-    <div>
-      <DatesProvider
-        settings={{
-          locale: 'es',
-          firstDayOfWeek: 0,
-          weekendDays: [0, 6],
-          timezone: 'America/Argentina/Buenos_Aires',
-        }}
-      >
-        <Box>
-          <Flex direction="column" gap="md">
-            <Flex direction="row" gap="lg">
-              <Title text='Turnos' />
-              <Button onClick={() => {
-                navigate("/turnos/cargar")
-              }} color="#66355d" variant="filled">
-                Cargar Turno
-              </Button>
-            </Flex>
+  if (form) {
+    return (
+      <div>
+        <DatesProvider
+          settings={{
+            locale: 'es',
+            firstDayOfWeek: 0,
+            weekendDays: [0, 6],
+            timezone: 'America/Argentina/Buenos_Aires',
+          }}
+        >
+          <Box>
+            <Flex direction="column" gap="md">
+              <Flex direction="row" gap="lg">
+                <Title text="Turnos" c={mainColor} />
+                <Button
+                  onClick={() => {
+                    navigate('/turnos/cargar');
+                  }}
+                  color={mainColor}
+                  variant="filled"
+                >
+                  Cargar Turno
+                </Button>
+              </Flex>
 
-            <Box bd="1px #aaa solid" p="sm">
-              <form onSubmit={form.onSubmit(handleOnSubmit)}>
-                <Grid gutter="10px" columns={20}>
-                  <Grid.Col span={5}>
-                    <DatePickerInput
-                      key={form.key('startDate')}
-                      {...form.getInputProps('startDate')}
-                      label="Intervalo de Fecha:"
-                      placeholder="Desde"
-                    />
-                  </Grid.Col>
-                  <Grid.Col span={5}>
-                    <DatePickerInput
-                      label=" "
-                      placeholder="Hasta"
-                      key={form.key('endDate')}
-                      {...form.getInputProps('endDate')}
-                    />
-                  </Grid.Col>
-                  <Grid.Col span={4}>
-                    <NativeSelect
-                      onChange={(e) => {
-                        setFindBy(e.currentTarget.value);
-                        console.log(e.currentTarget.value);
-                      }}
-                      value={findBy}
-                      label="Buscar por: "
-                    >
-                      <option value="dni">DNI</option>
-                      <option value="owner">Nombre y Apellido</option>
-                    </NativeSelect>
-                  </Grid.Col>
-                  <Grid.Col span={6}>
-                    <TextInput
-                      key={form.key('input')}
-                      {...form.getInputProps('input')}
-                      placeholder="Buscar"
-                      label="Ingresar: "
-                    />
-                  </Grid.Col>
-                  <Grid.Col span={4}>
-                    <NativeSelect
-                      label="Sexo"
-                      key={form.key('sex')}
-                      {...form.getInputProps('sex')}
-                    >
-                      <option value="" style={{ color: '#aaa' }}>
-                        Todos
-                      </option>
-                      <option value="Macho">Macho</option>
-                      <option value="Hembra">Hembra</option>
-                    </NativeSelect>
-                  </Grid.Col>
-                  <Grid.Col span={4}>
-                    <NativeSelect
-                      label="Raza"
-                      key={form.key('race')}
-                      {...form.getInputProps('race')}
-                    >
-                      <option value="" style={{ color: '#aaa' }}>
-                        Todas
-                      </option>
-                      <option value="Canino">Canino</option>
-                      <option value="Felino">Felino</option>
-                    </NativeSelect>
-                  </Grid.Col>
-                  <Grid.Col span={4}>
-                    <NativeSelect
-                      label="Tamaño"
-                      key={form.key('size')}
-                      {...form.getInputProps('size')}
-                    >
-                      <option value="" style={{ color: '#aaa' }}>
-                        Todos
-                      </option>
-                      <option value="Grande">Grande</option>
-                      <option value="Mediano">Mediano</option>
-                      <option value="Pequeño">Pequeño</option>
-                    </NativeSelect>
-                  </Grid.Col>
-                  <Grid.Col span={4}>
-                    <NativeSelect
-                      label="Barrio"
-                      key={form.key('neighborhood')}
-                      {...form.getInputProps('neighborhood')}
-                    >
-                      <option value="" style={{ color: '#aaa' }}>
-                        Todos
-                      </option>
-                      {neighborhoodOptions()}
-                    </NativeSelect>
-                  </Grid.Col>
-                  <Grid.Col span={4}>
-                    <NativeSelect
-                      label="Estado"
-                      key={form.key('status')}
-                      {...form.getInputProps('status')}
-                    >
-                      <option value="" style={{ color: '#aaa' }}>
-                        Todos
-                      </option>
-                      <option value="Pendiente">Pendiente</option>
-                      <option value="Realizado">Realizado</option>
-                      <option value="Cancelado">Cancelado</option>
-                      <option value="Ausentado">Ausentado</option>
-                      <option value="Esperando Actualización">
-                        Esperando Actualización
-                      </option>
-                    </NativeSelect>
-                  </Grid.Col>
-                  <Grid.Col span={4}>
-                    <NativeSelect
-                      label="Ordenar por: "
-                      key={form.key('orderBy')}
-                      {...form.getInputProps('orderBy')}
-                    >
-                      <option value="id-asc">Fecha de carga(Ascendente)</option>
-                      <option value="id-desc">
-                        Fecha de carga(Descendente)
-                      </option>
-                      <option value="owner-asc">Dueño(A-Z)</option>
-                      <option value="owner-desc">Dueño(Z-A)</option>
-                      <option value="date-asc">Fecha(Ascendente)</option>
-                      <option value="date-desc">Fecha(Descendente)</option>
-                    </NativeSelect>
-                  </Grid.Col>
-
-                  <Grid.Col span={6}></Grid.Col>
-                  <Grid.Col span={5}>
-                    <Flex direction="column" justify="flex-end" h="100%">
-                      <Button
-                        type="submit"
-                        fullWidth
-                        variant="filled"
-                        color="#66355d"
+              <Box bd="1px #aaa solid" p="sm">
+                <form onSubmit={form.onSubmit(handleOnSubmit)}>
+                  <Grid gutter="10px" columns={20}>
+                    <Grid.Col span={5}>
+                      <DatePickerInput
+                        key={form.key('startDate')}
+                        {...form.getInputProps('startDate')}
+                        label="Intervalo de Fecha:"
+                        placeholder="Desde"
+                      />
+                    </Grid.Col>
+                    <Grid.Col span={5}>
+                      <DatePickerInput
+                        label=" "
+                        placeholder="Hasta"
+                        key={form.key('endDate')}
+                        {...form.getInputProps('endDate')}
+                      />
+                    </Grid.Col>
+                    <Grid.Col span={4}>
+                      <NativeSelect
+                        onChange={(e) => {
+                          setFindBy(e.currentTarget.value);
+                          console.log(e.currentTarget.value);
+                        }}
+                        value={findBy}
+                        label="Buscar por: "
                       >
-                        Filtrar
-                      </Button>
-                    </Flex>
-                  </Grid.Col>
-
-                  <Grid.Col span={5}>
-                    <Flex direction="column" justify="flex-end" h="100%">
-                      <Button
-                        onClick={handleOnReset}
-                        fullWidth
-                        variant="outline"
-                        color="#66355d"
+                        <option value="dni">DNI</option>
+                        <option value="owner">Nombre y Apellido</option>
+                      </NativeSelect>
+                    </Grid.Col>
+                    <Grid.Col span={6}>
+                      <TextInput
+                        key={form.key('input')}
+                        {...form.getInputProps('input')}
+                        placeholder="Buscar"
+                        label="Ingresar: "
+                      />
+                    </Grid.Col>
+                    <Grid.Col span={4}>
+                      <NativeSelect
+                        label="Sexo"
+                        key={form.key('sex')}
+                        {...form.getInputProps('sex')}
                       >
-                        Limpiar Filtro
-                      </Button>
-                    </Flex>
-                  </Grid.Col>
-                </Grid>
-              </form>
-            </Box>
+                        <option value="" style={{ color: '#aaa' }}>
+                          Todos
+                        </option>
+                        <option value="Macho">Macho</option>
+                        <option value="Hembra">Hembra</option>
+                      </NativeSelect>
+                    </Grid.Col>
+                    <Grid.Col span={4}>
+                      <NativeSelect
+                        label="Raza"
+                        key={form.key('race')}
+                        {...form.getInputProps('race')}
+                      >
+                        <option value="" style={{ color: '#aaa' }}>
+                          Todas
+                        </option>
+                        <option value="Canino">Canino</option>
+                        <option value="Felino">Felino</option>
+                      </NativeSelect>
+                    </Grid.Col>
+                    <Grid.Col span={4}>
+                      <NativeSelect
+                        label="Tamaño"
+                        key={form.key('size')}
+                        {...form.getInputProps('size')}
+                      >
+                        <option value="" style={{ color: '#aaa' }}>
+                          Todos
+                        </option>
+                        <option value="Grande">Grande</option>
+                        <option value="Mediano">Mediano</option>
+                        <option value="Pequeño">Pequeño</option>
+                      </NativeSelect>
+                    </Grid.Col>
+                    <Grid.Col span={4}>
+                      <NativeSelect
+                        label="Barrio"
+                        key={form.key('neighborhood')}
+                        {...form.getInputProps('neighborhood')}
+                      >
+                        <option value="" style={{ color: '#aaa' }}>
+                          Todos
+                        </option>
+                        {neighborhoodOptions()}
+                      </NativeSelect>
+                    </Grid.Col>
+                    <Grid.Col span={4}>
+                      <NativeSelect
+                        label="Estado"
+                        key={form.key('status')}
+                        {...form.getInputProps('status')}
+                      >
+                        <option value="" style={{ color: '#aaa' }}>
+                          Todos
+                        </option>
+                        <option value="Pendiente">Pendiente</option>
+                        <option value="Realizado">Realizado</option>
+                        <option value="Cancelado">Cancelado</option>
+                        <option value="Ausentado">Ausentado</option>
+                        <option value="Esperando Actualización">
+                          Esperando Actualización
+                        </option>
+                      </NativeSelect>
+                    </Grid.Col>
+                    <Grid.Col span={4}>
+                      <NativeSelect
+                        label="Ordenar por: "
+                        key={form.key('orderBy')}
+                        {...form.getInputProps('orderBy')}
+                      >
+                        <option value="id-asc">
+                          Fecha de carga(Ascendente)
+                        </option>
+                        <option value="id-desc">
+                          Fecha de carga(Descendente)
+                        </option>
+                        <option value="owner-asc">Dueño(A-Z)</option>
+                        <option value="owner-desc">Dueño(Z-A)</option>
+                        <option value="date-asc">Fecha(Ascendente)</option>
+                        <option value="date-desc">Fecha(Descendente)</option>
+                      </NativeSelect>
+                    </Grid.Col>
 
-            <Box>
-              <Text fw={700} c={handleLoadingText().color}>
-                {handleLoadingText().text}
-              </Text>
-              <LoadingOverlay visible={loadingRows} zIndex={1000} />
-              {appoinmentData.length === 0 ? (
-                <Text fw={700} size="lg">
-                  Ningun registro coincide con los parametros
+                    <Grid.Col span={6}></Grid.Col>
+                    <Grid.Col span={5}>
+                      <Flex direction="column" justify="flex-end" h="100%">
+                        <Button
+                          type="submit"
+                          fullWidth
+                          variant="filled"
+                          color={mainColor}
+                        >
+                          Filtrar
+                        </Button>
+                      </Flex>
+                    </Grid.Col>
+
+                    <Grid.Col span={5}>
+                      <Flex direction="column" justify="flex-end" h="100%">
+                        <Button
+                          onClick={handleOnReset}
+                          fullWidth
+                          variant="outline"
+                          color={mainColor}
+                        >
+                          Limpiar Filtro
+                        </Button>
+                      </Flex>
+                    </Grid.Col>
+                  </Grid>
+                </form>
+              </Box>
+
+              <Box>
+                <Text fw={700} c={handleLoadingText().color}>
+                  {handleLoadingText().text}
                 </Text>
-              ) : (
-                <div>
-                  <div
-                    style={{ minHeight: `${(registersPerPage + 1) * 50}px` }}
-                  >
-                    <Table>
-                      <Table.Thead>
-                        <Table.Th>Fecha</Table.Th>
-                        <Table.Th>Hora</Table.Th>
-                        <Table.Th>Dueño</Table.Th>
-                        <Table.Th>DNI</Table.Th>
-                        <Table.Th>Domicilio</Table.Th>
-                        <Table.Th>Telefono</Table.Th>
-                        <Table.Th>Barrio</Table.Th>
-                        <Table.Th>Raza</Table.Th>
-                        <Table.Th>Sexo</Table.Th>
-                        <Table.Th>Tamaño</Table.Th>
-                        <Table.Th>Estado</Table.Th>
-                      </Table.Thead>
-                      <Table.Tbody>{<Rows></Rows>}</Table.Tbody>
-                    </Table>
+                <LoadingOverlay visible={loadingRows} zIndex={1000} />
+                {appoinmentData.length === 0 ? (
+                  <Text fw={700} size="lg">
+                    Ningun registro coincide con los parametros
+                  </Text>
+                ) : (
+                  <div>
+                    <div
+                      style={{ minHeight: `${(registersPerPage + 1) * 50}px` }}
+                    >
+                      <Table>
+                        <Table.Thead>
+                          <Table.Tr>
+                            <Table.Th>Fecha</Table.Th>
+                            <Table.Th>Hora</Table.Th>
+                            <Table.Th>Dueño</Table.Th>
+                            <Table.Th>DNI</Table.Th>
+                            <Table.Th>Domicilio</Table.Th>
+                            <Table.Th>Telefono</Table.Th>
+                            <Table.Th>Barrio</Table.Th>
+                            <Table.Th>Raza</Table.Th>
+                            <Table.Th>Sexo</Table.Th>
+                            <Table.Th>Tamaño</Table.Th>
+                            <Table.Th>Estado</Table.Th>
+                          </Table.Tr>
+                        </Table.Thead>
+                        <Table.Tbody>{<Rows></Rows>}</Table.Tbody>
+                      </Table>
+                    </div>
+                    <div
+                      style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        marginTop: '10px',
+                      }}
+                    >
+                      <Pagination
+                        total={Math.ceil(
+                          appoinmentData.length / registersPerPage
+                        )}
+                        value={actualPage}
+                        onChange={setPage}
+                        color={mainColor}
+                      />
+                    </div>
                   </div>
-                  <div
-                    style={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      marginTop: '10px',
-                    }}
-                  >
-                    <Pagination
-                      total={Math.ceil(
-                        appoinmentData.length / registersPerPage
-                      )}
-                      value={actualPage}
-                      onChange={setPage}
-                      color="#66355d"
-                    />
-                  </div>
-                </div>
-              )}
-            </Box>
-          </Flex>
-        </Box>
-      </DatesProvider>
-    </div>
-  );
+                )}
+              </Box>
+            </Flex>
+          </Box>
+        </DatesProvider>
+      </div>
+    );
+  }
 }
 
 export default FilterAppoinments;
