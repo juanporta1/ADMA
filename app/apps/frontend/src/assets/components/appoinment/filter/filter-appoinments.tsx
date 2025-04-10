@@ -30,6 +30,7 @@ class FilterParams {
   endDate?: Date;
   input?: string;
   orderBy?: string;
+  onlyByHour?: string
 }
 
 class Appoinment {
@@ -155,6 +156,7 @@ export function FilterAppoinments() {
 
   const handleOnReset = () => {
     form!.reset();
+    handleOnSubmit();
   };
 
   const handleOnSubmit = () => {
@@ -162,17 +164,19 @@ export function FilterAppoinments() {
       startLoadingRows();
       setIsLoading('loading');
 
-      const params = Object.fromEntries(
+      const params: FilterParams = Object.fromEntries(
         Object.entries(form!.getValues()).filter(
           ([key, value]) => value != null && value != ''
         )
       );
       filterAppoinments(params);
       finishLoadingRows();
+      setPage(1);
       setIsLoading('loaded');
     } catch (err) {
       setIsLoading('error');
       finishLoadingRows();
+      setPage(1);
       throw err;
     }
   };
@@ -211,11 +215,13 @@ export function FilterAppoinments() {
       const tooltipLabel = canEdit
         ? `No puede editar registros anteriores al ${today}`
         : 'Editar Registro';
+      const twoNames = appoinment.owner.split(',');
       return (
         <Table.Tr style={{ maxHeight: '50px' }} key={appoinment.ID_appoinment}>
           <Table.Td>{formattedDate}</Table.Td>
           <Table.Td>{formattedTime}</Table.Td>
-          <Table.Td>{appoinment.owner}</Table.Td>
+          <Table.Td>{twoNames[0]}</Table.Td>
+          <Table.Td>{twoNames[1]}</Table.Td>
           <Table.Td>{appoinment.dni}</Table.Td>
           <Table.Td>{appoinment.home}</Table.Td>
           <Table.Td>{appoinment.phone}</Table.Td>
@@ -224,7 +230,9 @@ export function FilterAppoinments() {
           <Table.Td>{appoinment.sex}</Table.Td>
           <Table.Td>{appoinment.size}</Table.Td>
           <Table.Td>{appoinment.status}</Table.Td>
-          <Table.Td c={appoinment.reason ? "#000" : "#aaaa"}>{appoinment.reason ? appoinment.reason : "Sin Razon"}</Table.Td>
+          <Table.Td c={appoinment.reason ? '#000' : '#aaaa'}>
+            {appoinment.reason ? appoinment.reason : 'Sin Razon'}
+          </Table.Td>
           <Table.Td>
             <Tooltip label={tooltipLabel}>
               <Button
@@ -410,8 +418,20 @@ export function FilterAppoinments() {
                         <option value="date-desc">Fecha(Descendente)</option>
                       </NativeSelect>
                     </Grid.Col>
+                    <Grid.Col span={4}>
+                      <NativeSelect
+                        label="Hora: "
+                        key={form.key('onlyByHour')}
+                        {...form.getInputProps('onlyByHour')}
+                      >
+                        <option value="">Todas</option>
+                        <option value="08:00:00">8:00</option>
+                        <option value="10:00:00">10:00</option>
+                        <option value="12:00:00">12:00</option>
+                      </NativeSelect>
+                    </Grid.Col>
 
-                    <Grid.Col span={6}></Grid.Col>
+                    <Grid.Col span={2}></Grid.Col>
                     <Grid.Col span={5}>
                       <Flex direction="column" justify="flex-end" h="100%">
                         <Button
@@ -460,7 +480,8 @@ export function FilterAppoinments() {
                           <Table.Tr>
                             <Table.Th>Fecha</Table.Th>
                             <Table.Th>Hora</Table.Th>
-                            <Table.Th>Dueño</Table.Th>
+                            <Table.Th>Apellido</Table.Th>
+                            <Table.Th>Nombre</Table.Th>
                             <Table.Th>DNI</Table.Th>
                             <Table.Th>Domicilio</Table.Th>
                             <Table.Th>Telefono</Table.Th>

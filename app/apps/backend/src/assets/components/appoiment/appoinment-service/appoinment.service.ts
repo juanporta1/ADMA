@@ -17,7 +17,7 @@ export class AppoinmentService {
     if (Object.keys(querys).length != 0) {
       const filterQueryBuilder =
         this.appoinmentRepository.createQueryBuilder('a');
-  
+
       if (querys.id)
         filterQueryBuilder.andWhere('a.ID_appoinment = :id', { id: querys.id });
       if (querys.owner)
@@ -69,10 +69,15 @@ export class AppoinmentService {
           status: querys.status,
         });
       if (querys.byHour)
-         
         filterQueryBuilder.andWhere('a.date = :byHour', {
           byHour: querys.byHour,
         });
+      if (querys.onlyByHour)
+
+        filterQueryBuilder.andWhere(
+          `TO_CHAR(a.date, 'HH24:MI:SS') = :hour`,
+          { hour: querys.onlyByHour }
+        );
       return await filterQueryBuilder.getMany();
     } else {
       return await this.appoinmentRepository.find();

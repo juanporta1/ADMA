@@ -6,16 +6,16 @@ export class Appoinment {
   @PrimaryGeneratedColumn()
   ID_appoinment!: number;
 
-  @Column({ type: 'varchar', length: 50 })
+  @Column({ type: 'varchar', length: 150 })
   owner!: string;
 
-  @Column({ type: 'varchar', length: 75 })
+  @Column({ type: 'varchar', length: 150 })
   home!: string;
 
   @Column({ type: 'varchar', length: 50 })
   neighborhood!: string;
 
-  @Column({ type: 'varchar', length: 20 })
+  @Column({ type: 'varchar', length: 50 })
   phone!: string;
 
   @Column({ type: 'varchar' })

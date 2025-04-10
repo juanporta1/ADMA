@@ -3,6 +3,7 @@ import {
   Button,
   Flex,
   Grid,
+  LoadingOverlay,
   NativeSelect,
   Stack,
   Text,
@@ -19,19 +20,34 @@ import { DatePickerInput, DatesProvider } from '@mantine/dates';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { notifications } from '@mantine/notifications';
+import { useDisclosure } from '@mantine/hooks';
 
 class FormValues {
   lastName!: string;
   name!: string;
   dni!: string;
   phone!: string;
+  home!: string;
   neighborhood!: string;
   size!: string;
-  race!: string;
   sex!: string;
+  race!: string;
   date!: Date;
-  observations!: string;
+  observations?: string;
   hour!: string;
+}
+
+class NewAppoinment {
+  owner!: string;
+  home!: string;
+  neighborhood!: string;
+  phone!: string;
+  dni!: string;
+  date!: Date;
+  size!: string;
+  sex!: string;
+  race!: string;
+  observations?: string | null;
 }
 
 export function CreateAppoinment() {
@@ -46,6 +62,7 @@ export function CreateAppoinment() {
       size: '',
       race: '',
       sex: '',
+      home: '',
       date: new Date(),
       observations: '',
       hour: '',
@@ -80,6 +97,7 @@ export function CreateAppoinment() {
   });
   const mainColor = useContext(MainColorContext);
   const navigate = useNavigate();
+  const [visible, {open: openLoading, close: closeLoading}] = useDisclosure(false);
   const [actualDate, setActualDate] = useState<Date | null>(null);
   const [disabledSelects, setDisabledSelects] = useState<boolean[]>([]);
   const neighborhoodInputData: string[] = [
@@ -114,10 +132,50 @@ export function CreateAppoinment() {
   };
 
   const handleOnSubmit = (values: FormValues) => {
-    try{
+    try {
+      openLoading()
+      const newDate = new Date(
+        `${values.date.getFullYear()}-${
+          values.date.getMonth() + 1
+        }-${values.date.getDate()} ${values.hour}:00:00.000`
+      );
+      const newOwner = `${values.lastName}, ${values.name}`;
 
-    }catch(err){
+      const newAppoinment: NewAppoinment = {
+        owner: newOwner,
+        home: values.home,
+        neighborhood: values.neighborhood,
+        dni: values.dni,
+        phone: values.phone,
+        race: values.race,
+        size: values.size,
+        sex: values.sex,
+        date: newDate,
+        observations: values.observations,
+      };
+      axios
+        .post('http://localhost:3000/api/appoinment', newAppoinment)
+        .then((res) => {
+          console.log(res.data);
+        });
+      notifications.show({
+        title: 'Carga del nuevo tunro exitosa',
+        message:
+          'El turno ha sido agendado.',
+        color: 'green',
+      })
+      closeLoading()
+      navigate("/turnos/listar")
+    } catch (err) {
+      notifications.show({
+        title: 'Ha ocurrido un error',
+        message:
+          'Ha ocurrido un error mientras se agendaba el turno, reintentelo de nuevo mas tarde.',
+        color: 'red',
+      })
+      closeLoading()
       
+      throw err;
     }
   };
 
@@ -164,6 +222,8 @@ export function CreateAppoinment() {
 
   useEffect(() => {
     form.setValues({ hour: '', date: undefined });
+  }, []);
+  useEffect(() => {
     if (!actualDate) return;
 
     const fetchDisabledHours = async () => {
@@ -209,6 +269,7 @@ export function CreateAppoinment() {
   }, [actualDate]);
   return (
     <div>
+      <LoadingOverlay visible={visible}/>
       <DatesProvider
         settings={{
           locale: 'es',
@@ -224,7 +285,7 @@ export function CreateAppoinment() {
           <Box bd="1px #aaa solid" p="sm">
             <form onSubmit={form.onSubmit(handleOnSubmit)}>
               <Grid>
-                <Grid.Col span={4}>
+                <Grid.Col span={3}>
                   <TextInput
                     label="Apellido: "
                     placeholder="Ingresar Apellido"
@@ -233,7 +294,7 @@ export function CreateAppoinment() {
                     required
                   />
                 </Grid.Col>
-                <Grid.Col span={4}>
+                <Grid.Col span={3}>
                   <TextInput
                     label="Nombre: "
                     placeholder="Ingresar Nombre"
@@ -242,12 +303,21 @@ export function CreateAppoinment() {
                     required
                   />
                 </Grid.Col>
-                <Grid.Col span={4}>
+                <Grid.Col span={3}>
                   <TextInput
                     label="DNI: "
                     placeholder="Ingresar DNI"
                     key={form.key('dni')}
                     {...form.getInputProps('dni')}
+                    required
+                  />
+                </Grid.Col>
+                <Grid.Col span={3}>
+                  <TextInput
+                    label="Domicilio: "
+                    placeholder="Ingresar Domicilio"
+                    key={form.key('home')}
+                    {...form.getInputProps('home')}
                     required
                   />
                 </Grid.Col>
@@ -340,12 +410,7 @@ export function CreateAppoinment() {
                   />
                 </Grid.Col>
                 <Grid.Col span={12}>
-                  <Button
-                    fullWidth
-                    color={mainColor}
-                    type="submit"
-                    onClick={handleOnSubmit}
-                  >
+                  <Button fullWidth color={mainColor} type="submit">
                     Cargar Turno
                   </Button>
                 </Grid.Col>
