@@ -23,7 +23,7 @@ import {
   faFilter,
   faArrowUpFromBracket,
 } from '@fortawesome/free-solid-svg-icons';
-import NavLinksContainer from '../../utilities/nav-links-containter/nav-links-container';
+import NavLinksContainer from '../utilities/nav-links-containter/nav-links-container';
 export function Layout() {
   const [opened, { toggle }] = useDisclosure();
   const navigate = useNavigate();

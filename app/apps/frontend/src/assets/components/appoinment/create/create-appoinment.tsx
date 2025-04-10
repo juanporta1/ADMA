@@ -33,7 +33,7 @@ class FormValues {
   sex!: string;
   race!: string;
   date!: Date;
-  observations?: string;
+  observations!: string;
   hour!: string;
 }
 
@@ -47,7 +47,7 @@ class NewAppoinment {
   size!: string;
   sex!: string;
   race!: string;
-  observations?: string | null;
+  observations!: string | null;
 }
 
 export function CreateAppoinment() {
@@ -280,7 +280,7 @@ export function CreateAppoinment() {
       >
         <Stack>
           <Flex direction="row" gap="md" justify="flex-start" align="baseline">
-            <Title c={mainColor} text="Cargar Turno" />
+            <Title c={mainColor} text="Nuevo Turno" />
           </Flex>
           <Box bd="1px #aaa solid" p="sm">
             <form onSubmit={form.onSubmit(handleOnSubmit)}>
@@ -407,6 +407,8 @@ export function CreateAppoinment() {
                   <Textarea
                     label="Observaciones: "
                     placeholder="Escriba aqui si tiene observaciones"
+                    key={form.key("observations")}
+                    {...form.getInputProps("observations")}
                   />
                 </Grid.Col>
                 <Grid.Col span={12}>

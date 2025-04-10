@@ -1,9 +1,11 @@
 import {
+  ActionIcon,
   Box,
   Button,
   Flex,
   Grid,
   LoadingOverlay,
+  Modal,
   NativeSelect,
   Pagination,
   Table,
@@ -16,11 +18,16 @@ import { DatePickerInput, DatesProvider } from '@mantine/dates';
 import 'dayjs/locale/es';
 import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useSet } from '@mantine/hooks';
 import { useNavigate } from 'react-router-dom';
 import Title from '../../utilities/title/title';
 import { AppoinmentContext } from '../../../contexts/appoinment-context';
 import { MainColorContext } from '../../../contexts/color-context';
+
+import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { error } from 'console';
+import { notifications } from '@mantine/notifications';
 class FilterParams {
   sex?: string;
   race?: string;
@@ -30,7 +37,7 @@ class FilterParams {
   endDate?: Date;
   input?: string;
   orderBy?: string;
-  onlyByHour?: string
+  onlyByHour?: string;
 }
 
 class Appoinment {
@@ -62,6 +69,9 @@ export function FilterAppoinments() {
   const [loadingRows, { open: startLoadingRows, close: finishLoadingRows }] =
     useDisclosure(false);
   const navigate = useNavigate();
+  const [deleteModal, { open: openDeleteModal, close: closeDeleteModal }] =
+    useDisclosure(false);
+  const [actualRegister, setActualRegister] = useState<Appoinment>();
   const registersPerPage = 7;
   const form = useContext(AppoinmentContext);
   const mainColor = useContext(MainColorContext);
@@ -158,7 +168,35 @@ export function FilterAppoinments() {
     form!.reset();
     handleOnSubmit();
   };
-
+  const handleOnDelete = () => {
+    try {
+      if (actualRegister) {
+        axios
+          .delete(
+            `http://localhost:3000/api/appoinment/${actualRegister.ID_appoinment}`
+          )
+          .then((res) => {
+            console.log(res.data);
+            notifications.show({
+              title: 'Se ha eliminado el registro',
+              message: 'La operacion ha sido exitosa',
+              color: 'green',
+            });
+          })
+          .catch((err) => {
+            notifications.show({
+              title: 'Ha ocurrido un error',
+              message: 'Ha pasado algo en el proceso de eliminar el registro',
+              color: 'red',
+            });
+          });
+        closeDeleteModal();
+        handleOnSubmit();
+      }
+    } catch (err) {
+      throw err;
+    }
+  };
   const handleOnSubmit = () => {
     try {
       startLoadingRows();
@@ -216,6 +254,10 @@ export function FilterAppoinments() {
         ? `No puede editar registros anteriores al ${today}`
         : 'Editar Registro';
       const twoNames = appoinment.owner.split(',');
+      const canDelete = appoinment.status === 'Pendiente' ? false : true;
+      const deleteLabel = canDelete
+        ? 'Borrar'
+        : 'No puede borrar este registro';
       return (
         <Table.Tr style={{ maxHeight: '50px' }} key={appoinment.ID_appoinment}>
           <Table.Td>{formattedDate}</Table.Td>
@@ -235,15 +277,29 @@ export function FilterAppoinments() {
           </Table.Td>
           <Table.Td>
             <Tooltip label={tooltipLabel}>
-              <Button
+              <ActionIcon
                 onClick={() => {
                   navigate(`/turnos/editar/${appoinment.ID_appoinment}`);
                 }}
                 color={mainColor}
                 disabled={canEdit}
               >
-                Editar
-              </Button>
+                <FontAwesomeIcon icon={faPenToSquare} />
+              </ActionIcon>
+            </Tooltip>
+          </Table.Td>
+          <Table.Td>
+            <Tooltip label={deleteLabel}>
+              <ActionIcon
+                onClick={() => {
+                  openDeleteModal();
+                  setActualRegister(appoinment);
+                }}
+                color={mainColor}
+                disabled={canEdit}
+              >
+                <FontAwesomeIcon icon={faTrash} />
+              </ActionIcon>
             </Tooltip>
           </Table.Td>
         </Table.Tr>
@@ -267,6 +323,25 @@ export function FilterAppoinments() {
   if (form) {
     return (
       <div>
+        <Modal
+          opened={deleteModal}
+          onClose={closeDeleteModal}
+          title="¿Seguro quiere borrar este registro?"
+          centered
+        >
+          <Flex gap="xl" justify="center" align="center">
+            <Button variant="light" color={mainColor} onClick={handleOnDelete}>
+              Sí, estoy seguro
+            </Button>
+            <Button
+              variant="filled"
+              color={mainColor}
+              onClick={closeDeleteModal}
+            >
+              Cancelar
+            </Button>
+          </Flex>
+        </Modal>
         <DatesProvider
           settings={{
             locale: 'es',
