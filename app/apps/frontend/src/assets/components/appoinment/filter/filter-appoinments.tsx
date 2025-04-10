@@ -251,11 +251,11 @@ export function FilterAppoinments() {
       }).format(new Date());
 
       const tooltipLabel = canEdit
-        ? `No puede editar registros anteriores al ${today}`
+        ? `No puede editar este registro.`
         : 'Editar Registro';
       const twoNames = appoinment.owner.split(',');
       const canDelete = appoinment.status === 'Pendiente' ? false : true;
-      const deleteLabel = canDelete
+      const deleteLabel = !canDelete
         ? 'Borrar'
         : 'No puede borrar este registro';
       return (

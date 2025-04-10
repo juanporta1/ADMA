@@ -9,6 +9,7 @@ import {
   Flex,
   Grid,
   LoadingOverlay,
+  Modal,
   NativeSelect,
   Stack,
   Text,
@@ -49,21 +50,21 @@ class Appoinment {
   observations!: string;
 }
 
-class FormValues{
+class FormValues {
   lastName!: string;
-        name!: string;
-        dni!: string;
-        phone!: string;
-        neighborhood!: string;
-        size!: string;
-        race!: string;
-        sex!: string;
-        home!: string;
-        date!: Date;
-        observations!: string;
-        hour!: string;
-        status!: string;
-        reason!: string;
+  name!: string;
+  dni!: string;
+  phone!: string;
+  neighborhood!: string;
+  size!: string;
+  race!: string;
+  sex!: string;
+  home!: string;
+  date!: Date;
+  observations!: string;
+  hour!: string;
+  status!: string;
+  reason!: string;
 }
 export function EditAppoinment() {
   const { id } = useParams();
@@ -113,7 +114,7 @@ export function EditAppoinment() {
         },
         observations: (value: string) => {
           if (value.length > 800)
-            return 'El DNI unicamente debe contener numeros.';
+            return 'Las observaciones no pueden ser tan largas';
           else return null;
         },
       },
@@ -127,6 +128,7 @@ export function EditAppoinment() {
   const mainColor = useContext(MainColorContext);
   const [disabledSelects, setDisabledSelects] = useState<boolean[]>([]);
   const [actualDate, setActualDate] = useState<Date | null>(null);
+  const [editModal, {open: openEditModal, close: closeEditModal}] = useDisclosure(false)
   const neighborhoodInputData: string[] = [
     'Córdoba',
     'La Perla',
@@ -157,13 +159,46 @@ export function EditAppoinment() {
   const handleOnCancel = () => {
     navigate('/turnos/listar');
   };
-  const handleOnSubmit = (params: FormValues) => {
-    try{
+  const handleOnSubmit = () => {
+    openEditModal()
+  }
 
-    }catch(err){
-      throw err
+  const submit = (params: FormValues) => {
+    try {
+      const date = new Date(
+        `${params.date.getFullYear()}-${
+          params.date.getMonth() + 1
+        }-${params.date.getDate()} ${params.hour}`
+      );
+      const reason: string | null =
+        params.reason == '' ? null : params.reason;
+
+      const data = {
+        owner: `${params.lastName},${params.name}`,
+        home: params.home,
+        phone: params.phone,
+        neighborhood: params.neighborhood,
+        dni: params.dni,
+        date,
+        size: params.size,
+        sex: params.sex,
+        race: params.race,
+        status: params.status,
+        observations: params.observations,
+        reason,
+      };
+      axios
+        .put(
+          `http://localhost:3000/api/appoinment/${actualAppoinment.ID_appoinment}`,
+          data
+        )
+        .then((res) => {
+          console.log(res.data);
+          navigate("/turnos/listar")
+        });
+    } catch (err) {
+      throw err;
     }
-
   };
   const neighborhoodOptions = () => {
     return neighborhoodInputData.map((value, key) => (
@@ -227,7 +262,10 @@ export function EditAppoinment() {
           }-${appoinment.date.getDate()}`;
 
           const hours = `${appoinment.date.getHours()}:00:00`;
-
+          const observations = appoinment.observations
+            ? appoinment.observations
+            : '';
+          const reason = appoinment.reason ? appoinment.reason : '';
           form.setValues({
             lastName: lastName,
             name: name,
@@ -239,11 +277,11 @@ export function EditAppoinment() {
             sex: appoinment?.sex,
             home: appoinment?.home,
             date: new Date(date),
-            observations: appoinment.observations,
+            observations,
             hour: hours,
             status: appoinment.status,
+            reason,
           });
-          
         });
     } catch (err) {
       throw err;
@@ -251,12 +289,24 @@ export function EditAppoinment() {
   }, []);
 
   useEffect(() => {
-    console.log(actualAppoinment)
-  }, [actualAppoinment])
+    console.log(actualAppoinment);
+  }, [actualAppoinment]);
 
   return (
     <div>
       {/* <LoadingOverlay visible={visible} /> */}
+      <Modal centered title="¿Seguro quieres editar este turno?" opened={editModal} onClose={closeEditModal}>
+        <Flex direction={"row"} justify={"center"} align={"center"} gap={"xl"}>
+          <Button color={mainColor} variant='light' onClick={() => {
+            submit(form.getValues())
+          }}>
+            Si, estoy seguro
+          </Button>
+          <Button color={mainColor}>
+            Cancelar
+          </Button>
+        </Flex>
+      </Modal>
       <DatesProvider
         settings={{
           locale: 'es',
@@ -433,22 +483,28 @@ export function EditAppoinment() {
                     label="Estado: "
                     key={form.key('status')}
                     {...form.getInputProps('status')}
-                    
                     required
                   >
-                    {actualAppoinment.status === "Esperando Actualización" ?  <option value="Esperando Actualización" disabled>
-                      Esperando Actualización
-                    </option> : <></>} 
-                    {actualAppoinment.status !== "Esperando Actualización" ? <option value="Pendiente">
-                      Pendiente
-                    </option> : <></>}
-                    {actualAppoinment.status === "Esperando Actualización" ?  <option value="Realizado">
-                      Realizado
-                    </option> : <></>} 
-                    
+                    {actualAppoinment.status === 'Esperando Actualización' ? (
+                      <option value="Esperando Actualización" disabled>
+                        Esperando Actualización
+                      </option>
+                    ) : (
+                      <></>
+                    )}
+                    {actualAppoinment.status !== 'Esperando Actualización' ? (
+                      <option value="Pendiente">Pendiente</option>
+                    ) : (
+                      <></>
+                    )}
+                    {actualAppoinment.status === 'Esperando Actualización' ? (
+                      <option value="Realizado">Realizado</option>
+                    ) : (
+                      <></>
+                    )}
+
                     <option value="Cancelado">Cancelado</option>
                     <option value="Ausentado">Ausentado</option>
-                    
                   </NativeSelect>
                 </Grid.Col>
                 {form.getValues().status === 'Cancelado' ? (
@@ -462,7 +518,9 @@ export function EditAppoinment() {
                       <option value="Embarazada">Animal en Cinta</option>
                       <option value="En celo">En Celo</option>
                       <option value="Se ausento">Ausencia Justificada</option>
-                      <option value="Muerte del animal">Muerte del Animal</option>
+                      <option value="Muerte del animal">
+                        Muerte del Animal
+                      </option>
                       <option value="Otras razones">Otras razones</option>
                     </NativeSelect>
                   </Grid.Col>
