@@ -11,7 +11,7 @@ export function App() {
     <Routes>
       <Route path="/" element={<Layout />}>
         <Route
-          path="/turnos/filtrar"
+          path="/turnos/listar"
           element={
             <Suspense fallback={<LoadingOverlay visible />}>
               <FilterAppoinments />
@@ -19,7 +19,7 @@ export function App() {
           }
         />
         <Route
-          path="/turnos/cargar"
+          path="/turnos/nuevo"
           element={
             <Suspense fallback={<LoadingOverlay visible />}>
               <CreateAppoinment />

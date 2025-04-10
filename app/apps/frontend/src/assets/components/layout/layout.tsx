@@ -23,7 +23,7 @@ import {
   faFilter,
   faArrowUpFromBracket,
 } from '@fortawesome/free-solid-svg-icons';
-import NavLinksContainer from '../utilities/nav-links-containter/nav-links-container';
+import NavLinksContainer from '../../utilities/nav-links-containter/nav-links-container';
 export function Layout() {
   const [opened, { toggle }] = useDisclosure();
   const navigate = useNavigate();
@@ -69,13 +69,13 @@ export function Layout() {
                 }}
                 childrenNavs={[
                   {
-                    goTo: '/turnos/filtrar',
-                    label: 'Filtrar',
+                    goTo: '/turnos/listar',
+                    label: 'Listar',
                     icon: <FontAwesomeIcon icon={faFilter} />,
                   },
                   {
-                    goTo: '/turnos/cargar',
-                    label: 'Cargar',
+                    goTo: '/turnos/nuevo',
+                    label: 'Nuevo',
                     icon: <FontAwesomeIcon icon={faArrowUpFromBracket} />,
                   },
                 ]}

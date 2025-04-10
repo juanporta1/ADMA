@@ -278,7 +278,7 @@ export function FilterAppoinments() {
                   color={mainColor}
                   variant="filled"
                 >
-                  Cargar Turno
+                  Nuevo
                 </Button>
               </Flex>
 
@@ -420,7 +420,7 @@ export function FilterAppoinments() {
                           variant="filled"
                           color={mainColor}
                         >
-                          Filtrar
+                          Listar
                         </Button>
                       </Flex>
                     </Grid.Col>
