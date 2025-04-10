@@ -155,7 +155,7 @@ export function EditAppoinment() {
     'Liniers',
   ];
   const handleOnCancel = () => {
-    navigate('/turnos/filtrar');
+    navigate('/turnos/listar');
   };
   const handleOnSubmit = (params: FormValues) => {
     try{

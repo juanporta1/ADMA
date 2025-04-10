@@ -356,7 +356,7 @@ export function FilterAppoinments() {
                 <Title text="Turnos" c={mainColor} />
                 <Button
                   onClick={() => {
-                    navigate('/turnos/cargar');
+                    navigate('/turnos/nuevo');
                   }}
                   color={mainColor}
                   variant="filled"
