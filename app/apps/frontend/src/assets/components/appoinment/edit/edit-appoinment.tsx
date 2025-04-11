@@ -23,6 +23,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { MainColorContext } from '../../../contexts/color-context';
 import App from '../../../../app/app';
 import { stat } from 'fs';
+import { notifications } from '@mantine/notifications';
 
 class Appoinment {
   ID_appoinment!: number;
@@ -118,6 +119,8 @@ export function EditAppoinment() {
           else return null;
         },
       },
+      validateInputOnChange: true,
+      validateInputOnBlur: true,
     })
   );
 
@@ -163,7 +166,7 @@ export function EditAppoinment() {
     openEditModal()
   }
 
-  const submit = (params: FormValues) => {
+  const submit = (params: typeof form.values) => {
     try {
       const date = new Date(
         `${params.date.getFullYear()}-${
@@ -195,8 +198,24 @@ export function EditAppoinment() {
         .then((res) => {
           console.log(res.data);
           navigate("/turnos/listar")
+          closeEditModal()
+          
+          const isTheSame = Object.keys(data).every((key,value) => value === actualAppoinment[key as keyof Appoinment])
+          if (!isTheSame){
+            notifications.show({
+              title:"Edicion exitosa",
+              message: "El registro ha sido editado con exito.",
+              color: "green"
+            })
+          }
+          
         });
     } catch (err) {
+      notifications.show({
+        title:"Edicion exitosa",
+        message: "El registro ha sido editado con exito.",
+        color: "green"
+      })
       throw err;
     }
   };
