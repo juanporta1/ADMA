@@ -1,7 +1,8 @@
 import { ReactNode } from 'react';
-import { AppoinmentProvider } from './assets/providers/appoinment-provider';
-import { ColorProvider } from './assets/providers/color-provider';
-import { NeighborhoodProvider } from './assets/providers/neighborhood-provider';
+import { AppoinmentProvider } from './providers/appoinment-provider';
+import { ColorProvider } from './providers/color-provider';
+import { NeighborhoodProvider } from './providers/neighborhood-provider';
+import { ApiHostProvider } from './providers/api-host-provider';
 
 interface props {
   children: ReactNode;
@@ -9,10 +10,12 @@ interface props {
 
 export function ContextsProvider({ children }: props) {
   return (
-    <NeighborhoodProvider>
-      <ColorProvider>
-        <AppoinmentProvider>{children}</AppoinmentProvider>
-      </ColorProvider>
-    </NeighborhoodProvider>
+    <ApiHostProvider>
+      <NeighborhoodProvider>
+        <ColorProvider>
+          <AppoinmentProvider>{children}</AppoinmentProvider>
+        </ColorProvider>
+      </NeighborhoodProvider>
+    </ApiHostProvider>
   );
 }

@@ -4,19 +4,15 @@ import {
   Button,
   Flex,
   Grid,
-  keys,
   LoadingOverlay,
   Modal,
-  NativeSelect,
   Pagination,
-  Select,
   Table,
   Text,
-  TextInput,
   Tooltip,
 } from '@mantine/core';
-import styles from './filter-appoinments.module.css';
-import { DatePickerInput, DatesProvider } from '@mantine/dates';
+
+import { DatesProvider } from '@mantine/dates';
 import 'dayjs/locale/es';
 import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
@@ -28,12 +24,12 @@ import { MainColorContext } from '../../../contexts/color-context';
 
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { error } from 'console';
 import { notifications } from '@mantine/notifications';
 import FormColumn from '../../utilities/form-column/form-column';
-import { NeighborhoodsContext } from '../../../contexts/neighborhoods-context';
-import { Form, UseFormReturnType } from '@mantine/form';
+
 import useGetLoadingText from '../../../hooks/appoinment/filter/get-loading-text/get-loading-text';
+import useGetFilterSelectsData from '../../../hooks/appoinment/filter/get-filter-selects-data/get-filter-selects-data';
+import useFilterAppoinments from '../../../hooks/appoinment/filter/use-filter-appoinments/use-filter-appoinments';
 
 class FilterParams {
   sex?: string;
@@ -68,15 +64,10 @@ class Appoinment {
   observations!: string | null;
   reason!: string | null;
 }
-class SelectData {
-  value!: string;
-  text!: string;
-  disabled?: boolean;
-}
+
 export function FilterAppoinments() {
   const [appoinmentData, setAppoinmentData] = useState<Appoinment[]>([]);
   const [isLoading, setIsLoading] = useState<string | null>(null);
-  const [findBy, setFindBy] = useState<string>('owner');
   const [actualPage, setPage] = useState(1);
   const [loadingRows, { open: startLoadingRows, close: finishLoadingRows }] =
     useDisclosure(false);
@@ -87,98 +78,8 @@ export function FilterAppoinments() {
   const registersPerPage = 7;
   const form = useContext(AppoinmentContext);
   const mainColor = useContext(MainColorContext);
-  const neighborhoods = useContext(NeighborhoodsContext);
-
-  const neighborhoodsData: SelectData[] = neighborhoods.map((neig) => ({value: neig, text: neig}))
-
-  const selectsData: { [key: string]: SelectData[] } = {
-    findBy: [
-      { text: 'DNI', value: 'dni' },
-      { text: 'Nombre y Apellido', value: 'owner' },
-    ],
-    sex: [
-      { value: '', text: 'Todos' },
-      { value: 'Macho', text: 'Macho' },
-      { value: 'Hembra', text: 'Hembra' },
-    ],
-    race: [
-      { value: '', text: 'Todos' },
-      { value: 'Canino', text: 'Canino' },
-      { value: 'Felino', text: 'Felino' },
-    ],
-    size: [
-      { value: '', text: 'Todos' },
-      { value: 'Grande', text: 'Grande' },
-      { value: 'Mediano', text: 'Mediano' },
-      { value: 'Pequeño', text: 'Pequeño' },
-    ],
-    status: [
-      { value: '', text: 'Todos' },
-      { value: 'Pendiente', text: 'Pendiente' },
-      { value: 'Realizado', text: 'Realizado' },
-      { value: 'Cancelado', text: 'Cancelado' },
-      { value: 'Ausentado', text: 'Ausentado' },
-      { value: 'Esperando Actualización', text: 'Esperando Actualización' },
-    ],
-    neighborhood: [
-      {value: "", text: "Todos"},
-      ...neighborhoodsData
-    ],
-    orderBy: [
-      {value: 'id-asc', text: 'Más antiguo a más nuevo'},
-      {value: 'id-desc', text: 'Más nuevo a más antiguo'},
-      {value: 'owner-asc', text: 'Dueño(A-Z)'},
-      {value: 'owner-desc', text: 'Dueño(Z-A)'},
-      {value: 'date-asc', text: 'Fecha(Ascendente)'},
-      {value: 'date-desc', text: 'Fecha(Descendente)'}
-    ],
-    hour:[
-      { value: '', text: 'Todos' },
-      { value: '08:00:00', text: '8:00' },
-      { value: '10:00:00', text: '10:00' },
-      { value: '12:00:00', text: '12:00' },
-    ]
-  };
-
-
-  const filterAppoinments = (params: FilterParams = {}) => {
-    try {
-      if (params.input) {
-        const { input, findBy, ...otherParams } = params;
-        if (!findBy) return null;
-        const newObject = {
-          [findBy]: input,
-          ...otherParams,
-        };
-        axios
-          .get('http://localhost:3000/api/appoinment', {
-            params: newObject,
-          })
-          .then((res) => {
-            setAppoinmentData(res.data);
-          });
-      } else {
-        axios
-          .get('http://localhost:3000/api/appoinment', {
-            params,
-          })
-          .then((res) => {
-            setAppoinmentData(res.data);
-          });
-      }
-    } catch (err) {
-      throw err;
-    }
-  };
-
-  const neighborhoodOptions = () => {
-    return neighborhoods.map((value, key) => (
-      <option value={value} key={key}>
-        {value}
-      </option>
-    ));
-  };
-
+  const selectsData = useGetFilterSelectsData();
+  const {filterAppoinments} = useFilterAppoinments()
   const handleOnReset = () => {
     form!.reset();
     handleOnSubmit();
@@ -212,7 +113,7 @@ export function FilterAppoinments() {
       throw err;
     }
   };
-  const handleOnSubmit = () => {
+  const handleOnSubmit = async () => {
     try {
       startLoadingRows();
       setIsLoading('loading');
@@ -221,8 +122,10 @@ export function FilterAppoinments() {
         Object.entries(form!.getValues()).filter(
           ([key, value]) => value != null && value != ''
         )
+        
       );
-      filterAppoinments(params);
+      const data = await filterAppoinments(params);
+      setAppoinmentData(data);
       finishLoadingRows();
       setPage(1);
       setIsLoading('loaded');
@@ -259,11 +162,6 @@ export function FilterAppoinments() {
         appoinment.status === 'Esperando Actualización'
           ? false
           : true;
-      const today = new Intl.DateTimeFormat('es-AR', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      }).format(new Date());
 
       const tooltipLabel = canEdit
         ? `No puede editar este registro.`
