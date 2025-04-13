@@ -79,7 +79,7 @@ export function FilterAppoinments() {
   const form = useContext(AppoinmentContext);
   const mainColor = useContext(MainColorContext);
   const selectsData = useGetFilterSelectsData();
-  const {filterAppoinments} = useFilterAppoinments()
+  const { filterAppoinments } = useFilterAppoinments();
   const handleOnReset = () => {
     form!.reset();
     handleOnSubmit();
@@ -122,7 +122,6 @@ export function FilterAppoinments() {
         Object.entries(form!.getValues()).filter(
           ([key, value]) => value != null && value != ''
         )
-        
       );
       const data = await filterAppoinments(params);
       setAppoinmentData(data);
@@ -301,7 +300,7 @@ export function FilterAppoinments() {
                     <FormColumn
                       form={form}
                       inputType="select"
-                      label=' '
+                      label=" "
                       name="findBy"
                       span={4}
                       data={selectsData.findBy}
@@ -354,7 +353,7 @@ export function FilterAppoinments() {
                       inputType="select"
                       data={selectsData.status}
                     />
-                    
+
                     <FormColumn
                       span={5}
                       name="orderBy"
@@ -372,7 +371,7 @@ export function FilterAppoinments() {
                       data={selectsData.hour}
                     />
                     <Grid.Col span={2}></Grid.Col>
-                    
+
                     <Grid.Col span={4}>
                       <Flex direction="column" justify="flex-end" h="100%">
                         <Button
