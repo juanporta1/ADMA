@@ -18,7 +18,8 @@ export function AppoinmentProvider({ children }: props) {
       input: '',
       status: '',
       orderBy: '',
-      byHour: ''
+      byHour: '',
+      findBy: 'dni'
     },
   });
   return (

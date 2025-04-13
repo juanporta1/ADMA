@@ -4,10 +4,12 @@ import {
   Button,
   Flex,
   Grid,
+  keys,
   LoadingOverlay,
   Modal,
   NativeSelect,
   Pagination,
+  Select,
   Table,
   Text,
   TextInput,
@@ -28,6 +30,11 @@ import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { error } from 'console';
 import { notifications } from '@mantine/notifications';
+import FormColumn from '../../utilities/form-column/form-column';
+import { NeighborhoodsContext } from '../../../contexts/neighborhoods-context';
+import { Form, UseFormReturnType } from '@mantine/form';
+import useGetLoadingText from '../../../hooks/appoinment/filter/get-loading-text/get-loading-text';
+
 class FilterParams {
   sex?: string;
   race?: string;
@@ -38,6 +45,7 @@ class FilterParams {
   input?: string;
   orderBy?: string;
   onlyByHour?: string;
+  findBy?: 'dni' | 'owner';
 }
 
 class Appoinment {
@@ -60,7 +68,11 @@ class Appoinment {
   observations!: string | null;
   reason!: string | null;
 }
-
+class SelectData {
+  value!: string;
+  text!: string;
+  disabled?: boolean;
+}
 export function FilterAppoinments() {
   const [appoinmentData, setAppoinmentData] = useState<Appoinment[]>([]);
   const [isLoading, setIsLoading] = useState<string | null>(null);
@@ -75,62 +87,65 @@ export function FilterAppoinments() {
   const registersPerPage = 7;
   const form = useContext(AppoinmentContext);
   const mainColor = useContext(MainColorContext);
-  const neighborhoodInputData: string[] = [
-    'Córdoba',
-    'La Perla',
-    'Liniers',
-    'Parque San Juan',
-    'Parque Virrey Este',
-    'Portales del Sol',
-    'Residencial El Crucero',
-    'Sabattini',
-    'Sur',
-    'Tiro Federal y Piedra del Sapo',
-    'Touring',
-    'Villa Camiares',
-    'General Bustos',
-    'Nuevo Amanecer',
-    'Villa Oviedo',
-    'Parque Virrey Oeste',
-    'Lalahenes',
-    'San Martín/25 de Mayo',
-    'Santa Teresa/Jesús',
-    'El Cañito',
-    'Pellegrini',
-    'Norte',
-    'San Juan',
-    'Don Bosco',
-    'Liniers',
-  ];
+  const neighborhoods = useContext(NeighborhoodsContext);
 
-  const handleLoadingText = () => {
-    if (isLoading === 'loading') {
-      return {
-        color: '#000',
-        text: 'Filtrando...',
-      };
-    } else if (isLoading === 'loaded') {
-      return {
-        color: '#69c266',
-        text: 'Filtrado',
-      };
-    } else if (isLoading === 'error') {
-      return {
-        color: '#e84b4b',
-        text: 'Algo salio mal... Intentalo de nuevo.',
-      };
-    } else {
-      return {
-        text: '',
-        color: '',
-      };
-    }
+  const neighborhoodsData: SelectData[] = neighborhoods.map((neig) => ({value: neig, text: neig}))
+
+  const selectsData: { [key: string]: SelectData[] } = {
+    findBy: [
+      { text: 'DNI', value: 'dni' },
+      { text: 'Nombre y Apellido', value: 'owner' },
+    ],
+    sex: [
+      { value: '', text: 'Todos' },
+      { value: 'Macho', text: 'Macho' },
+      { value: 'Hembra', text: 'Hembra' },
+    ],
+    race: [
+      { value: '', text: 'Todos' },
+      { value: 'Canino', text: 'Canino' },
+      { value: 'Felino', text: 'Felino' },
+    ],
+    size: [
+      { value: '', text: 'Todos' },
+      { value: 'Grande', text: 'Grande' },
+      { value: 'Mediano', text: 'Mediano' },
+      { value: 'Pequeño', text: 'Pequeño' },
+    ],
+    status: [
+      { value: '', text: 'Todos' },
+      { value: 'Pendiente', text: 'Pendiente' },
+      { value: 'Realizado', text: 'Realizado' },
+      { value: 'Cancelado', text: 'Cancelado' },
+      { value: 'Ausentado', text: 'Ausentado' },
+      { value: 'Esperando Actualización', text: 'Esperando Actualización' },
+    ],
+    neighborhood: [
+      {value: "", text: "Todos"},
+      ...neighborhoodsData
+    ],
+    orderBy: [
+      {value: 'id-asc', text: 'Más antiguo a más nuevo'},
+      {value: 'id-desc', text: 'Más nuevo a más antiguo'},
+      {value: 'owner-asc', text: 'Dueño(A-Z)'},
+      {value: 'owner-desc', text: 'Dueño(Z-A)'},
+      {value: 'date-asc', text: 'Fecha(Ascendente)'},
+      {value: 'date-desc', text: 'Fecha(Descendente)'}
+    ],
+    hour:[
+      { value: '', text: 'Todos' },
+      { value: '08:00:00', text: '8:00' },
+      { value: '10:00:00', text: '10:00' },
+      { value: '12:00:00', text: '12:00' },
+    ]
   };
+
 
   const filterAppoinments = (params: FilterParams = {}) => {
     try {
       if (params.input) {
-        const { input, ...otherParams } = params;
+        const { input, findBy, ...otherParams } = params;
+        if (!findBy) return null;
         const newObject = {
           [findBy]: input,
           ...otherParams,
@@ -157,7 +172,7 @@ export function FilterAppoinments() {
   };
 
   const neighborhoodOptions = () => {
-    return neighborhoodInputData.map((value, key) => (
+    return neighborhoods.map((value, key) => (
       <option value={value} key={key}>
         {value}
       </option>
@@ -368,146 +383,99 @@ export function FilterAppoinments() {
               <Box bd="1px #aaa solid" p="sm">
                 <form onSubmit={form.onSubmit(handleOnSubmit)}>
                   <Grid gutter="10px" columns={20}>
-                    <Grid.Col span={5}>
-                      <DatePickerInput
-                        key={form.key('startDate')}
-                        {...form.getInputProps('startDate')}
-                        label="Intervalo de Fecha:"
-                        placeholder="Desde"
-                      />
-                    </Grid.Col>
-                    <Grid.Col span={5}>
-                      <DatePickerInput
-                        label=" "
-                        placeholder="Hasta"
-                        key={form.key('endDate')}
-                        {...form.getInputProps('endDate')}
-                      />
-                    </Grid.Col>
-                    <Grid.Col span={4}>
-                      <NativeSelect
-                        onChange={(e) => {
-                          setFindBy(e.currentTarget.value);
-                          console.log(e.currentTarget.value);
-                        }}
-                        value={findBy}
-                        label="Buscar por: "
-                      >
-                        <option value="dni">DNI</option>
-                        <option value="owner">Nombre y Apellido</option>
-                      </NativeSelect>
-                    </Grid.Col>
-                    <Grid.Col span={6}>
-                      <TextInput
-                        key={form.key('input')}
-                        {...form.getInputProps('input')}
-                        placeholder="Buscar"
-                        label="Ingresar: "
-                      />
-                    </Grid.Col>
-                    <Grid.Col span={4}>
-                      <NativeSelect
-                        label="Sexo"
-                        key={form.key('sex')}
-                        {...form.getInputProps('sex')}
-                      >
-                        <option value="" style={{ color: '#aaa' }}>
-                          Todos
-                        </option>
-                        <option value="Macho">Macho</option>
-                        <option value="Hembra">Hembra</option>
-                      </NativeSelect>
-                    </Grid.Col>
-                    <Grid.Col span={4}>
-                      <NativeSelect
-                        label="Raza"
-                        key={form.key('race')}
-                        {...form.getInputProps('race')}
-                      >
-                        <option value="" style={{ color: '#aaa' }}>
-                          Todas
-                        </option>
-                        <option value="Canino">Canino</option>
-                        <option value="Felino">Felino</option>
-                      </NativeSelect>
-                    </Grid.Col>
-                    <Grid.Col span={4}>
-                      <NativeSelect
-                        label="Tamaño"
-                        key={form.key('size')}
-                        {...form.getInputProps('size')}
-                      >
-                        <option value="" style={{ color: '#aaa' }}>
-                          Todos
-                        </option>
-                        <option value="Grande">Grande</option>
-                        <option value="Mediano">Mediano</option>
-                        <option value="Pequeño">Pequeño</option>
-                      </NativeSelect>
-                    </Grid.Col>
-                    <Grid.Col span={4}>
-                      <NativeSelect
-                        label="Barrio"
-                        key={form.key('neighborhood')}
-                        {...form.getInputProps('neighborhood')}
-                      >
-                        <option value="" style={{ color: '#aaa' }}>
-                          Todos
-                        </option>
-                        {neighborhoodOptions()}
-                      </NativeSelect>
-                    </Grid.Col>
-                    <Grid.Col span={4}>
-                      <NativeSelect
-                        label="Estado"
-                        key={form.key('status')}
-                        {...form.getInputProps('status')}
-                      >
-                        <option value="" style={{ color: '#aaa' }}>
-                          Todos
-                        </option>
-                        <option value="Pendiente">Pendiente</option>
-                        <option value="Realizado">Realizado</option>
-                        <option value="Cancelado">Cancelado</option>
-                        <option value="Ausentado">Ausentado</option>
-                        <option value="Esperando Actualización">
-                          Esperando Actualización
-                        </option>
-                      </NativeSelect>
-                    </Grid.Col>
-                    <Grid.Col span={4}>
-                      <NativeSelect
-                        label="Ordenar por: "
-                        key={form.key('orderBy')}
-                        {...form.getInputProps('orderBy')}
-                      >
-                        <option value="id-asc">
-                          Fecha de carga(Ascendente)
-                        </option>
-                        <option value="id-desc">
-                          Fecha de carga(Descendente)
-                        </option>
-                        <option value="owner-asc">Dueño(A-Z)</option>
-                        <option value="owner-desc">Dueño(Z-A)</option>
-                        <option value="date-asc">Fecha(Ascendente)</option>
-                        <option value="date-desc">Fecha(Descendente)</option>
-                      </NativeSelect>
-                    </Grid.Col>
-                    <Grid.Col span={4}>
-                      <NativeSelect
-                        label="Hora: "
-                        key={form.key('onlyByHour')}
-                        {...form.getInputProps('onlyByHour')}
-                      >
-                        <option value="">Todas</option>
-                        <option value="08:00:00">8:00</option>
-                        <option value="10:00:00">10:00</option>
-                        <option value="12:00:00">12:00</option>
-                      </NativeSelect>
-                    </Grid.Col>
+                    <FormColumn
+                      form={form}
+                      inputType="date"
+                      name="startDate"
+                      span={5}
+                      label="Intervalo de Fecha"
+                      placeholder="Desde"
+                    />
 
+                    <FormColumn
+                      label=" "
+                      placeholder="Hasta"
+                      name="endDate"
+                      form={form}
+                      inputType="date"
+                      span={5}
+                    />
+                    <FormColumn
+                      form={form}
+                      inputType="select"
+                      label=' '
+                      name="findBy"
+                      span={4}
+                      data={selectsData.findBy}
+                    />
+                    <FormColumn
+                      inputType="text"
+                      form={form}
+                      name="input"
+                      span={6}
+                      placeholder="Buscar"
+                      label="Ingresar: "
+                    />
+                    <FormColumn
+                      span={4}
+                      name="sex"
+                      label="Sexo"
+                      form={form}
+                      inputType="select"
+                      data={selectsData.sex}
+                    />
+                    <FormColumn
+                      span={4}
+                      name="race"
+                      label="Especie"
+                      form={form}
+                      inputType="select"
+                      data={selectsData.race}
+                    />
+                    <FormColumn
+                      span={4}
+                      name="size"
+                      label="Tamaño"
+                      form={form}
+                      inputType="select"
+                      data={selectsData.size}
+                    />
+                    <FormColumn
+                      span={4}
+                      name="neighborhood"
+                      label="Barrio"
+                      form={form}
+                      inputType="select"
+                      data={selectsData.neighborhood}
+                    />
+                    <FormColumn
+                      span={4}
+                      name="status"
+                      label="Estado"
+                      form={form}
+                      inputType="select"
+                      data={selectsData.status}
+                    />
+                    
+                    <FormColumn
+                      span={5}
+                      name="orderBy"
+                      label="Ordenar por: "
+                      form={form}
+                      inputType="select"
+                      data={selectsData.orderBy}
+                    />
+                    <FormColumn
+                      span={5}
+                      name="onlyByHour"
+                      label="Hora: "
+                      form={form}
+                      inputType="select"
+                      data={selectsData.hour}
+                    />
                     <Grid.Col span={2}></Grid.Col>
-                    <Grid.Col span={5}>
+                    
+                    <Grid.Col span={4}>
                       <Flex direction="column" justify="flex-end" h="100%">
                         <Button
                           type="submit"
@@ -520,7 +488,7 @@ export function FilterAppoinments() {
                       </Flex>
                     </Grid.Col>
 
-                    <Grid.Col span={5}>
+                    <Grid.Col span={4}>
                       <Flex direction="column" justify="flex-end" h="100%">
                         <Button
                           onClick={handleOnReset}
@@ -537,8 +505,8 @@ export function FilterAppoinments() {
               </Box>
 
               <Box>
-                <Text fw={700} c={handleLoadingText().color}>
-                  {handleLoadingText().text}
+                <Text fw={700} c={useGetLoadingText(isLoading).color}>
+                  {useGetLoadingText(isLoading).text}
                 </Text>
                 <LoadingOverlay visible={loadingRows} zIndex={1000} />
                 {appoinmentData.length === 0 ? (
