@@ -5,16 +5,16 @@ import axios from 'axios';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface useDeleteAppoinment {
-  deleteAppoinment: (appoinment: Appoinment) => void;
+  deleteAppoinment: (id: number) => void;
 }
 
 export function useDeleteAppoinment(): useDeleteAppoinment {
-  async function deleteAppoinment(appoinment: Appoinment) {
+  async function deleteAppoinment(id: number) {
     try {
-      if (appoinment) {
+     
         await axios
           .delete(
-            `http://localhost:3000/api/appoinment/${appoinment.ID_appoinment}`
+            `http://localhost:3000/api/appoinment/${id}`
           )
           .then((res) => {
             console.log(res.data);
@@ -31,7 +31,7 @@ export function useDeleteAppoinment(): useDeleteAppoinment {
               color: 'red',
             });
           });
-      }
+      
     } catch (err) {
       throw err;
     }

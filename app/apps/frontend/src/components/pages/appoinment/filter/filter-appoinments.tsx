@@ -1,5 +1,4 @@
 import {
-  ActionIcon,
   Box,
   Button,
   Flex,
@@ -9,22 +8,16 @@ import {
   Pagination,
   Table,
   Text,
-  Tooltip,
 } from '@mantine/core';
 
 import { DatesProvider } from '@mantine/dates';
 import 'dayjs/locale/es';
-import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
-import { useDisclosure, useSet } from '@mantine/hooks';
+import { useDisclosure } from '@mantine/hooks';
 import { useNavigate } from 'react-router-dom';
 import Title from '../../../utilities/title/title';
 import { AppoinmentContext } from '../../../../contexts/appoinment-context';
 import { MainColorContext } from '../../../../contexts/color-context';
-
-import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { notifications } from '@mantine/notifications';
 import FormColumn from '../../../utilities/form-column/form-column';
 
 import useGetLoadingText from '../../../../hooks/appoinment/filter/get-loading-text/get-loading-text';
@@ -32,17 +25,19 @@ import useGetFilterSelectsData from '../../../../hooks/appoinment/filter/get-fil
 import useFilterAppoinments from '../../../../hooks/appoinment/filter/use-filter-appoinments/use-filter-appoinments';
 import AppoinmentRow from '../utilities/appoinment-row/appoinment-row';
 import useDeleteAppoinment from '../../../../hooks/appoinment/use-delete-appoinment/use-delete-appoinment';
+import DeleteModal from './delete-modal/delete-modal';
 
-interface FilterParams {
+export interface FilterParams {
   sex?: string;
-  race?: string;
+  specie?: string;
   size?: string;
   neighborhood?: string;
   startDate?: Date;
   endDate?: Date;
+  hour?: string;
   input?: string;
   orderBy?: string;
-  onlyByHour?: string;
+  byHour?: string;
   findBy?: 'dni' | 'owner';
 }
 
@@ -53,10 +48,11 @@ export interface Appoinment {
   neighborhood: string;
   phone: string;
   dni: string;
-  date: Date;
+  date: string;
+  hour: string;
   size: 'Grande' | 'Pequeño' | 'Mediano';
   sex: 'Macho' | 'Hembra';
-  race: 'Canino' | 'Felino';
+  specie: 'Canino' | 'Felino';
   status:
     | 'Pendiente'
     | 'Cancelado'
@@ -89,10 +85,8 @@ export function FilterAppoinments() {
     handleOnSubmit();
   };
   const handleOnDelete = async () => {
-    console.log(actualRegister)
     if (actualRegister) {
-      
-      await deleteAppoinment(actualRegister);
+      await deleteAppoinment(actualRegister.ID_appoinment);
       closeDeleteModal();
       handleOnSubmit();
     }
@@ -154,25 +148,7 @@ export function FilterAppoinments() {
   if (form) {
     return (
       <div>
-        <Modal
-          opened={deleteModal}
-          onClose={closeDeleteModal}
-          title="¿Seguro quiere borrar este registro?"
-          centered
-        >
-          <Flex gap="xl" justify="center" align="center">
-            <Button variant="light" color={mainColor} onClick={handleOnDelete}>
-              Sí, estoy seguro
-            </Button>
-            <Button
-              variant="filled"
-              color={mainColor}
-              onClick={closeDeleteModal}
-            >
-              Cancelar
-            </Button>
-          </Flex>
-        </Modal>
+        <DeleteModal onClose={closeDeleteModal} handleOnDelete={handleOnDelete} opened={deleteModal}/>
         <DatesProvider
           settings={{
             locale: 'es',
@@ -183,7 +159,7 @@ export function FilterAppoinments() {
         >
           <Box>
             <Flex direction="column" gap="md">
-              <Flex direction="row" gap="lg">
+              <Flex direction="row" justify="space-between">
                 <Title text="Turnos" c={mainColor} />
                 <Button
                   onClick={() => {
@@ -242,11 +218,11 @@ export function FilterAppoinments() {
                     />
                     <FormColumn
                       span={4}
-                      name="race"
+                      name="specie"
                       label="Especie"
                       form={form}
                       inputType="select"
-                      data={selectsData.race}
+                      data={selectsData.specie}
                     />
                     <FormColumn
                       span={4}
@@ -345,7 +321,7 @@ export function FilterAppoinments() {
                             <Table.Th>Domicilio</Table.Th>
                             <Table.Th>Telefono</Table.Th>
                             <Table.Th>Barrio</Table.Th>
-                            <Table.Th>Raza</Table.Th>
+                            <Table.Th>Especie</Table.Th>
                             <Table.Th>Sexo</Table.Th>
                             <Table.Th>Tamaño</Table.Th>
                             <Table.Th>Estado</Table.Th>

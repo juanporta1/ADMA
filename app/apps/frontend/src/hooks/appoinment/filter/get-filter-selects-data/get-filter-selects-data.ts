@@ -1,4 +1,4 @@
-import { useState, useCallback, useContext } from 'react';
+import {  useContext } from 'react';
 import { NeighborhoodsContext } from '../../../../contexts/neighborhoods-context';
 
 export interface SelectData {
@@ -9,7 +9,7 @@ export interface SelectData {
 export interface UseGetFilterSelectsData {
   findBy: SelectData[],
   sex: SelectData[],
-  race: SelectData[],
+  specie: SelectData[],
   size: SelectData[],
   status: SelectData[],
   neighborhood: SelectData[],
@@ -31,7 +31,7 @@ export function useGetFilterSelectsData(): UseGetFilterSelectsData {
       { value: 'Macho', text: 'Macho' },
       { value: 'Hembra', text: 'Hembra' },
     ],
-    race: [
+    specie: [
       { value: '', text: 'Todos' },
       { value: 'Canino', text: 'Canino' },
       { value: 'Felino', text: 'Felino' },
@@ -64,9 +64,9 @@ export function useGetFilterSelectsData(): UseGetFilterSelectsData {
     ],
     hour:[
       { value: '', text: 'Todos' },
-      { value: '08:00:00', text: '8:00' },
-      { value: '10:00:00', text: '10:00' },
-      { value: '12:00:00', text: '12:00' },
+      { value: '8:00', text: '8:00' },
+      { value: '10:00', text: '10:00' },
+      { value: '12:00', text: '12:00' },
     ]
   })
 }

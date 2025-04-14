@@ -32,8 +32,8 @@ export class AppoinmentService {
         filterQueryBuilder.andWhere('a.size = :size', { size: querys.size });
       if (querys.sex)
         filterQueryBuilder.andWhere('a.sex = :sex', { sex: querys.sex });
-      if (querys.race)
-        filterQueryBuilder.andWhere('a.race = :race', { race: querys.race });
+      if (querys.specie)
+        filterQueryBuilder.andWhere('a.race = :race', { race: querys.specie });
       if (querys.date)
         filterQueryBuilder.andWhere('a.date = :date', { date: querys.date });
       if (querys.startDate)
@@ -68,15 +68,15 @@ export class AppoinmentService {
         filterQueryBuilder.andWhere('a.status = :status', {
           status: querys.status,
         });
-      if (querys.byHour)
+      if (querys.byDate)
         filterQueryBuilder.andWhere('a.date = :byHour', {
-          byHour: querys.byHour,
+          byHour: querys.byDate,
         });
-      if (querys.onlyByHour)
+      if (querys.byHour)
 
         filterQueryBuilder.andWhere(
-          `TO_CHAR(a.date, 'HH24:MI:SS') = :hour`,
-          { hour: querys.onlyByHour }
+          `a.hour = :hour`,
+          { hour: querys.byHour }
         );
       return await filterQueryBuilder.getMany();
     } else {

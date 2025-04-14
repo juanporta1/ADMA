@@ -4,7 +4,7 @@ export enum Size {
   little = 'Pequeño',
 }
 
-export enum Race {
+export enum Specie {
   dog = 'Canino',
   cat = 'Felino',
 }
@@ -18,14 +18,19 @@ export enum Status {
   canceled = 'Cancelado',
   done = 'Realizado',
   absent = 'Ausentado',
-  pendingUpdate = 'Esperando Actualización'
+  pendingUpdate = 'Esperando Actualización',
 }
 
 export enum Reasons {
-  pregnant="Embarazada",
-  inHeat="En celo",
-  didNotCome="Se ausento",
-  deaded="Muerte del animal",
-  other="Otras razones"
+  pregnant = 'Embarazada',
+  inHeat = 'En celo',
+  didNotCome = 'Se ausento',
+  deaded = 'Muerte del animal',
+  other = 'Otras razones',
 }
 
+export enum Hours {
+  eight = '8:00',
+  ten = '10:00',
+  twelve = '12:00',
+}

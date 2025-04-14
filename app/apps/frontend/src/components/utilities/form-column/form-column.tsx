@@ -26,11 +26,19 @@ export function FormColumn(props: props) {
         />
       );
     } else if (props.inputType === 'select') {
-      const Options = props.data?.map((data) => (
-        <option value={data.value} disabled={data.disabled ? true : false}>
-          {data.text}
-        </option>
-      ));
+      let key = 0;
+      const Options = props.data?.map((data) => {
+        key++;
+        return (
+          <option
+            key={key}
+            value={data.value}
+            disabled={data.disabled ? true : false}
+          >
+            {data.text}
+          </option>
+        );
+      });
 
       return (
         <NativeSelect

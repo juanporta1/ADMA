@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
-import { Status, Race, Sex, Size, Reasons} from './appoinment-DTOs/appoiment.enum';
+import { Status, Sex, Size, Reasons, Hours, Specie} from './appoinment-DTOs/appoiment.enum';
 
 @Entity({ name: 'Appoinment' })
 export class Appoinment {
@@ -15,14 +15,17 @@ export class Appoinment {
   @Column({ type: 'varchar', length: 50 })
   neighborhood!: string;
 
-  @Column({ type: 'varchar', length: 50 })
-  phone!: string;
+  @Column({ type: 'varchar', length: 50, nullable: true })
+  phone?: string;
 
   @Column({ type: 'varchar' })
   dni!: string;
 
-  @Column({ type: 'timestamp' })
+  @Column({ type: 'date' })
   date!: Date;
+
+  @Column({type: "enum", enum: Hours})
+  hour!: string;
 
   @Column({ type: 'enum', enum: Size  })
   size!: string;
@@ -30,8 +33,8 @@ export class Appoinment {
   @Column({ type: 'enum', enum: Sex })
   sex!: string;
 
-  @Column({ type: 'enum', enum: Race })
-  race!: string;
+  @Column({ type: 'enum', enum: Specie })
+  specie!: string;
 
   @Column({ type: 'enum', default: 'Pendiente', enum: Status })
   status!: string;

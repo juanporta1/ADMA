@@ -35,7 +35,7 @@ class Appoinment {
   date!: Date;
   size!: 'Grande' | 'Pequeño' | 'Mediano';
   sex!: 'Macho' | 'Hembra';
-  race!: 'Canino' | 'Felino';
+  specie!: 'Canino' | 'Felino';
   status!:
     | 'Pendiente'
     | 'Cancelado'

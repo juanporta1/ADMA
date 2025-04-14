@@ -14,18 +14,7 @@ interface props{
 
 }
 export function AppoinmentRow({appoinment, clickFunction}: props) {
-  const convertedDate = new Date(appoinment.date);
-  const formattedDate = new Intl.DateTimeFormat('es-AR', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).format(convertedDate);
-
-  const formattedTime = new Intl.DateTimeFormat('es-AR', {
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false,
-  }).format(convertedDate);
+  
 
   const canEdit =
     appoinment.status === 'Pendiente' ||
@@ -44,15 +33,15 @@ export function AppoinmentRow({appoinment, clickFunction}: props) {
   const navigate = useNavigate();
   return (
     <Table.Tr style={{ maxHeight: '50px' }} key={appoinment.ID_appoinment}>
-      <Table.Td>{formattedDate}</Table.Td>
-      <Table.Td>{formattedTime}</Table.Td>
+      <Table.Td>{appoinment.date}</Table.Td>
+      <Table.Td>{appoinment.hour}</Table.Td>
       <Table.Td>{twoNames[0]}</Table.Td>
       <Table.Td>{twoNames[1]}</Table.Td>
       <Table.Td>{appoinment.dni}</Table.Td>
       <Table.Td>{appoinment.home}</Table.Td>
       <Table.Td>{appoinment.phone}</Table.Td>
       <Table.Td>{appoinment.neighborhood}</Table.Td>
-      <Table.Td>{appoinment.race}</Table.Td>
+      <Table.Td>{appoinment.specie}</Table.Td>
       <Table.Td>{appoinment.sex}</Table.Td>
       <Table.Td>{appoinment.size}</Table.Td>
       <Table.Td>{appoinment.status}</Table.Td>

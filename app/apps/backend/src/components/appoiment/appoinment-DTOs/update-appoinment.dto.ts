@@ -7,7 +7,7 @@ export class UpdateAppoinmentDto {
   date!: Date;
   size!: 'Pequeño' | 'Mediano' | 'Grande';
   sex!: 'Macho' | 'Hembra';
-  race!: 'Perro' | 'Gato';
+  specie!: 'Perro' | 'Gato';
   status!: 'Pendiente' | 'Cancelado' | 'Realizado';
   observations!: string;
   reasons!:

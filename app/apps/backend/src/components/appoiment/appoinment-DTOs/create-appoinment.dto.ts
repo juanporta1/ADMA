@@ -8,5 +8,5 @@ export class CreateAppoinmentDTO{
     date!: Date;
     size!: "Pequeño" | "Mediano" | "Grande";
     sex!: "Macho" | "Hembra";
-    race!: "Perro" | "Gato";
+    specie!: "Perro" | "Gato";
 }
