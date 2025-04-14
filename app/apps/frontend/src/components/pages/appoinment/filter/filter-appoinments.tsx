@@ -18,20 +18,22 @@ import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import { useDisclosure, useSet } from '@mantine/hooks';
 import { useNavigate } from 'react-router-dom';
-import Title from '../../utilities/title/title';
-import { AppoinmentContext } from '../../../contexts/appoinment-context';
-import { MainColorContext } from '../../../contexts/color-context';
+import Title from '../../../utilities/title/title';
+import { AppoinmentContext } from '../../../../contexts/appoinment-context';
+import { MainColorContext } from '../../../../contexts/color-context';
 
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { notifications } from '@mantine/notifications';
-import FormColumn from '../../utilities/form-column/form-column';
+import FormColumn from '../../../utilities/form-column/form-column';
 
-import useGetLoadingText from '../../../hooks/appoinment/filter/get-loading-text/get-loading-text';
-import useGetFilterSelectsData from '../../../hooks/appoinment/filter/get-filter-selects-data/get-filter-selects-data';
-import useFilterAppoinments from '../../../hooks/appoinment/filter/use-filter-appoinments/use-filter-appoinments';
+import useGetLoadingText from '../../../../hooks/appoinment/filter/get-loading-text/get-loading-text';
+import useGetFilterSelectsData from '../../../../hooks/appoinment/filter/get-filter-selects-data/get-filter-selects-data';
+import useFilterAppoinments from '../../../../hooks/appoinment/filter/use-filter-appoinments/use-filter-appoinments';
+import AppoinmentRow from '../utilities/appoinment-row/appoinment-row';
+import useDeleteAppoinment from '../../../../hooks/appoinment/use-delete-appoinment/use-delete-appoinment';
 
-class FilterParams {
+interface FilterParams {
   sex?: string;
   race?: string;
   size?: string;
@@ -44,25 +46,25 @@ class FilterParams {
   findBy?: 'dni' | 'owner';
 }
 
-class Appoinment {
-  ID_appoinment!: number;
-  owner!: string;
-  home!: string;
-  neighborhood!: string;
-  phone!: string;
-  dni!: string;
-  date!: Date;
-  size!: 'Grande' | 'Pequeño' | 'Mediano';
-  sex!: 'Macho' | 'Hembra';
-  race!: 'Canino' | 'Felino';
-  status!:
+export interface Appoinment {
+  ID_appoinment: number;
+  owner: string;
+  home: string;
+  neighborhood: string;
+  phone: string;
+  dni: string;
+  date: Date;
+  size: 'Grande' | 'Pequeño' | 'Mediano';
+  sex: 'Macho' | 'Hembra';
+  race: 'Canino' | 'Felino';
+  status:
     | 'Pendiente'
     | 'Cancelado'
     | 'Ausentado'
     | 'Realizado'
     | 'Esperando Actualización';
-  observations!: string | null;
-  reason!: string | null;
+  observations: string | null;
+  reason: string | null;
 }
 
 export function FilterAppoinments() {
@@ -80,37 +82,19 @@ export function FilterAppoinments() {
   const mainColor = useContext(MainColorContext);
   const selectsData = useGetFilterSelectsData();
   const { filterAppoinments } = useFilterAppoinments();
+  const { deleteAppoinment } = useDeleteAppoinment();
+
   const handleOnReset = () => {
     form!.reset();
     handleOnSubmit();
   };
-  const handleOnDelete = () => {
-    try {
-      if (actualRegister) {
-        axios
-          .delete(
-            `http://localhost:3000/api/appoinment/${actualRegister.ID_appoinment}`
-          )
-          .then((res) => {
-            console.log(res.data);
-            notifications.show({
-              title: 'Se ha eliminado el registro',
-              message: 'La operacion ha sido exitosa',
-              color: 'green',
-            });
-          })
-          .catch((err) => {
-            notifications.show({
-              title: 'Ha ocurrido un error',
-              message: 'Ha pasado algo en el proceso de eliminar el registro',
-              color: 'red',
-            });
-          });
-        closeDeleteModal();
-        handleOnSubmit();
-      }
-    } catch (err) {
-      throw err;
+  const handleOnDelete = async () => {
+    console.log(actualRegister)
+    if (actualRegister) {
+      
+      await deleteAppoinment(actualRegister);
+      closeDeleteModal();
+      handleOnSubmit();
     }
   };
   const handleOnSubmit = async () => {
@@ -142,81 +126,16 @@ export function FilterAppoinments() {
       actualPage * registersPerPage
     );
 
-    return paginationData.map((appoinment) => {
-      const convertedDate = new Date(appoinment.date);
-      const formattedDate = new Intl.DateTimeFormat('es-AR', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-      }).format(convertedDate);
-
-      const formattedTime = new Intl.DateTimeFormat('es-AR', {
-        hour: '2-digit',
-        minute: '2-digit',
-        hour12: false,
-      }).format(convertedDate);
-
-      const canEdit =
-        appoinment.status === 'Pendiente' ||
-        appoinment.status === 'Esperando Actualización'
-          ? false
-          : true;
-
-      const tooltipLabel = canEdit
-        ? `No puede editar este registro.`
-        : 'Editar Registro';
-      const twoNames = appoinment.owner.split(',');
-      const canDelete = appoinment.status === 'Pendiente' ? false : true;
-      const deleteLabel = !canDelete
-        ? 'Borrar'
-        : 'No puede borrar este registro';
-      return (
-        <Table.Tr style={{ maxHeight: '50px' }} key={appoinment.ID_appoinment}>
-          <Table.Td>{formattedDate}</Table.Td>
-          <Table.Td>{formattedTime}</Table.Td>
-          <Table.Td>{twoNames[0]}</Table.Td>
-          <Table.Td>{twoNames[1]}</Table.Td>
-          <Table.Td>{appoinment.dni}</Table.Td>
-          <Table.Td>{appoinment.home}</Table.Td>
-          <Table.Td>{appoinment.phone}</Table.Td>
-          <Table.Td>{appoinment.neighborhood}</Table.Td>
-          <Table.Td>{appoinment.race}</Table.Td>
-          <Table.Td>{appoinment.sex}</Table.Td>
-          <Table.Td>{appoinment.size}</Table.Td>
-          <Table.Td>{appoinment.status}</Table.Td>
-          <Table.Td c={appoinment.reason ? '#000' : '#aaaa'}>
-            {appoinment.reason ? appoinment.reason : 'Sin Razon'}
-          </Table.Td>
-          <Table.Td>
-            <Tooltip label={tooltipLabel}>
-              <ActionIcon
-                onClick={() => {
-                  navigate(`/turnos/editar/${appoinment.ID_appoinment}`);
-                }}
-                color={mainColor}
-                disabled={canEdit}
-              >
-                <FontAwesomeIcon icon={faPenToSquare} />
-              </ActionIcon>
-            </Tooltip>
-          </Table.Td>
-          <Table.Td>
-            <Tooltip label={deleteLabel}>
-              <ActionIcon
-                onClick={() => {
-                  openDeleteModal();
-                  setActualRegister(appoinment);
-                }}
-                color={mainColor}
-                disabled={canEdit}
-              >
-                <FontAwesomeIcon icon={faTrash} />
-              </ActionIcon>
-            </Tooltip>
-          </Table.Td>
-        </Table.Tr>
-      );
-    });
+    return paginationData.map((appoinment) => (
+      <AppoinmentRow
+        appoinment={appoinment}
+        key={appoinment.ID_appoinment}
+        clickFunction={() => {
+          openDeleteModal();
+          setActualRegister(appoinment);
+        }}
+      />
+    ));
   };
 
   useEffect(() => {

@@ -13,9 +13,9 @@ import {
 import styles from './create-appoinment.module.css';
 import 'dayjs/locale/es';
 import { useForm } from '@mantine/form';
-import Title from '../../utilities/title/title';
+import Title from '../../../utilities/title/title';
 import { useContext, useEffect, useState } from 'react';
-import { MainColorContext } from '../../../contexts/color-context';
+import { MainColorContext } from '../../../../contexts/color-context';
 import { DatePickerInput, DatesProvider } from '@mantine/dates';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';

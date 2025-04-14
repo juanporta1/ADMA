@@ -17,10 +17,10 @@ import {
   TextInput,
 } from '@mantine/core';
 import { DatePickerInput, DatesProvider } from '@mantine/dates';
-import Title from '../../utilities/title/title';
+import Title from '../../../utilities/title/title';
 import { useForm, UseFormReturnType } from '@mantine/form';
 import { useDisclosure } from '@mantine/hooks';
-import { MainColorContext } from '../../../contexts/color-context';
+import { MainColorContext } from '../../../../contexts/color-context';
 import App from '../../../../app/app';
 import { stat } from 'fs';
 import { notifications } from '@mantine/notifications';
