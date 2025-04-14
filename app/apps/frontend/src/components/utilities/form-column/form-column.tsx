@@ -1,7 +1,7 @@
 import { Grid, NativeSelect, TextInput } from '@mantine/core';
 import styles from './form-column.module.css';
 import { UseFormReturnType } from '@mantine/form';
-import { DatePickerInput } from '@mantine/dates';
+import { DatePickerInput, DateValue } from '@mantine/dates';
 
 class props {
   inputType!: 'date' | 'text' | 'select';
@@ -11,7 +11,7 @@ class props {
   label?: string;
   data?: { value: string; text: string; disabled?: boolean }[] = [];
   name!: string;
-  onChange?: (event: Event) => {};
+  functionOnChange?: (date: DateValue) => void = () => {};
 }
 
 export function FormColumn(props: props) {
@@ -23,6 +23,7 @@ export function FormColumn(props: props) {
           {...props.form.getInputProps(props.name)}
           label={props.label}
           placeholder={props.placeholder}
+          onChange={props.functionOnChange ? props.functionOnChange : (date: DateValue) => {}}
         />
       );
     } else if (props.inputType === 'select') {

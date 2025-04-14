@@ -2,7 +2,7 @@ import { ActionIcon, Table, Tooltip } from '@mantine/core';
 import styles from './appoinment-row.module.css';
 import { Appoinment } from '../../filter/filter-appoinments';
 import { useContext } from 'react';
-import { AppoinmentContext } from '../../../../../contexts/appoinment-context';
+ 
 import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';

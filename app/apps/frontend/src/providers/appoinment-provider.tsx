@@ -10,7 +10,7 @@ export function AppoinmentProvider({ children }: props) {
     mode: 'uncontrolled',
     initialValues: {
       sex: '',
-      race: '',
+      specie: '',
       size: '',
       neighborhood: '',
       startDate: new Date(),

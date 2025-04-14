@@ -24,8 +24,8 @@ export function useGetLoadingText(isLoading: string | null): UseGetLoadingText {
     };
   } else {
     return {
-      text: '',
-      color: '',
+      text: 'a',
+      color: '#fff',
     };
   }
 }

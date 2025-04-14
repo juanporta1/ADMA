@@ -45,10 +45,12 @@ export function useGetFilterSelectsData(): UseGetFilterSelectsData {
     status: [
       { value: '', text: 'Todos' },
       { value: 'Pendiente', text: 'Pendiente' },
-      { value: 'Realizado', text: 'Realizado' },
       { value: 'Cancelado', text: 'Cancelado' },
       { value: 'Ausentado', text: 'Ausentado' },
       { value: 'Esperando Actualización', text: 'Esperando Actualización' },
+      { value: 'En Proceso', text: 'En Proceso' },
+      { value: 'Realizado', text: 'Realizado' },
+      { value: 'No Realizado', text: 'No Realizado' },
     ],
     neighborhood: [
       {value: "", text: "Todos"},

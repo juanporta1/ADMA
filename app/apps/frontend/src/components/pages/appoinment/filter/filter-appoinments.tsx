@@ -4,7 +4,6 @@ import {
   Flex,
   Grid,
   LoadingOverlay,
-  Modal,
   Pagination,
   Table,
   Text,
@@ -38,6 +37,7 @@ export interface FilterParams {
   input?: string;
   orderBy?: string;
   byHour?: string;
+  status?: string;
   findBy?: 'dni' | 'owner';
 }
 
@@ -57,8 +57,10 @@ export interface Appoinment {
     | 'Pendiente'
     | 'Cancelado'
     | 'Ausentado'
+    | 'Esperando Actualización'
+    | 'En Proceso'
     | 'Realizado'
-    | 'Esperando Actualización';
+    | 'No Realizado';
   observations: string | null;
   reason: string | null;
 }
@@ -148,7 +150,11 @@ export function FilterAppoinments() {
   if (form) {
     return (
       <div>
-        <DeleteModal onClose={closeDeleteModal} handleOnDelete={handleOnDelete} opened={deleteModal}/>
+        <DeleteModal
+          onClose={closeDeleteModal}
+          handleOnDelete={handleOnDelete}
+          opened={deleteModal}
+        />
         <DatesProvider
           settings={{
             locale: 'es',
@@ -355,7 +361,7 @@ export function FilterAppoinments() {
         </DatesProvider>
       </div>
     );
-  }
+  } else return <></>;
 }
 
 export default FilterAppoinments;

@@ -33,7 +33,7 @@ export class AppoinmentService {
       if (querys.sex)
         filterQueryBuilder.andWhere('a.sex = :sex', { sex: querys.sex });
       if (querys.specie)
-        filterQueryBuilder.andWhere('a.race = :race', { race: querys.specie });
+        filterQueryBuilder.andWhere('a.specie = :specie', { specie: querys.specie });
       if (querys.date)
         filterQueryBuilder.andWhere('a.date = :date', { date: querys.date });
       if (querys.startDate)

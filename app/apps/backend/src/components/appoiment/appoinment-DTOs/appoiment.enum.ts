@@ -16,9 +16,11 @@ export enum Sex {
 export enum Status {
   pending = 'Pendiente',
   canceled = 'Cancelado',
-  done = 'Realizado',
   absent = 'Ausentado',
   pendingUpdate = 'Esperando Actualización',
+  inProcess = 'En Proceso',
+  done = 'Realizado',
+  notDone = 'No Realizado',
 }
 
 export enum Reasons {
