@@ -188,6 +188,7 @@ export function FilterAppoinments() {
                       span={5}
                       label="Intervalo de Fecha"
                       placeholder="Desde"
+                      notRequired
                     />
 
                     <FormColumn
@@ -197,6 +198,7 @@ export function FilterAppoinments() {
                       form={form}
                       inputType="date"
                       span={5}
+                      notRequired
                     />
                     <FormColumn
                       form={form}
@@ -205,6 +207,7 @@ export function FilterAppoinments() {
                       name="findBy"
                       span={4}
                       data={selectsData.findBy}
+                      notRequired
                     />
                     <FormColumn
                       inputType="text"
@@ -213,6 +216,7 @@ export function FilterAppoinments() {
                       span={6}
                       placeholder="Buscar"
                       label="Ingresar: "
+                      notRequired
                     />
                     <FormColumn
                       span={4}
@@ -221,6 +225,7 @@ export function FilterAppoinments() {
                       form={form}
                       inputType="select"
                       data={selectsData.sex}
+                      notRequired
                     />
                     <FormColumn
                       span={4}
@@ -229,6 +234,7 @@ export function FilterAppoinments() {
                       form={form}
                       inputType="select"
                       data={selectsData.specie}
+                      notRequired
                     />
                     <FormColumn
                       span={4}
@@ -237,6 +243,7 @@ export function FilterAppoinments() {
                       form={form}
                       inputType="select"
                       data={selectsData.size}
+                      notRequired
                     />
                     <FormColumn
                       span={4}
@@ -245,6 +252,7 @@ export function FilterAppoinments() {
                       form={form}
                       inputType="select"
                       data={selectsData.neighborhood}
+                      notRequired
                     />
                     <FormColumn
                       span={4}
@@ -253,8 +261,8 @@ export function FilterAppoinments() {
                       form={form}
                       inputType="select"
                       data={selectsData.status}
+                      notRequired
                     />
-
                     <FormColumn
                       span={5}
                       name="orderBy"
@@ -262,6 +270,7 @@ export function FilterAppoinments() {
                       form={form}
                       inputType="select"
                       data={selectsData.orderBy}
+                      notRequired
                     />
                     <FormColumn
                       span={5}
@@ -270,6 +279,7 @@ export function FilterAppoinments() {
                       form={form}
                       inputType="select"
                       data={selectsData.hour}
+                      notRequired
                     />
                     <Grid.Col span={2}></Grid.Col>
 

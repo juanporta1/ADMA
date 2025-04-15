@@ -9,6 +9,7 @@ export interface UseCreateForm {
 export function useCreateForm(): UseCreateForm {
   const form = useForm({
     mode: 'controlled',
+    
     initialValues: {
       lastName: '',
       name: '',
@@ -16,8 +17,8 @@ export function useCreateForm(): UseCreateForm {
       phone: '',
       neighborhood: '',
       size: '',
-      race: '',
       sex: '',
+      specie: '',  // Added missing specie field
       home: '',
       date: new Date(),
       observations: '',
@@ -40,6 +41,7 @@ export function useCreateForm(): UseCreateForm {
         else return null;
       },
       phone: (value: string) => {
+        if (value.length === 0) return null;
         if (!/^\d+$/.test(value))  // Changed regex to validate only numbers
           return 'El teléfono unicamente debe contener numeros.';
         else return null;

@@ -24,6 +24,7 @@ import { useDisclosure } from '@mantine/hooks';
 import { useCreateForm } from '../../../../hooks/appoinment/create/use-create-form/use-create-form';
 import { NeighborhoodsContext } from '../../../../contexts/neighborhoods-context';
 import { FormColumn } from '../../../utilities/form-column/form-column';
+import { useGetCreateSelectsData } from '../../../../hooks/appoinment/create/get-create-selects-data/get-create-selects-data';
 
 class FormValues {
   lastName!: string;
@@ -60,11 +61,15 @@ export function CreateAppoinment() {
   const navigate = useNavigate();
   const [visible, { open: openLoading, close: closeLoading }] =
     useDisclosure(false);
-  const [actualDate, setActualDate] = useState<Date | null>(null);
   const [disabledSelects, setDisabledSelects] = useState<boolean[]>([]);
-  const neighborhoodInputData: string[] = useContext(NeighborhoodsContext);
+  const neighborhoodInputData: string[] = Array(
+    ...useContext(NeighborhoodsContext)
+  );
+  const selectsData = useGetCreateSelectsData();
+
+
   const handleOnCancel = () => {
-    navigate('/turnos/filtrar');
+    navigate('/turnos/listar');
   };
 
   const handleOnSubmit = (values: FormValues) => {
@@ -111,20 +116,11 @@ export function CreateAppoinment() {
     }
   };
 
-  const neighborhoodOptions = () => {
-    return neighborhoodInputData.map((value, key) => (
-      <option value={value} key={key}>
-        {value}
-      </option>
-    ));
-  };
-
   const HourNativeSelect = () => {
-    if (actualDate) {
+    if (form.values.date) {
       return (
         <NativeSelect
           label="Hora: "
-          defaultValue=""
           key={form.key('hour')}
           {...form.getInputProps('hour')}
           required
@@ -156,7 +152,7 @@ export function CreateAppoinment() {
     form.setValues({ hour: '', date: undefined });
   }, []);
   useEffect(() => {
-    if (!actualDate) return;
+    if (!form.values.date) return;
 
     const fetchDisabledHours = async () => {
       const hours = [8, 10, 12];
@@ -164,13 +160,13 @@ export function CreateAppoinment() {
 
       for (let hour of hours) {
         try {
-          const date = `${actualDate.getFullYear()}-${
-            actualDate.getMonth() + 1
-          }-${actualDate.getDate()}`;
+          const date = `${form.values.date.getFullYear()}-${
+            form.values.date.getMonth() + 1
+          }-${form.values.date.getDate()}`;
           const res = await axios.get('http://localhost:3000/api/appoinment', {
             params: { byHour: `${hour}:00`, byDate: `${date}` },
           });
-          
+
           results.push(res.data.length > 10);
         } catch (err) {
           console.error(err);
@@ -196,7 +192,7 @@ export function CreateAppoinment() {
     };
 
     fetchDisabledHours();
-  }, [actualDate]);
+  }, [form.values.date]);
   return (
     <div>
       <LoadingOverlay visible={visible} />
@@ -254,6 +250,7 @@ export function CreateAppoinment() {
                   span={4}
                   label="Teléfono: "
                   placeholder="Ingresar Teléfono"
+                  notRequired
                 />
                 <FormColumn
                   inputType="date"
@@ -262,12 +259,8 @@ export function CreateAppoinment() {
                   span={4}
                   label="Fecha: "
                   placeholder="Ingrese Fecha"
-                  functionOnChange={(date) => {
-                    
-                      setActualDate(date);
-                      form.setValues({ date: date });
-                    
-                  }}
+                  minDate={new Date()}
+                  
                 />
                 <Grid.Col span={4}>{<HourNativeSelect />}</Grid.Col>
                 <FormColumn
@@ -276,11 +269,7 @@ export function CreateAppoinment() {
                   name="sex"
                   span={3}
                   label="Sexo: "
-                  data={[
-                    { value: "", text: "Seleccione Sexo", disabled: true },
-                    { value: "Macho", text: "Macho" },
-                    { value: "Hembra", text: "Hembra" }
-                  ]}
+                  data={selectsData.sex}
                 />
                 <FormColumn
                   inputType="select"
@@ -288,11 +277,7 @@ export function CreateAppoinment() {
                   name="specie"
                   span={3}
                   label="Especie: "
-                  data={[
-                    { value: "", text: "Seleccione Especie", disabled: true },
-                    { value: "Canino", text: "Canino" },
-                    { value: "Felino", text: "Felino" }
-                  ]}
+                  data={selectsData.specie}
                 />
                 <FormColumn
                   inputType="select"
@@ -300,12 +285,7 @@ export function CreateAppoinment() {
                   name="size"
                   span={3}
                   label="Tamaño: "
-                  data={[
-                    { value: "", text: "Seleccione Tamaño", disabled: true },
-                    { value: "Grande", text: "Grande" },
-                    { value: "Mediano", text: "Mediano" },
-                    { value: "Pequeño", text: "Pequeño" }
-                  ]}
+                  data={selectsData.size}
                 />
                 <FormColumn
                   inputType="select"
@@ -313,10 +293,7 @@ export function CreateAppoinment() {
                   name="neighborhood"
                   span={3}
                   label="Barrio: "
-                  data={neighborhoodInputData.map(value => ({
-                    value: value,
-                    text: value
-                  }))}
+                  data={selectsData.neighborhood}
                 />
                 <Grid.Col span={12}>
                   <Textarea

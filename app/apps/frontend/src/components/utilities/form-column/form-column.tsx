@@ -3,29 +3,33 @@ import styles from './form-column.module.css';
 import { UseFormReturnType } from '@mantine/form';
 import { DatePickerInput, DateValue } from '@mantine/dates';
 
-class props {
-  inputType!: 'date' | 'text' | 'select';
-  form!: UseFormReturnType<any>;
-  span!: number;
+interface props {
+  inputType: 'date' | 'text' | 'select';
+  form: UseFormReturnType<any>;
+  span: number;
   placeholder?: string;
   label?: string;
-  data?: { value: string; text: string; disabled?: boolean }[] = [];
-  name!: string;
-  functionOnChange?: (date: DateValue) => void = () => {};
+  data?: { value: string; text: string; disabled?: boolean }[];
+  name: string;
+  notRequired?: boolean;
+  minDate?: Date;
+ 
 }
 
 export function FormColumn(props: props) {
-  const Input = () => {
+  let inputElement: JSX.Element;
+  
     if (props.inputType === 'date') {
-      return (
-        <DatePickerInput
-          name={props.form.key(props.name)}
+      
+       inputElement = <DatePickerInput
+          key={props.form.key(props.name)}
           {...props.form.getInputProps(props.name)}
           label={props.label}
           placeholder={props.placeholder}
-          onChange={props.functionOnChange ? props.functionOnChange : (date: DateValue) => {}}
+          minDate={props.minDate}
+          required={props.notRequired === undefined ? true : false}
         />
-      );
+      ;
     } else if (props.inputType === 'select') {
       let key = 0;
       const Options = props.data?.map((data) => {
@@ -41,30 +45,34 @@ export function FormColumn(props: props) {
         );
       });
 
-      return (
-        <NativeSelect
+      
+        inputElement = <NativeSelect
           label={props.label}
-          name={props.form.key(props.name)}
+          key={props.form.key(props.name)}
           {...props.form.getInputProps(props.name)}
+          required={props.notRequired === undefined ? true : false}
+          
         >
           {Options}
         </NativeSelect>
-      );
+      ;
     } else {
-      return (
+      inputElement = 
         <TextInput
           label={props.label}
           placeholder={props.placeholder}
-          name={props.form.key(props.name)}
+          key={props.form.key(props.name)}
           {...props.form.getInputProps(props.name)}
+          required={props.notRequired === undefined ? true : false}
+          
         />
-      );
+      ;
     }
-  };
+  
 
   return (
     <Grid.Col span={props.span}>
-      <Input />
+      {inputElement}
     </Grid.Col>
   );
 }
