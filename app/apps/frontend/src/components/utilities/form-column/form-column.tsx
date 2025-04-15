@@ -1,3 +1,4 @@
+// Componente reutilizable para renderizar diferentes tipos de campos de formulario en una columna de Grid
 import { Grid, NativeSelect, Textarea, TextInput } from '@mantine/core';
 import styles from './form-column.module.css';
 import { UseFormReturnType } from '@mantine/form';
@@ -15,10 +16,12 @@ interface props {
   minDate?: Date;
 }
 
+// Renderiza el campo adecuado según el tipo especificado
 export function FormColumn(props: props) {
   let inputElement: JSX.Element;
 
   if (props.inputType === 'date') {
+    // Campo de fecha
     inputElement = (
       <DatePickerInput
         key={props.form.key(props.name)}
@@ -30,6 +33,7 @@ export function FormColumn(props: props) {
       />
     );
   } else if (props.inputType === 'select') {
+    // Campo de selección (select)
     let key = 0;
     const Options = props.data?.map((data) => {
       key++;
@@ -55,6 +59,7 @@ export function FormColumn(props: props) {
       </NativeSelect>
     );
   } else if (props.inputType === 'textarea') {
+    // Campo de texto multilínea
     inputElement = (
       <Textarea
         label={props.label}
@@ -64,6 +69,7 @@ export function FormColumn(props: props) {
       />
     );
   } else {
+    // Campo de texto simple
     inputElement = (
       <TextInput
         label={props.label}
@@ -75,6 +81,7 @@ export function FormColumn(props: props) {
     );
   }
 
+  // Devuelve el campo dentro de una columna del grid
   return <Grid.Col span={props.span}>{inputElement}</Grid.Col>;
 }
 

@@ -1,3 +1,4 @@
+// Componente para renderizar una fila de la tabla de turnos con acciones de editar y borrar
 import { ActionIcon, Table, Tooltip } from '@mantine/core';
 import styles from './appoinment-row.module.css';
 import { Appoinment } from '../../filter/filter-appoinments';
@@ -11,21 +12,25 @@ import { MainColorContext } from '../../../../../contexts/color-context';
 interface props{
   clickFunction: () => void,
   appoinment: Appoinment,
-
 }
+
+// Renderiza una fila de turno con botones de editar y borrar, según el estado del turno
 export function AppoinmentRow({appoinment, clickFunction}: props) {
   
-
+  // Determina si se puede editar el turno según su estado
   const canEdit =
     appoinment.status === 'Pendiente' ||
     appoinment.status === 'Esperando Actualización'
       ? false
       : true;
 
+  // Etiqueta del tooltip para el botón de editar
   const tooltipLabel = canEdit
     ? `No puede editar este registro.`
     : 'Editar Registro';
+  // Separa el nombre y apellido del dueño
   const twoNames = appoinment.owner.split(',');
+  // Determina si se puede borrar el turno
   const canDelete = appoinment.status === 'Pendiente' ? false : true;
   const deleteLabel = !canDelete ? 'Borrar' : 'No puede borrar este registro';
 
@@ -48,6 +53,7 @@ export function AppoinmentRow({appoinment, clickFunction}: props) {
       <Table.Td c={appoinment.reason ? '#000' : '#aaaa'}>
         {appoinment.reason ? appoinment.reason : 'Sin Razon'}
       </Table.Td>
+      {/* Botón para editar el turno */}
       <Table.Td>
         <Tooltip label={tooltipLabel}>
           <ActionIcon
@@ -61,6 +67,7 @@ export function AppoinmentRow({appoinment, clickFunction}: props) {
           </ActionIcon>
         </Tooltip>
       </Table.Td>
+      {/* Botón para borrar el turno */}
       <Table.Td>
         <Tooltip label={deleteLabel}>
           <ActionIcon

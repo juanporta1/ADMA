@@ -1,3 +1,4 @@
+// Hook para crear un nuevo turno y mostrar notificaciones
 import axios from 'axios';
 import { notifications } from '@mantine/notifications';
 
@@ -34,6 +35,7 @@ export interface UseCreateAppoinment {
   createAppoinment: (values: FormValues) => Promise<void>;
 }
 
+// Envía los datos del turno al backend y muestra una notificación de éxito
 export function useCreateAppoinment(): UseCreateAppoinment {
   const createAppoinment = async (values: FormValues): Promise<void> => {
     const newOwner = `${values.lastName},${values.name}`;

@@ -1,11 +1,12 @@
+// Hook para inicializar y validar el formulario de creación de turnos
 import { useForm, UseFormReturnType } from '@mantine/form';
-import { useState, useCallback } from 'react';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface UseCreateForm {
   form: UseFormReturnType<any>;
 }
 
+// Devuelve el formulario con validaciones para cada campo
 export function useCreateForm(): UseCreateForm {
   const form = useForm({
     mode: 'controlled',
@@ -57,3 +58,4 @@ export function useCreateForm(): UseCreateForm {
 }
 
 export default useCreateForm;
+// Exporta el hook para ser utilizado en otros componentes

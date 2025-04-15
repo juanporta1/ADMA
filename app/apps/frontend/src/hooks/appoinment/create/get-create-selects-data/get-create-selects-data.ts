@@ -1,3 +1,4 @@
+// Hook para obtener los datos de los selectores del formulario de creación de turnos
 import { useContext } from 'react';
 import { NeighborhoodsContext } from '../../../../contexts/neighborhoods-context';
 
@@ -14,6 +15,7 @@ export interface UseGetCreateSelectsData {
   neighborhood: SelectData[];
 }
 
+// Devuelve los datos para los selectores de sexo, especie, tamaño y barrio
 export function useGetCreateSelectsData(): UseGetCreateSelectsData {
   const neighborhoods = useContext(NeighborhoodsContext) as string[];
 
