@@ -1,4 +1,4 @@
-import {  useContext } from 'react';
+import { useContext } from 'react';
 import { NeighborhoodsContext } from '../../../../contexts/neighborhoods-context';
 
 export interface SelectData {
@@ -7,21 +7,24 @@ export interface SelectData {
   disabled?: boolean;
 }
 export interface UseGetFilterSelectsData {
-  findBy: SelectData[],
-  sex: SelectData[],
-  specie: SelectData[],
-  size: SelectData[],
-  status: SelectData[],
-  neighborhood: SelectData[],
-  orderBy: SelectData[],
-  hour: SelectData[],
+  findBy: SelectData[];
+  sex: SelectData[];
+  specie: SelectData[];
+  size: SelectData[];
+  status: SelectData[];
+  neighborhood: SelectData[];
+  orderBy: SelectData[];
+  hour: SelectData[];
 }
 
 export function useGetFilterSelectsData(): UseGetFilterSelectsData {
   const neighborhoods = useContext(NeighborhoodsContext) as string[];
 
-  const neighborhoodsData: SelectData[] = neighborhoods.map((neig) => ({value: neig, text: neig})) 
-  return({
+  const neighborhoodsData: SelectData[] = neighborhoods.map((neig) => ({
+    value: neig,
+    text: neig,
+  }));
+  return {
     findBy: [
       { text: 'DNI', value: 'dni' },
       { text: 'Nombre y Apellido', value: 'owner' },
@@ -52,25 +55,22 @@ export function useGetFilterSelectsData(): UseGetFilterSelectsData {
       { value: 'Realizado', text: 'Realizado' },
       { value: 'No Realizado', text: 'No Realizado' },
     ],
-    neighborhood: [
-      {value: "", text: "Todos"},
-      ...neighborhoodsData
-    ],
+    neighborhood: [{ value: '', text: 'Todos' }, ...neighborhoodsData],
     orderBy: [
-      {value: 'id-asc', text: 'Más antiguo a más nuevo'},
-      {value: 'id-desc', text: 'Más nuevo a más antiguo'},
-      {value: 'owner-asc', text: 'Dueño(A-Z)'},
-      {value: 'owner-desc', text: 'Dueño(Z-A)'},
-      {value: 'date-asc', text: 'Fecha(Ascendente)'},
-      {value: 'date-desc', text: 'Fecha(Descendente)'}
+      { value: 'id-desc', text: 'Más nuevo a más antiguo' },
+      { value: 'id-asc', text: 'Más antiguo a más nuevo' },
+      { value: 'owner-asc', text: 'Dueño(A-Z)' },
+      { value: 'owner-desc', text: 'Dueño(Z-A)' },
+      { value: 'date-asc', text: 'Fecha(Ascendente)' },
+      { value: 'date-desc', text: 'Fecha(Descendente)' },
     ],
-    hour:[
+    hour: [
       { value: '', text: 'Todos' },
       { value: '8:00', text: '8:00' },
       { value: '10:00', text: '10:00' },
       { value: '12:00', text: '12:00' },
-    ]
-  })
+    ],
+  };
 }
 
 export default useGetFilterSelectsData;

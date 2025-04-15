@@ -17,10 +17,10 @@ export function AppoinmentProvider({ children }: props) {
       endDate: null,
       input: '',
       status: '',
-      orderBy: '',
+      orderBy: 'id-desc',
       byHour: '',
       findBy: 'dni'
-    },
+    }
   });
   return (
     <AppoinmentContext.Provider value={form}>

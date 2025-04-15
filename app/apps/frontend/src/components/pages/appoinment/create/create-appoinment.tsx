@@ -1,198 +1,84 @@
+// Importaciones de componentes de Mantine UI
 import {
   Box,
   Button,
   Flex,
   Grid,
   LoadingOverlay,
-  NativeSelect,
   Stack,
-  Text,
-  Textarea,
-  TextInput,
 } from '@mantine/core';
 import styles from './create-appoinment.module.css';
 import 'dayjs/locale/es';
-import { useForm } from '@mantine/form';
+ 
+// Importaciones de componentes personalizados
 import Title from '../../../utilities/title/title';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect} from 'react';
 import { MainColorContext } from '../../../../contexts/color-context';
-import { DatePickerInput, DatesProvider } from '@mantine/dates';
+import { DatesProvider } from '@mantine/dates';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { notifications } from '@mantine/notifications';
 import { useDisclosure } from '@mantine/hooks';
 import { useCreateForm } from '../../../../hooks/appoinment/create/use-create-form/use-create-form';
-import { NeighborhoodsContext } from '../../../../contexts/neighborhoods-context';
 import { FormColumn } from '../../../utilities/form-column/form-column';
 import { useGetCreateSelectsData } from '../../../../hooks/appoinment/create/get-create-selects-data/get-create-selects-data';
+import HourSelect from './hour-select/hour-select';
+import { useCreateAppoinment } from '../../../../hooks/appoinment/create/use-create-appoinment/use-create-appoinment';
 
+// Definición de la estructura del formulario
 class FormValues {
-  lastName!: string;
-  name!: string;
-  dni!: string;
-  phone!: string;
-  home!: string;
-  neighborhood!: string;
-  size!: string;
-  sex!: string;
-  specie!: string;
-  date!: Date;
-  observations!: string;
-  hour!: string;
+  lastName!: string;  // Apellido del dueño
+  name!: string;      // Nombre del dueño
+  dni!: string;       // DNI del dueño
+  phone!: string;     // Teléfono de contacto
+  home!: string;      // Dirección del domicilio
+  neighborhood!: string; // Barrio
+  size!: string;      // Tamaño de la mascota
+  sex!: string;       // Sexo de la mascota
+  specie!: string;    // Especie de la mascota
+  date!: Date;        // Fecha del turno
+  observations!: string; // Observaciones adicionales
+  hour!: string;      // Hora del turno
 }
 
-class NewAppoinment {
-  owner!: string;
-  home!: string;
-  neighborhood!: string;
-  phone!: string;
-  dni!: string;
-  date!: Date;
-  hour!: string;
-  size!: string;
-  sex!: string;
-  specie!: string;
-  observations!: string | null;
-}
-
+// Componente principal para la creación de turnos
 export function CreateAppoinment() {
-  const { form } = useCreateForm();
-  const mainColor = useContext(MainColorContext);
-  const navigate = useNavigate();
-  const [visible, { open: openLoading, close: closeLoading }] =
-    useDisclosure(false);
-  const [disabledSelects, setDisabledSelects] = useState<boolean[]>([]);
-  const neighborhoodInputData: string[] = Array(
-    ...useContext(NeighborhoodsContext)
-  );
-  const selectsData = useGetCreateSelectsData();
+  // Inicialización de hooks y estados
+  const { form } = useCreateForm();  // Formulario personalizado
+  const mainColor = useContext(MainColorContext);  // Color principal de la app
+  const navigate = useNavigate();  // Navegación entre rutas
+  const [visible, { open: openLoading, close: closeLoading }] = useDisclosure(false);  // Control del overlay de carga
+  const selectsData = useGetCreateSelectsData();  // Datos para los selectores
+  const {createAppoinment} = useCreateAppoinment();  // Hook para crear turnos
 
-
+  // Función para cancelar y volver al listado
   const handleOnCancel = () => {
     navigate('/turnos/listar');
   };
 
-  const handleOnSubmit = (values: FormValues) => {
+  // Manejador del envío del formulario
+  const handleOnSubmit = async (values: FormValues) => {
     try {
       openLoading();
-
-      const newOwner = `${values.lastName}, ${values.name}`;
-
-      const newAppoinment: NewAppoinment = {
-        owner: newOwner,
-        home: values.home,
-        neighborhood: values.neighborhood,
-        dni: values.dni,
-        phone: values.phone,
-        specie: values.specie,
-        size: values.size,
-        sex: values.sex,
-        date: values.date,
-        hour: values.hour,
-        observations: values.observations,
-      };
-      axios
-        .post('http://localhost:3000/api/appoinment', newAppoinment)
-        .then((res) => {
-          console.log(res.data);
-        });
-      notifications.show({
-        title: 'Carga del nuevo tunro exitosa',
-        message: 'El turno ha sido agendado.',
-        color: 'green',
-      });
+      await createAppoinment(values);
       closeLoading();
       navigate('/turnos/listar');
     } catch (err) {
       notifications.show({
         title: 'Ha ocurrido un error',
-        message:
-          'Ha ocurrido un error mientras se agendaba el turno, reintentelo de nuevo mas tarde.',
+        message: 'Ha ocurrido un error mientras se agendaba el turno, reintentelo de nuevo mas tarde.',
         color: 'red',
       });
       closeLoading();
-
       throw err;
     }
   };
 
-  const HourNativeSelect = () => {
-    if (form.values.date) {
-      return (
-        <NativeSelect
-          label="Hora: "
-          key={form.key('hour')}
-          {...form.getInputProps('hour')}
-          required
-        >
-          <option value="" disabled>
-            Seleccione Horario
-          </option>
-          <option value="8:00" disabled={disabledSelects[0]}>
-            8:00
-          </option>
-          <option value="10:00" disabled={disabledSelects[1]}>
-            10:00
-          </option>
-          <option value="12:00" disabled={disabledSelects[2]}>
-            12:00
-          </option>
-        </NativeSelect>
-      );
-    } else {
-      return (
-        <NativeSelect label="Hora: " defaultValue="">
-          <option value="">Primero debe seleccionar una fecha</option>
-        </NativeSelect>
-      );
-    }
-  };
-
+  // Inicialización de valores del formulario
   useEffect(() => {
     form.setValues({ hour: '', date: undefined });
   }, []);
-  useEffect(() => {
-    if (!form.values.date) return;
-
-    const fetchDisabledHours = async () => {
-      const hours = [8, 10, 12];
-      const results: boolean[] = [];
-
-      for (let hour of hours) {
-        try {
-          const date = `${form.values.date.getFullYear()}-${
-            form.values.date.getMonth() + 1
-          }-${form.values.date.getDate()}`;
-          const res = await axios.get('http://localhost:3000/api/appoinment', {
-            params: { byHour: `${hour}:00`, byDate: `${date}` },
-          });
-
-          results.push(res.data.length > 10);
-        } catch (err) {
-          console.error(err);
-          results.push(true);
-        }
-      }
-
-      setDisabledSelects(results);
-      if (results.includes(true) && !results.includes(false))
-        notifications.show({
-          title: 'Sin horarios disponibles',
-          message:
-            'La fecha seleccionada tiene todos los horarios en su maxima capacidad.',
-          color: 'red',
-        });
-      else if (results.includes(true))
-        notifications.show({
-          title: 'Algunos horarios no estan disponibles',
-          message:
-            'En la fecha seleccionada, algunos horarios estan en su maxima capacidad.',
-          color: 'yellow',
-        });
-    };
-
-    fetchDisabledHours();
-  }, [form.values.date]);
+  
+  // Renderizado del componente
   return (
     <div>
       <LoadingOverlay visible={visible} />
@@ -205,12 +91,15 @@ export function CreateAppoinment() {
         }}
       >
         <Stack>
+          {/* Encabezado del formulario */}
           <Flex direction="row" gap="md" justify="flex-start" align="baseline">
             <Title c={mainColor} text="Nuevo Turno" />
           </Flex>
+          {/* Contenedor del formulario */}
           <Box bd="1px #aaa solid" p="sm">
             <form onSubmit={form.onSubmit(handleOnSubmit)}>
               <Grid>
+                {/* Campos para datos personales */}
                 <FormColumn
                   inputType="text"
                   form={form}
@@ -252,6 +141,7 @@ export function CreateAppoinment() {
                   placeholder="Ingresar Teléfono"
                   notRequired
                 />
+                {/* Campos para fecha y hora */}
                 <FormColumn
                   inputType="date"
                   form={form}
@@ -260,9 +150,9 @@ export function CreateAppoinment() {
                   label="Fecha: "
                   placeholder="Ingrese Fecha"
                   minDate={new Date()}
-                  
                 />
-                <Grid.Col span={4}>{<HourNativeSelect />}</Grid.Col>
+                <Grid.Col span={4}>{<HourSelect form={form}/>}</Grid.Col>
+                {/* Campos para datos de la mascota */}
                 <FormColumn
                   inputType="select"
                   form={form}
@@ -295,14 +185,17 @@ export function CreateAppoinment() {
                   label="Barrio: "
                   data={selectsData.neighborhood}
                 />
-                <Grid.Col span={12}>
-                  <Textarea
-                    label="Observaciones: "
-                    placeholder="Escriba aqui si tiene observaciones"
-                    key={form.key('observations')}
-                    {...form.getInputProps('observations')}
-                  />
-                </Grid.Col>
+                {/* Campo de observaciones */}
+                <FormColumn
+                  inputType="textarea"
+                  label="Observaciones"
+                  placeholder="Escriba aquí si tiene observaciones"
+                  name="observations"
+                  form={form}
+                  span={12}
+                  notRequired
+                />
+                {/* Botones de acción */}
                 <Grid.Col span={12}>
                   <Button fullWidth color={mainColor} type="submit">
                     Cargar Turno
