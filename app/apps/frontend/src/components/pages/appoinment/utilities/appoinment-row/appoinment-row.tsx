@@ -1,6 +1,5 @@
 // Componente para renderizar una fila de la tabla de turnos con acciones de editar y borrar
 import { ActionIcon, Table, Tooltip } from '@mantine/core';
-import styles from './appoinment-row.module.css';
 import { Appoinment } from '../../filter/filter-appoinments';
 import { useContext } from 'react';
  

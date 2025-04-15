@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Appoinment } from '../../../components/pages/appoinment/filter/filter-appoinments';
+import { Appoinment } from '../../../../components/pages/appoinment/filter/filter-appoinments';
 import { notifications } from '@mantine/notifications';
 import axios from 'axios';
 

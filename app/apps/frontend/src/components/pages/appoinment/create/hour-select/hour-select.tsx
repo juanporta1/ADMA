@@ -1,5 +1,4 @@
 import { UseFormReturnType } from '@mantine/form';
-import styles from './hour-select.module.css';
 import { NativeSelect } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import axios from 'axios';

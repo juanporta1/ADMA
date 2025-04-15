@@ -1,6 +1,5 @@
 // Componente para renderizar un menú de navegación lateral con enlaces principales y secundarios
 import { ReactNode, useState } from 'react';
-import styles from './nav-links-container.module.css';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { NavLink } from '@mantine/core';
 

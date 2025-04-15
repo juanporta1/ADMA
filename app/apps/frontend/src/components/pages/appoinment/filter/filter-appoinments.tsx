@@ -30,7 +30,7 @@ import useGetLoadingText from '../../../../hooks/appoinment/filter/get-loading-t
 import useGetFilterSelectsData from '../../../../hooks/appoinment/filter/get-filter-selects-data/get-filter-selects-data';
 import useFilterAppoinments from '../../../../hooks/appoinment/filter/use-filter-appoinments/use-filter-appoinments';
 import AppoinmentRow from '../utilities/appoinment-row/appoinment-row';
-import useDeleteAppoinment from '../../../../hooks/appoinment/use-delete-appoinment/use-delete-appoinment';
+import useDeleteAppoinment from '../../../../hooks/appoinment/filter/use-delete-appoinment/use-delete-appoinment';
 import DeleteModal from './delete-modal/delete-modal';
 
 // Interfaz para los parámetros de filtrado de turnos
@@ -180,6 +180,8 @@ export function FilterAppoinments() {
         setIsLoading(null);
       }, 2000);
       return () => clearTimeout(timeout);
+    }else{
+      return () => {}
     }
   }, [isLoading]);
 

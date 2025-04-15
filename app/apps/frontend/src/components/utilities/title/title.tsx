@@ -1,6 +1,6 @@
 // Componente simple para mostrar un título estilizado
 import { Text } from '@mantine/core';
-import styles from './title.module.css';
+ 
 
 interface props {
   text: string;
