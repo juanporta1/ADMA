@@ -26,14 +26,6 @@ export function App() {
             </Suspense>
           }
         />
-        <Route
-          path="/turnos/editar/:id"
-          element={
-            <Suspense fallback={<LoadingOverlay visible />}>
-              <EditAppoinment />
-            </Suspense>
-          }
-        />
       </Route>
     </Routes>
   );

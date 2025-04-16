@@ -58,7 +58,7 @@ export function EditAppoinment({appoinment,cancelFunc}: props) {
 
   // Manejador del envío del formulario
   const handleOnSubmit = async (values: FormValues) => {
-
+    
   };
 
   // Inicialización de valores del formulario
