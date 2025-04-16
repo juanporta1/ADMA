@@ -22,7 +22,7 @@ export function useEditForm(): UseEditForm {
       observations: '',
       hour: '',
       status: '',
-      reason: '',
+      reason: null,
     },
     validate: {
       lastName: (value: string) => {

@@ -1,12 +1,5 @@
 // Importaciones de componentes de Mantine UI
-import {
-  Box,
-  Button,
-  Flex,
-  Grid,
-  LoadingOverlay,
-  Stack,
-} from '@mantine/core';
+import { Box, Button, Flex, Grid, LoadingOverlay, Stack } from '@mantine/core';
 import styles from './edit-appoinment.module.css';
 import 'dayjs/locale/es';
 
@@ -21,51 +14,54 @@ import useGetEditSelectsData from '../../../../hooks/appoinment/edit/get-edit-se
 import useEditForm from '../../../../hooks/appoinment/edit/use-edit-form/use-edit-form';
 import { useDisclosure } from '@mantine/hooks';
 import { Appoinment } from '../filter/filter-appoinments';
+import UseEditAppoinment from '../../../../hooks/appoinment/edit/use-edit-appoinment/use-edit-appoinment';
 
 // Definición de la estructura del formulario
-interface FormValues {
-  owner: string;    // Nombre del dueño
-  dni: string;       // DNI del dueño
-  phone: string;     // Teléfono de contacto
-  home: string;      // Dirección del domicilio
+ export interface EditFormValues {
+  owner: string; // Nombre del dueño
+  dni: string; // DNI del dueño
+  phone: string; // Teléfono de contacto
+  home: string; // Dirección del domicilio
   neighborhood: string; // Barrio
-  size: string;      // Tamaño de la mascota
-  sex: string;       // Sexo de la mascota
-  specie: string;    // Especie de la mascota
-  date: Date;        // Fecha del turno
+  size: string; // Tamaño de la mascota
+  sex: string; // Sexo de la mascota
+  specie: string; // Especie de la mascota
+  date: Date; // Fecha del turno
   observations: string; // Observaciones adicionales
   hour: string;
-  status?: string;      // Hora del turno
+  status: string; // Hora del turno
+  reason: string
 }
 
-interface props{
+interface props {
   appoinment: Appoinment;
   cancelFunc: () => void;
 }
 // Componente principal para la edición de turnos (estructura igual a creación)
-export function EditAppoinment({appoinment,cancelFunc}: props) {
+export function EditAppoinment({ appoinment, cancelFunc }: props) {
   // Inicialización de hooks y estados
-  const { form } = useEditForm();  // Formulario personalizado
-  const mainColor = useContext(MainColorContext);  // Color principal de la app
-  
+  const { form } = useEditForm(); // Formulario personalizado
+  const mainColor = useContext(MainColorContext); // Color principal de la app
+  const [actualStatus, setActualStatus] = useState<string>(appoinment.status);
   const [actualDate, setActualDate] = useState<DateValue>(new Date());
-  const selectsData = useGetEditSelectsData();  // Datos para los selectores
-  const [visible, {open, close}] = useDisclosure(false);
+  const selectsData = useGetEditSelectsData(); // Datos para los selectores
+  const [visible, { open, close }] = useDisclosure(false);
+  const {editAppoinment} = UseEditAppoinment()
   // Función para cancelar y volver al listado
   const handleOnCancel = () => {
     cancelFunc();
   };
 
   // Manejador del envío del formulario
-  const handleOnSubmit = async (values: FormValues) => {
-    
+  const handleOnSubmit = async (values: EditFormValues) => {
+    await editAppoinment(values, appoinment.ID_appoinment);
   };
 
   // Inicialización de valores del formulario
   useEffect(() => {
     const twoNames = appoinment.owner.split(',');
     const dateWithoutTimezone = new Date(appoinment.date + 'T00:00:00');
-    
+
     const settings: typeof form.values = {
       lastName: twoNames[0],
       name: twoNames[1],
@@ -79,7 +75,8 @@ export function EditAppoinment({appoinment,cancelFunc}: props) {
       date: dateWithoutTimezone,
       hour: appoinment.hour,
       observations: appoinment.observations || '',
-    }
+      status: appoinment.status,
+    };
 
     form.setValues(settings);
   }, []);
@@ -151,12 +148,20 @@ export function EditAppoinment({appoinment,cancelFunc}: props) {
                   label="Fecha: "
                   placeholder="Ingrese Fecha"
                   minDate={new Date()}
-                  onChangeFunc={(date) => {
+                  onChangeDateFunc={(date) => {
                     setActualDate(date);
                     form.setValues({ date: date });
                   }}
                 />
-                <Grid.Col span={4}>{<HourSelect form={form} dateValue={actualDate} registerId={appoinment.ID_appoinment}/>}</Grid.Col>
+                <Grid.Col span={4}>
+                  {
+                    <HourSelect
+                      form={form}
+                      dateValue={actualDate}
+                      registerId={appoinment.ID_appoinment}
+                    />
+                  }
+                </Grid.Col>
                 {/* Campos para datos de la mascota */}
                 <FormColumn
                   inputType="select"
@@ -200,6 +205,34 @@ export function EditAppoinment({appoinment,cancelFunc}: props) {
                   span={12}
                   notRequired
                 />
+                <FormColumn
+                  inputType="select"
+                  form={form}
+                  name="status"
+                  span={3}
+                  data={selectsData.status}
+                  label="Estado: "
+                  onChangeSelectFunc={(e) => {
+                    setActualStatus(e.currentTarget.value);
+                    form.setValues({ status: e.currentTarget.value, reason: e.currentTarget.value === 'Cancelado' ? "" : null });
+                  }}
+                />
+                {actualStatus !== 'Pendiente' ? (
+                  <FormColumn
+                    form={form}
+                    inputType="select"
+                    name="reason"
+                    span={3}
+                    label='Razón: '
+                    data={selectsData.reason}
+                    onChangeSelectFunc={(e) => {
+                      form.setValues({reason: e.currentTarget.value})
+                   }} 
+                  />
+                ) : (
+                  <></>
+                )}
+
                 {/* Botones de acción */}
                 <Grid.Col span={12}>
                   <Button fullWidth color={mainColor} type="submit">

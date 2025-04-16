@@ -46,7 +46,18 @@ export function useGetEditSelectsData(): UseGetEditSelectsData {
       {value: "Cancelado", text: "Cancelado"},
     ],
     reason: [
-      
+      { value: '', text: 'Seleccione un motivo', disabled: true },
+      // General reasons
+      { value: 'Enfermedad del dueño', text: 'Enfermedad del dueño' },
+      { value: 'Problemas de transporte', text: 'Problemas de transporte' },
+      { value: 'Emergencia familiar', text: 'Emergencia familiar' },
+      // Female-specific reasons
+      { value: 'En celo', text: 'En celo (Solo hembras)'  },
+      { value: 'Preñada', text: 'Preñada (Solo hembras)'  },
+      { value: 'Post parto', text: 'Post parto (Solo hembras)'  },
+      { value: 'Agresividad', text: 'Agresividad'  },
+      { value: 'Marcaje territorial', text: 'Marcaje territorial' },
+      { value: 'Otro', text: 'Otro' },	
     ]
   };
 }

@@ -24,11 +24,16 @@ export enum Status {
 }
 
 export enum Reasons {
-  pregnant = 'Embarazada',
+  ownerSickness = 'Enfermedad del dueño',
+  transportIssues = 'Problemas de transporte',
+  familyEmergency = 'Emergencia familiar',
+  // Female specific
   inHeat = 'En celo',
-  didNotCome = 'Se ausento',
-  deaded = 'Muerte del animal',
-  other = 'Otras razones',
+  pregnant = 'Preñada',
+  postPartum = 'Post parto',
+  // Male specific
+  aggression = 'Agresividad',
+  territorialMarking = 'Marcaje territorial'
 }
 
 export enum Hours {

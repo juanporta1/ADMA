@@ -3,6 +3,7 @@ import { Grid, NativeSelect, Textarea, TextInput } from '@mantine/core';
 import styles from './form-column.module.css';
 import { UseFormReturnType } from '@mantine/form';
 import { DatePickerInput, DateValue } from '@mantine/dates';
+import { ChangeEventHandler } from 'react';
 
 interface props {
   inputType: 'date' | 'text' | 'select' | 'textarea';
@@ -14,7 +15,8 @@ interface props {
   name: string;
   notRequired?: boolean;
   minDate?: Date;
-  onChangeFunc?: (date: DateValue) => void;
+  onChangeDateFunc?: (date: DateValue) => void;
+  onChangeSelectFunc?: ChangeEventHandler<HTMLSelectElement>;
 }
 
 // Renderiza el campo adecuado según el tipo especificado
@@ -31,7 +33,7 @@ export function FormColumn(props: props) {
         placeholder={props.placeholder}
         minDate={props.minDate}
         required={props.notRequired === undefined ? true : false}
-        onChange={props.onChangeFunc}
+        onChange={props.onChangeDateFunc}
       />
     );
   } else if (props.inputType === 'select') {
@@ -56,6 +58,7 @@ export function FormColumn(props: props) {
         key={props.form.key(props.name)}
         {...props.form.getInputProps(props.name)}
         required={props.notRequired === undefined ? true : false}
+        onChange={props.onChangeSelectFunc}
       >
         {Options}
       </NativeSelect>
