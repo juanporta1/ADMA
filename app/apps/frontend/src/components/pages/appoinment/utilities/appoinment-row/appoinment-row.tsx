@@ -37,7 +37,7 @@ export function AppoinmentRow({appoinment, clickDeleteFunc, clickEditFunc}: prop
   const mainColor = useContext(MainColorContext);
   const navigate = useNavigate();
   return (
-    <Table.Tr style={{ maxHeight: '50px' }} key={appoinment.ID_appoinment}>
+    <Table.Tr  key={appoinment.ID_appoinment} mah={"60px"} mih={"50px"}>
       <Table.Td>{appoinment.date}</Table.Td>
       <Table.Td>{appoinment.hour}</Table.Td>
       <Table.Td>{twoNames[0]}</Table.Td>

@@ -162,6 +162,7 @@ export function FilterAppoinments() {
     // Mapea cada turno a una fila de la tabla
     return paginationData.map((appoinment) => (
       <AppoinmentRow
+        
         appoinment={appoinment}
         key={appoinment.ID_appoinment}
         clickDeleteFunc={() => {
@@ -407,7 +408,7 @@ export function FilterAppoinments() {
                   <div>
                     {/* Tabla de resultados */}
                     <div
-                      style={{ minHeight: `${(registersPerPage + 1) * 50}px` }}
+                      style={{ minHeight: `${(registersPerPage + 1) * 60}px` }}
                     >
                       {/* Overlay de carga mientras se obtienen los datos */}
                       <LoadingOverlay visible={loadingRows} zIndex={10} />
