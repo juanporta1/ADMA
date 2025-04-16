@@ -12,16 +12,16 @@ import 'dayjs/locale/es';
  
 // Importaciones de componentes personalizados
 import Title from '../../../utilities/title/title';
-import { useContext, useEffect} from 'react';
+import { useContext, useEffect, useState} from 'react';
 import { MainColorContext } from '../../../../contexts/color-context';
-import { DatesProvider } from '@mantine/dates';
+import { DatesProvider, DateValue } from '@mantine/dates';
 import { useNavigate } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
 import { useDisclosure } from '@mantine/hooks';
 import { useCreateForm } from '../../../../hooks/appoinment/create/use-create-form/use-create-form';
 import { FormColumn } from '../../../utilities/form-column/form-column';
 import { useGetCreateSelectsData } from '../../../../hooks/appoinment/create/get-create-selects-data/get-create-selects-data';
-import HourSelect from './hour-select/hour-select';
+import HourSelect from '../utilities/hour-select/hour-select';
 import { useCreateAppoinment } from '../../../../hooks/appoinment/create/use-create-appoinment/use-create-appoinment';
 
 // Definición de la estructura del formulario
@@ -49,7 +49,7 @@ export function CreateAppoinment() {
   const [visible, { open: openLoading, close: closeLoading }] = useDisclosure(false);  // Control del overlay de carga
   const selectsData = useGetCreateSelectsData();  // Datos para los selectores
   const {createAppoinment} = useCreateAppoinment();  // Hook para crear turnos
-
+  const [actualDate, setActualDate] = useState<DateValue>(new Date());  // Fecha actual
   // Función para cancelar y volver al listado
   const handleOnCancel = () => {
     navigate('/turnos/listar');
@@ -150,8 +150,12 @@ export function CreateAppoinment() {
                   label="Fecha: "
                   placeholder="Ingrese Fecha"
                   minDate={new Date()}
+                  onChangeFunc={(date) => {
+                    setActualDate(date)
+                    form.setValues({date: date})
+                  }}
                 />
-                <Grid.Col span={4}>{<HourSelect form={form}/>}</Grid.Col>
+                <Grid.Col span={4}>{<HourSelect form={form} dateValue={actualDate}/>}</Grid.Col>
                 {/* Campos para datos de la mascota */}
                 <FormColumn
                   inputType="select"

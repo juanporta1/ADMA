@@ -12,18 +12,18 @@ import 'dayjs/locale/es';
 
 // Importaciones de componentes personalizados
 import Title from '../../../utilities/title/title';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { MainColorContext } from '../../../../contexts/color-context';
-import { DatesProvider } from '@mantine/dates';
+import { DatesProvider, DateValue } from '@mantine/dates';
 import { useNavigate, useParams } from 'react-router-dom';
 import { notifications } from '@mantine/notifications';
-import { useDisclosure } from '@mantine/hooks';
-import { useCreateForm } from '../../../../hooks/appoinment/create/use-create-form/use-create-form';
 import { FormColumn } from '../../../utilities/form-column/form-column';
-import { useGetCreateSelectsData } from '../../../../hooks/appoinment/create/get-create-selects-data/get-create-selects-data';
-import HourSelect from '../create/hour-select/hour-select';
-import { useCreateAppoinment } from '../../../../hooks/appoinment/create/use-create-appoinment/use-create-appoinment';
+import HourSelect from '../utilities/hour-select/hour-select';
 import useGetEditSelectsData from '../../../../hooks/appoinment/edit/get-edit-selects-data/get-edit-selects-data';
+import useEditForm from '../../../../hooks/appoinment/edit/use-edit-form/use-edit-form';
+import useGetAppoinmentById from '../../../../hooks/appoinment/edit/use-get-appoinment-by-id/use-get-appoinment-by-id';
+import { useDisclosure } from '@mantine/hooks';
+import { Appoinment } from '../filter/filter-appoinments';
 
 // Definición de la estructura del formulario
 interface FormValues {
@@ -41,30 +41,51 @@ interface FormValues {
   status?: string;      // Hora del turno
 }
 
+interface props{
+  appoinment: Appoinment;
+  cancelFunc: () => void;
+}
 // Componente principal para la edición de turnos (estructura igual a creación)
-export function EditAppoinment() {
-  // Obtener el parámetro :id de la URL
-  const { id } = useParams();
+export function EditAppoinment({appoinment,cancelFunc}: props) {
   // Inicialización de hooks y estados
-  const { form } = useCreateForm();  // Formulario personalizado
+  const { form } = useEditForm();  // Formulario personalizado
   const mainColor = useContext(MainColorContext);  // Color principal de la app
-  const navigate = useNavigate();  // Navegación entre rutas
-  const [visible, { open: openLoading, close: closeLoading }] = useDisclosure(false);  // Control del overlay de carga
+  
+  const [actualDate, setActualDate] = useState<DateValue>(new Date());
   const selectsData = useGetEditSelectsData();  // Datos para los selectores
- 
-
+  const [visible, {open, close}] = useDisclosure(false);
   // Función para cancelar y volver al listado
   const handleOnCancel = () => {
-    navigate('/turnos/listar');
+    cancelFunc();
   };
 
   // Manejador del envío del formulario
   const handleOnSubmit = async (values: FormValues) => {
+
   };
 
   // Inicialización de valores del formulario
   useEffect(() => {
-    form.setValues({ hour: '', date: undefined });
+    const twoNames = appoinment.owner.split(',');
+    const dateWithoutTimezone = new Date(appoinment.date + 'T00:00:00');
+    
+    const settings: typeof form.values = {
+      lastName: twoNames[0],
+      name: twoNames[1],
+      dni: appoinment.dni,
+      phone: appoinment.phone,
+      home: appoinment.home,
+      neighborhood: appoinment.neighborhood,
+      size: appoinment.size,
+      sex: appoinment.sex,
+      specie: appoinment.specie,
+      date: dateWithoutTimezone,
+      hour: appoinment.hour,
+      observations: appoinment.observations || '',
+    }
+
+    form.setValues(settings);
+    setActualDate(dateWithoutTimezone);
   }, []);
 
   // Renderizado del componente
@@ -80,11 +101,6 @@ export function EditAppoinment() {
         }}
       >
         <Stack>
-          {/* Encabezado del formulario */}
-          <Flex direction="row" gap="md" justify="flex-start" align="baseline">
-            <Title c={mainColor} text="Editar Turno" />
-          </Flex>
-          {/* Contenedor del formulario */}
           <Box bd="1px #aaa solid" p="sm">
             <form onSubmit={form.onSubmit(handleOnSubmit)}>
               <Grid>
@@ -139,8 +155,12 @@ export function EditAppoinment() {
                   label="Fecha: "
                   placeholder="Ingrese Fecha"
                   minDate={new Date()}
+                  onChangeFunc={(date) => {
+                    setActualDate(date);
+                    form.setValues({ date: date });
+                  }}
                 />
-                <Grid.Col span={4}>{<HourSelect form={form}/>}</Grid.Col>
+                <Grid.Col span={4}>{<HourSelect form={form} dateValue={actualDate} registerId={appoinment.ID_appoinment}/>}</Grid.Col>
                 {/* Campos para datos de la mascota */}
                 <FormColumn
                   inputType="select"

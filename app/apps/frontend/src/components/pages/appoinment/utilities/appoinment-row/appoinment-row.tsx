@@ -9,12 +9,13 @@ import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { MainColorContext } from '../../../../../contexts/color-context';
 
 interface props{
-  clickFunction: () => void,
+  clickDeleteFunc: () => void,
+  clickEditFunc: () => void,
   appoinment: Appoinment,
 }
 
 // Renderiza una fila de turno con botones de editar y borrar, según el estado del turno
-export function AppoinmentRow({appoinment, clickFunction}: props) {
+export function AppoinmentRow({appoinment, clickDeleteFunc, clickEditFunc}: props) {
   
   // Determina si se puede editar el turno según su estado
   const canEdit =
@@ -56,9 +57,7 @@ export function AppoinmentRow({appoinment, clickFunction}: props) {
       <Table.Td>
         <Tooltip label={tooltipLabel}>
           <ActionIcon
-            onClick={() => {
-              navigate(`/turnos/editar/${appoinment.ID_appoinment}`);
-            }}
+            onClick={clickEditFunc}
             color={mainColor}
             disabled={canEdit}
           >
@@ -70,7 +69,7 @@ export function AppoinmentRow({appoinment, clickFunction}: props) {
       <Table.Td>
         <Tooltip label={deleteLabel}>
           <ActionIcon
-            onClick={clickFunction}
+            onClick={clickDeleteFunc}
             color={mainColor}
             disabled={canEdit}
           >

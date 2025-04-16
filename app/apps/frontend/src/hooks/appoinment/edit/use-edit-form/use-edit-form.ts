@@ -1,16 +1,13 @@
-// Hook para inicializar y validar el formulario de creación de turnos
 import { useForm, UseFormReturnType } from '@mantine/form';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface UseCreateForm {
+export interface UseEditForm {
   form: UseFormReturnType<any>;
 }
 
-// Devuelve el formulario con validaciones para cada campo
-export function useCreateForm(): UseCreateForm {
+export function useEditForm(): UseEditForm {
   const form = useForm({
     mode: 'uncontrolled',
-    
     initialValues: {
       lastName: '',
       name: '',
@@ -19,11 +16,13 @@ export function useCreateForm(): UseCreateForm {
       neighborhood: '',
       size: '',
       sex: '',
-      specie: '',  // Added missing specie field
+      specie: '',
       home: '',
       date: new Date(),
       observations: '',
       hour: '',
+      status: '',
+      reason: '',
     },
     validate: {
       lastName: (value: string) => {
@@ -37,25 +36,24 @@ export function useCreateForm(): UseCreateForm {
         else return null;
       },
       dni: (value: string) => {
-        if (!/^\d+$/.test(value))  // Changed regex to validate only numbers
+        if (!/^\d+$/.test(value))
           return 'El DNI unicamente debe contener numeros.';
         else return null;
       },
       phone: (value: string) => {
         if (value.length === 0) return null;
-        if (!/^\d+$/.test(value))  // Changed regex to validate only numbers
+        if (!/^\d+$/.test(value))
           return 'El teléfono unicamente debe contener numeros.';
         else return null;
       },
       observations: (value: string) => {
         if (value.length > 800)
-          return 'Las observaciones no pueden ser tan largas.';  // Fixed error message
+          return 'Las observaciones no pueden ser tan largas.';
         else return null;
       },
     },
   });
-  return {form};
+  return { form };
 }
 
-export default useCreateForm;
-// Exporta el hook para ser utilizado en otros componentes
+export default useEditForm;

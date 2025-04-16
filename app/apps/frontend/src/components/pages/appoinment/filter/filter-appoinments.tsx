@@ -5,6 +5,7 @@ import {
   Flex,
   Grid,
   LoadingOverlay,
+  Modal,
   Pagination,
   Table,
   Text,
@@ -32,6 +33,7 @@ import useFilterAppoinments from '../../../../hooks/appoinment/filter/use-filter
 import AppoinmentRow from '../utilities/appoinment-row/appoinment-row';
 import useDeleteAppoinment from '../../../../hooks/appoinment/filter/use-delete-appoinment/use-delete-appoinment';
 import DeleteModal from './delete-modal/delete-modal';
+import EditAppoinment from '../edit/edit-appoinment';
 
 // Interfaz para los parámetros de filtrado de turnos
 export interface FilterParams {
@@ -87,10 +89,13 @@ export function FilterAppoinments() {
     useDisclosure(false);
   // Hook para navegar entre rutas
   const navigate = useNavigate();
-  // Estado y funciones para mostrar/ocultar el modal de eliminación
+  // Estado y funciones para mostrar/ocultar el modal de eliminación y edicion
   const [deleteModal, { open: openDeleteModal, close: closeDeleteModal }] =
     useDisclosure(false);
+    const [editModal, { open: openEditModal, close: closeEditModal }] =
+    useDisclosure(false);
   // Estado para almacenar el turno seleccionado para eliminar
+  
   const [actualRegister, setActualRegister] = useState<Appoinment>();
   // Cantidad de registros por página
   const registersPerPage = 7;
@@ -159,9 +164,13 @@ export function FilterAppoinments() {
       <AppoinmentRow
         appoinment={appoinment}
         key={appoinment.ID_appoinment}
-        clickFunction={() => {
-          openDeleteModal();
+        clickDeleteFunc={() => {
           setActualRegister(appoinment);
+          openDeleteModal();
+        }}
+        clickEditFunc={() => {
+          setActualRegister(appoinment);
+          openEditModal();
         }}
       />
     ));
@@ -195,6 +204,9 @@ export function FilterAppoinments() {
           handleOnDelete={handleOnDelete}
           opened={deleteModal}
         />
+        <Modal opened={editModal} onClose={closeEditModal} centered size='xl'>
+          <EditAppoinment appoinment={actualRegister!} cancelFunc={closeEditModal}/>
+        </Modal>
         {/* Proveedor de configuración de fechas */}
         <DatesProvider
           settings={{

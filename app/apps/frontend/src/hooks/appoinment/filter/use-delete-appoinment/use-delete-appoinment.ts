@@ -1,7 +1,8 @@
-import { useState, useCallback } from 'react';
-import { Appoinment } from '../../../../components/pages/appoinment/filter/filter-appoinments';
+import { useContext } from 'react';
+
 import { notifications } from '@mantine/notifications';
 import axios from 'axios';
+import { ApiHostContext } from '../../../../contexts/api-host-context';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface useDeleteAppoinment {
@@ -9,12 +10,13 @@ export interface useDeleteAppoinment {
 }
 
 export function useDeleteAppoinment(): useDeleteAppoinment {
+  const host = useContext(ApiHostContext)
   async function deleteAppoinment(id: number) {
     try {
      
         await axios
           .delete(
-            `http://localhost:3000/api/appoinment/${id}`
+            `${host}/appoinment/${id}`
           )
           .then((res) => {
             console.log(res.data);

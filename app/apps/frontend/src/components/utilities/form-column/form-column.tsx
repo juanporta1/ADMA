@@ -14,6 +14,7 @@ interface props {
   name: string;
   notRequired?: boolean;
   minDate?: Date;
+  onChangeFunc?: (date: DateValue) => void;
 }
 
 // Renderiza el campo adecuado según el tipo especificado
@@ -30,6 +31,7 @@ export function FormColumn(props: props) {
         placeholder={props.placeholder}
         minDate={props.minDate}
         required={props.notRequired === undefined ? true : false}
+        onChange={props.onChangeFunc}
       />
     );
   } else if (props.inputType === 'select') {
