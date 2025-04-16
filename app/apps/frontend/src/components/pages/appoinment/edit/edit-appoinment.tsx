@@ -11,17 +11,14 @@ import styles from './edit-appoinment.module.css';
 import 'dayjs/locale/es';
 
 // Importaciones de componentes personalizados
-import Title from '../../../utilities/title/title';
+
 import { useContext, useEffect, useState } from 'react';
 import { MainColorContext } from '../../../../contexts/color-context';
 import { DatesProvider, DateValue } from '@mantine/dates';
-import { useNavigate, useParams } from 'react-router-dom';
-import { notifications } from '@mantine/notifications';
 import { FormColumn } from '../../../utilities/form-column/form-column';
 import HourSelect from '../utilities/hour-select/hour-select';
 import useGetEditSelectsData from '../../../../hooks/appoinment/edit/get-edit-selects-data/get-edit-selects-data';
 import useEditForm from '../../../../hooks/appoinment/edit/use-edit-form/use-edit-form';
-import useGetAppoinmentById from '../../../../hooks/appoinment/edit/use-get-appoinment-by-id/use-get-appoinment-by-id';
 import { useDisclosure } from '@mantine/hooks';
 import { Appoinment } from '../filter/filter-appoinments';
 
@@ -85,7 +82,6 @@ export function EditAppoinment({appoinment,cancelFunc}: props) {
     }
 
     form.setValues(settings);
-    setActualDate(dateWithoutTimezone);
   }, []);
 
   // Renderizado del componente

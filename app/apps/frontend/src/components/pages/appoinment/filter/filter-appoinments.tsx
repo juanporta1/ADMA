@@ -92,10 +92,10 @@ export function FilterAppoinments() {
   // Estado y funciones para mostrar/ocultar el modal de eliminación y edicion
   const [deleteModal, { open: openDeleteModal, close: closeDeleteModal }] =
     useDisclosure(false);
-    const [editModal, { open: openEditModal, close: closeEditModal }] =
+  const [editModal, { open: openEditModal, close: closeEditModal }] =
     useDisclosure(false);
   // Estado para almacenar el turno seleccionado para eliminar
-  
+
   const [actualRegister, setActualRegister] = useState<Appoinment>();
   // Cantidad de registros por página
   const registersPerPage = 7;
@@ -189,8 +189,8 @@ export function FilterAppoinments() {
         setIsLoading(null);
       }, 2000);
       return () => clearTimeout(timeout);
-    }else{
-      return () => {}
+    } else {
+      return () => {};
     }
   }, [isLoading]);
 
@@ -204,8 +204,17 @@ export function FilterAppoinments() {
           handleOnDelete={handleOnDelete}
           opened={deleteModal}
         />
-        <Modal opened={editModal} onClose={closeEditModal} centered size='xl'>
-          <EditAppoinment appoinment={actualRegister!} cancelFunc={closeEditModal}/>
+        <Modal
+          title="Editar Informacion Del Turno"
+          opened={editModal}
+          onClose={closeEditModal}
+          centered
+          size="1000px"
+        >
+          <EditAppoinment
+            appoinment={actualRegister!}
+            cancelFunc={closeEditModal}
+          />
         </Modal>
         {/* Proveedor de configuración de fechas */}
         <DatesProvider
