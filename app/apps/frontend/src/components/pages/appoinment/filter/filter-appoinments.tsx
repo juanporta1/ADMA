@@ -57,9 +57,9 @@ export interface Appoinment {
   owner: string; // Nombre del dueño
   home: string; // Domicilio
   neighborhood: string; // Barrio
-  phone: string; // Teléfono
+  phone: string | null; // Teléfono
   dni: string; // DNI del dueño
-  date: string; // Fecha del turno
+  date: Date; // Fecha del turno
   hour: string; // Hora del turno
   size: 'Grande' | 'Pequeño' | 'Mediano'; // Tamaño de la mascota
   sex: 'Macho' | 'Hembra'; // Sexo de la mascota
@@ -215,6 +215,7 @@ export function FilterAppoinments() {
           <EditAppoinment
             appoinment={actualRegister!}
             cancelFunc={closeEditModal}
+            onSubmit={handleOnSubmit}
           />
         </Modal>
         {/* Proveedor de configuración de fechas */}

@@ -17,28 +17,37 @@ import { Appoinment } from '../filter/filter-appoinments';
 import UseEditAppoinment from '../../../../hooks/appoinment/edit/use-edit-appoinment/use-edit-appoinment';
 
 // Definición de la estructura del formulario
- export interface EditFormValues {
-  owner: string; // Nombre del dueño
+export interface EditFormValues {
+  lastName: string; // Nombre del dueño
+  name: string; // Nombre del dueño
   dni: string; // DNI del dueño
-  phone: string; // Teléfono de contacto
+  phone: string | null; // Teléfono de contacto
   home: string; // Dirección del domicilio
   neighborhood: string; // Barrio
-  size: string; // Tamaño de la mascota
-  sex: string; // Sexo de la mascota
-  specie: string; // Especie de la mascota
+  size: 'Grande' | 'Pequeño'; // Tamaño de la mascota
+  sex: 'Macho' | 'Hembra'; // Sexo de la mascota
+  specie: 'Canino' | 'Felino'; // Especie de la mascota
   date: Date; // Fecha del turno
-  observations: string; // Observaciones adicionales
+  observations: string | null; // Observaciones adicionales
   hour: string;
-  status: string; // Hora del turno
-  reason: string
+  status:
+    | 'Pendiente'
+    | 'Cancelado'
+    | 'Ausentado'
+    | 'Esperando Actualización'
+    | 'En Proceso'
+    | 'Realizado'
+    | 'No Realizado'; // Hora del turno
+  reason: string;
 }
 
 interface props {
   appoinment: Appoinment;
   cancelFunc: () => void;
+  onSubmit: () => void;
 }
 // Componente principal para la edición de turnos (estructura igual a creación)
-export function EditAppoinment({ appoinment, cancelFunc }: props) {
+export function EditAppoinment({ appoinment, cancelFunc, onSubmit }: props) {
   // Inicialización de hooks y estados
   const { form } = useEditForm(); // Formulario personalizado
   const mainColor = useContext(MainColorContext); // Color principal de la app
@@ -46,15 +55,20 @@ export function EditAppoinment({ appoinment, cancelFunc }: props) {
   const [actualDate, setActualDate] = useState<DateValue>(new Date());
   const selectsData = useGetEditSelectsData(); // Datos para los selectores
   const [visible, { open, close }] = useDisclosure(false);
-  const {editAppoinment} = UseEditAppoinment()
+  const { editAppoinment } = UseEditAppoinment();
   // Función para cancelar y volver al listado
   const handleOnCancel = () => {
     cancelFunc();
+    
   };
 
   // Manejador del envío del formulario
   const handleOnSubmit = async (values: EditFormValues) => {
+    open();
     await editAppoinment(values, appoinment.ID_appoinment);
+    cancelFunc();
+    onSubmit();
+    close();
   };
 
   // Inicialización de valores del formulario
@@ -214,7 +228,10 @@ export function EditAppoinment({ appoinment, cancelFunc }: props) {
                   label="Estado: "
                   onChangeSelectFunc={(e) => {
                     setActualStatus(e.currentTarget.value);
-                    form.setValues({ status: e.currentTarget.value, reason: e.currentTarget.value === 'Cancelado' ? "" : null });
+                    form.setValues({
+                      status: e.currentTarget.value,
+                      reason: e.currentTarget.value === 'Cancelado' ? '' : null,
+                    });
                   }}
                 />
                 {actualStatus !== 'Pendiente' ? (
@@ -223,11 +240,11 @@ export function EditAppoinment({ appoinment, cancelFunc }: props) {
                     inputType="select"
                     name="reason"
                     span={3}
-                    label='Razón: '
+                    label="Razón: "
                     data={selectsData.reason}
                     onChangeSelectFunc={(e) => {
-                      form.setValues({reason: e.currentTarget.value})
-                   }} 
+                      form.setValues({ reason: e.currentTarget.value });
+                    }}
                   />
                 ) : (
                   <></>
