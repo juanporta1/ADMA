@@ -50,7 +50,7 @@ export function useCreateAppoinment(): UseCreateAppoinment {
       sex: values.sex,
       date: values.date,
       hour: values.hour,
-      observations: values.observations,
+      observations: values.observations ? values.observations?.trim() : null,
     };
 
     const response = await axios.post('http://localhost:3000/api/appoinment', newAppoinment);

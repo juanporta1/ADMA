@@ -23,7 +23,7 @@ export function UseEditAppoinment(): UseEditAppoinment {
         dni: appoinment.dni,
         status: appoinment.status,
         reason: appoinment.reason,
-        observations: appoinment.observations,
+        observations: appoinment.observations ? appoinment.observations?.trim() : null,
         date: appoinment.date,
         hour: appoinment.hour,
         sex: appoinment.sex,

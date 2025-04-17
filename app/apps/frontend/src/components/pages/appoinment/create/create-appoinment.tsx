@@ -150,7 +150,7 @@ export function CreateAppoinment() {
                   label="Fecha: "
                   placeholder="Ingrese Fecha"
                   minDate={new Date()}
-                  onChangeFunc={(date) => {
+                  onChangeDateFunc={(date: DateValue) => {
                     setActualDate(date)
                     form.setValues({date: date})
                   }}

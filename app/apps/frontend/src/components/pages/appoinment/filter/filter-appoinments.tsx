@@ -94,6 +94,10 @@ export function FilterAppoinments() {
     useDisclosure(false);
   const [editModal, { open: openEditModal, close: closeEditModal }] =
     useDisclosure(false);
+  const [
+    observationsModal,
+    { open: openObservationsModal, close: closeObservationsModal },
+  ] = useDisclosure(false);
   // Estado para almacenar el turno seleccionado para eliminar
 
   const [actualRegister, setActualRegister] = useState<Appoinment>();
@@ -162,7 +166,6 @@ export function FilterAppoinments() {
     // Mapea cada turno a una fila de la tabla
     return paginationData.map((appoinment) => (
       <AppoinmentRow
-        
         appoinment={appoinment}
         key={appoinment.ID_appoinment}
         clickDeleteFunc={() => {
@@ -172,6 +175,10 @@ export function FilterAppoinments() {
         clickEditFunc={() => {
           setActualRegister(appoinment);
           openEditModal();
+        }}
+        clickSeeObservationFunc={() => {
+          setActualRegister(appoinment);
+          openObservationsModal();
         }}
       />
     ));
@@ -217,6 +224,24 @@ export function FilterAppoinments() {
             cancelFunc={closeEditModal}
             onSubmit={handleOnSubmit}
           />
+        </Modal>
+        <Modal
+          opened={observationsModal}
+          onClose={closeObservationsModal}
+          centered
+          withCloseButton={false}
+        >
+          <Flex direction={'column'} gap={'xl'}>
+            <Title text="Observaciones" c={mainColor} />
+            <Text>{actualRegister?.observations}</Text>
+            <Button
+              color={mainColor}
+              variant="light"
+              onClick={closeObservationsModal}
+            >
+              Voler
+            </Button>
+          </Flex>
         </Modal>
         {/* Proveedor de configuración de fechas */}
         <DatesProvider
@@ -341,7 +366,7 @@ export function FilterAppoinments() {
                     />
                     {/* Selector para ordenar por campo */}
                     <FormColumn
-                      span={5}
+                      span={4}
                       name="orderBy"
                       label="Ordenar por: "
                       form={form}
@@ -351,7 +376,7 @@ export function FilterAppoinments() {
                     />
                     {/* Selector de hora */}
                     <FormColumn
-                      span={5}
+                      span={4}
                       name="onlyByHour"
                       label="Hora: "
                       form={form}
@@ -360,7 +385,7 @@ export function FilterAppoinments() {
                       notRequired
                     />
                     {/* Espacio vacío para alineación */}
-                    <Grid.Col span={2}></Grid.Col>
+                    <Grid.Col span={4}></Grid.Col>
 
                     {/* Botón para listar los turnos filtrados */}
                     <Grid.Col span={4}>
@@ -409,7 +434,7 @@ export function FilterAppoinments() {
                   <div>
                     {/* Tabla de resultados */}
                     <div
-                      style={{ minHeight: `${(registersPerPage + 1) * 60}px` }}
+                      style={{ minHeight: `${(registersPerPage + 1) * 45}px` }}
                     >
                       {/* Overlay de carga mientras se obtienen los datos */}
                       <LoadingOverlay visible={loadingRows} zIndex={10} />
