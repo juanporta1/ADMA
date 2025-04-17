@@ -1,7 +1,7 @@
 import { Global, Module } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import * as dotenv from 'dotenv';
-import { Appoinment } from "../../components/appoiment/appoinment.entity";
+import { Appoinment } from "../pages/appoiment/appoinment.entity";
 
 dotenv.config()
 
