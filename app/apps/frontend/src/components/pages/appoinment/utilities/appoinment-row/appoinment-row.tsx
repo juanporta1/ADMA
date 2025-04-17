@@ -2,8 +2,6 @@
 import { ActionIcon, Table, Text, Tooltip } from '@mantine/core';
 import { Appoinment } from '../../filter/filter-appoinments';
 import { useContext } from 'react';
- 
-import { useNavigate } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { faComment } from '@fortawesome/free-regular-svg-icons';

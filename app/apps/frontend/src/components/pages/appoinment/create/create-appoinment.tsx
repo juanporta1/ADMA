@@ -7,9 +7,7 @@ import {
   LoadingOverlay,
   Stack,
 } from '@mantine/core';
-import styles from './create-appoinment.module.css';
 import 'dayjs/locale/es';
- 
 // Importaciones de componentes personalizados
 import Title from '../../../utilities/title/title';
 import { useContext, useEffect, useState} from 'react';
