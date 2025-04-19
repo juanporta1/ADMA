@@ -14,7 +14,7 @@ import useGetEditSelectsData from '../../../../hooks/appoinment/edit/get-edit-se
 import useEditForm from '../../../../hooks/appoinment/edit/use-edit-form/use-edit-form';
 import { useDisclosure } from '@mantine/hooks';
 import { Appoinment } from '../filter/filter-appoinments';
-import UseEditAppoinment from '../../../../hooks/appoinment/edit/use-edit-appoinment/use-edit-appoinment';
+import { useAppoinment } from '../../../../hooks/appoinment/use-appoinment/use-appoinment';
 
 // Definición de la estructura del formulario
 export interface EditFormValues {
@@ -55,7 +55,7 @@ export function EditAppoinment({ appoinment, cancelFunc, onSubmit }: props) {
   const [actualDate, setActualDate] = useState<DateValue>(new Date());
   const selectsData = useGetEditSelectsData(); // Datos para los selectores
   const [visible, { open, close }] = useDisclosure(false);
-  const { editAppoinment } = UseEditAppoinment();
+  const { edit } = useAppoinment();
   // Función para cancelar y volver al listado
   const handleOnCancel = () => {
     cancelFunc();
@@ -65,7 +65,7 @@ export function EditAppoinment({ appoinment, cancelFunc, onSubmit }: props) {
   // Manejador del envío del formulario
   const handleOnSubmit = async (values: EditFormValues) => {
     open();
-    await editAppoinment(values, appoinment.ID_appoinment);
+    await edit(values, appoinment.ID_appoinment);
     cancelFunc();
     onSubmit();
     close();

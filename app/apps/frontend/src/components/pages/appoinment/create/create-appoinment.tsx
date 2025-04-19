@@ -20,7 +20,7 @@ import { useCreateForm } from '../../../../hooks/appoinment/create/use-create-fo
 import { FormColumn } from '../../../utilities/form-column/form-column';
 import { useGetCreateSelectsData } from '../../../../hooks/appoinment/create/get-create-selects-data/get-create-selects-data';
 import HourSelect from '../utilities/hour-select/hour-select';
-import { useCreateAppoinment } from '../../../../hooks/appoinment/create/use-create-appoinment/use-create-appoinment';
+import { useAppoinment } from '../../../../hooks/appoinment/use-appoinment/use-appoinment';
 
 // Definición de la estructura del formulario
 class FormValues {
@@ -46,7 +46,7 @@ export function CreateAppoinment() {
   const navigate = useNavigate();  // Navegación entre rutas
   const [visible, { open: openLoading, close: closeLoading }] = useDisclosure(false);  // Control del overlay de carga
   const selectsData = useGetCreateSelectsData();  // Datos para los selectores
-  const {createAppoinment} = useCreateAppoinment();  // Hook para crear turnos
+  const {create} = useAppoinment();  // Hook para crear turnos
   const [actualDate, setActualDate] = useState<DateValue>(new Date());  // Fecha actual
   // Función para cancelar y volver al listado
   const handleOnCancel = () => {
@@ -57,7 +57,7 @@ export function CreateAppoinment() {
   const handleOnSubmit = async (values: FormValues) => {
     try {
       openLoading();
-      await createAppoinment(values);
+      await create(values);
       closeLoading();
       navigate('/turnos/listar');
     } catch (err) {

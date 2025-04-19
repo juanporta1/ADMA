@@ -1,11 +1,11 @@
 import { act, renderHook } from '@testing-library/react';
 import * as React from 'react';
 
-import UseCreateAppoinment from './use-create-appoinment';
+import UseAppoinment from './use-appoinment';
 
-describe('UseCreateAppoinment', () => {
+describe('UseAppoinment', () => {
   it('should render successfully', () => {
-    const { result } = renderHook(() => UseCreateAppoinment());
+    const { result } = renderHook(() => UseAppoinment());
 
     expect(result.current.count).toBe(0);
 

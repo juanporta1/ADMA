@@ -29,11 +29,10 @@ import FormColumn from '../../../utilities/form-column/form-column';
 // Importación de hooks personalizados para lógica de turnos
 import useGetLoadingText from '../../../../hooks/appoinment/filter/get-loading-text/get-loading-text';
 import useGetFilterSelectsData from '../../../../hooks/appoinment/filter/get-filter-selects-data/get-filter-selects-data';
-import useFilterAppoinments from '../../../../hooks/appoinment/filter/use-filter-appoinments/use-filter-appoinments';
 import AppoinmentRow from '../utilities/appoinment-row/appoinment-row';
-import useDeleteAppoinment from '../../../../hooks/appoinment/filter/use-delete-appoinment/use-delete-appoinment';
 import DeleteModal from './delete-modal/delete-modal';
 import EditAppoinment from '../edit/edit-appoinment';
+import { useAppoinment } from '../../../../hooks/appoinment/use-appoinment/use-appoinment';
 
 // Interfaz para los parámetros de filtrado de turnos
 export interface FilterParams {
@@ -110,10 +109,8 @@ export function FilterAppoinments() {
   // Hook para obtener los datos de los selectores del filtro
   const selectsData = useGetFilterSelectsData();
   // Hook para filtrar turnos
-  const { filterAppoinments } = useFilterAppoinments();
-  // Hook para eliminar turnos
-  const { deleteAppoinment } = useDeleteAppoinment();
-
+  const { filter, remove } = useAppoinment();
+  
   // Función para limpiar los filtros y volver a listar todos los turnos
   const handleOnReset = () => {
     form!.reset();
@@ -123,7 +120,7 @@ export function FilterAppoinments() {
   // Función para eliminar un turno seleccionado
   const handleOnDelete = async () => {
     if (actualRegister) {
-      await deleteAppoinment(actualRegister.ID_appoinment);
+      await remove(actualRegister.ID_appoinment);
       closeDeleteModal();
       handleOnSubmit();
     }
@@ -141,8 +138,14 @@ export function FilterAppoinments() {
           ([key, value]) => value != null && value != ''
         )
       );
+      console.log(params);
       // Llama al hook para filtrar los turnos
-      const data = await filterAppoinments(params);
+      const data = await filter(params);
+      if (!data) {
+        setIsLoading('error');
+        finishLoadingRows();
+        return;
+      }
       setAppoinmentData(data);
       finishLoadingRows();
       setPage(1);

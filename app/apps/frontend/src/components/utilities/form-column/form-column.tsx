@@ -22,7 +22,7 @@ interface props {
 // Renderiza el campo adecuado según el tipo especificado
 export function FormColumn(props: props) {
   let inputElement: JSX.Element;
-
+  
   if (props.inputType === 'date') {
     // Campo de fecha
     inputElement = (
@@ -33,7 +33,10 @@ export function FormColumn(props: props) {
         placeholder={props.placeholder}
         minDate={props.minDate}
         required={props.notRequired === undefined ? true : false}
-        onChange={props.onChangeDateFunc}
+        onChange={props.onChangeDateFunc ? props.onChangeDateFunc : (date: DateValue) => {
+          props.form.setValues({[props.name] : date})
+        }}
+        
       />
     );
   } else if (props.inputType === 'select') {
@@ -58,7 +61,9 @@ export function FormColumn(props: props) {
         key={props.form.key(props.name)}
         {...props.form.getInputProps(props.name)}
         required={props.notRequired === undefined ? true : false}
-        onChange={props.onChangeSelectFunc}
+        onChange={props.onChangeSelectFunc ? props.onChangeSelectFunc : (e) => {
+          props.form.setValues({[props.name] : e.target.value})
+        }}
       >
         {Options}
       </NativeSelect>
