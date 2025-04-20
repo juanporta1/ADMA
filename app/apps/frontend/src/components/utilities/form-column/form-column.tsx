@@ -1,6 +1,5 @@
 // Componente reutilizable para renderizar diferentes tipos de campos de formulario en una columna de Grid
 import { Grid, NativeSelect, Textarea, TextInput } from '@mantine/core';
-import styles from './form-column.module.css';
 import { UseFormReturnType } from '@mantine/form';
 import { DatePickerInput, DateValue } from '@mantine/dates';
 import { ChangeEventHandler } from 'react';
