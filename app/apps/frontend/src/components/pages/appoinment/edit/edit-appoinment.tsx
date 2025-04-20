@@ -1,6 +1,5 @@
 // Importaciones de componentes de Mantine UI
-import { Box, Button, Flex, Grid, LoadingOverlay, Stack } from '@mantine/core';
-import styles from './edit-appoinment.module.css';
+import { Box, Button, Grid, LoadingOverlay, Stack } from '@mantine/core';
 import 'dayjs/locale/es';
 
 // Importaciones de componentes personalizados
