@@ -1,7 +1,10 @@
 import { Global, Module } from "@nestjs/common";
 import { DataSource } from "typeorm";
 import * as dotenv from 'dotenv';
-import { Appoinment } from "../pages/appoiment/appoinment.entity";
+import { Appointment } from "../pages/appoiment/appointment.entity";
+import { Neighborhood } from "../data-entities/entities/neighborhood.entity";
+import { Specie } from "../data-entities/entities/specie.entity";
+import { Reason } from "../data-entities/entities/reason.entity";
 
 dotenv.config()
 
@@ -17,7 +20,7 @@ dotenv.config()
                     const dataSource = new DataSource({
                         type:"postgres",
                         url: process.env.DB_HOST,
-                        entities:[Appoinment],
+                        entities:[Appointment, Neighborhood, Specie, Reason],
                         synchronize: true,
                     });
                     await dataSource.initialize();

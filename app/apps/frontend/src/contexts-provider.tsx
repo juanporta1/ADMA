@@ -1,5 +1,5 @@
 import { ReactNode } from 'react';
-import { AppoinmentProvider } from './providers/appoinment-provider';
+import { AppointmentProvider } from './providers/appointment-provider';
 import { ColorProvider } from './providers/color-provider';
 import { NeighborhoodProvider } from './providers/neighborhood-provider';
 import { ApiHostProvider } from './providers/api-host-provider';
@@ -13,7 +13,7 @@ export function ContextsProvider({ children }: props) {
     <ApiHostProvider>
       <NeighborhoodProvider>
         <ColorProvider>
-          <AppoinmentProvider>{children}</AppoinmentProvider>
+          <AppointmentProvider>{children}</AppointmentProvider>
         </ColorProvider>
       </NeighborhoodProvider>
     </ApiHostProvider>
