@@ -4,12 +4,12 @@ export class FilterAppointmentDto{
     lastName!: string;
     home?: string;
     phone?:string;
-    neighborhood?: string;
+    neighborhood?: number;
     dni?: string;
     date?: Date;
     size?: "Pequeño" | "Mediano" | "Grande";
     sex?: "Macho" | "Hembra" ;
-    specie?: "Perro" | "Gato" ;
+    specie?:number;
     startDate?: Date;
     endDate?: Date;
     orderBy?: "owner-asc" | "owner-desc" | "date-asc" | "date-desc" | "id-asc" | "id-desc";
