@@ -26,16 +26,13 @@ import {
 import NavLinksContainer from '../utilities/nav-links-containter/nav-links-container';
 export function Layout() {
   const [opened, { toggle }] = useDisclosure();
-  const navigate = useNavigate();
-  const mainNavLinkColor = '#7e6c88';
-  const childNavLinkColor = '#e6e0ee';
-  const navLinkTextColor = '#3e3e3e';
+  
   return (
     <MantineProvider>
       <AppShell
         header={{ height: { base: 60, md: 70, lg: 80 } }}
         navbar={{
-          width: { base: 200, md: 300, lg: 400 },
+          width: { base: 100, md: 150, lg: 200 },
           breakpoint: 'sm',
           collapsed: { mobile: !opened },
         }}

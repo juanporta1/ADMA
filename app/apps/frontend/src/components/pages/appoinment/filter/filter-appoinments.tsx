@@ -242,7 +242,7 @@ export function FilterAppoinments() {
               variant="light"
               onClick={closeObservationsModal}
             >
-              Voler
+              Volver
             </Button>
           </Flex>
         </Modal>
@@ -380,7 +380,7 @@ export function FilterAppoinments() {
                     {/* Selector de hora */}
                     <FormColumn
                       span={4}
-                      name="onlyByHour"
+                      name="byHour"
                       label="Hora: "
                       form={form}
                       inputType="select"
@@ -449,8 +449,9 @@ export function FilterAppoinments() {
                             <Table.Th>Apellido</Table.Th>
                             <Table.Th>Nombre</Table.Th>
                             <Table.Th>DNI</Table.Th>
-                            <Table.Th>Domicilio</Table.Th>
+                            
                             <Table.Th>Telefono</Table.Th>
+                            <Table.Th>Domicilio</Table.Th>
                             <Table.Th>Barrio</Table.Th>
                             <Table.Th>Especie</Table.Th>
                             <Table.Th>Sexo</Table.Th>

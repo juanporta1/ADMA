@@ -1,4 +1,4 @@
-import { Button, Flex, Modal } from '@mantine/core';
+import { Button, Flex, Modal, Text } from '@mantine/core';
 import styles from './delete-modal.module.css';
 import { useContext } from 'react';
 import { MainColorContext } from '../../../../../contexts/color-context';
@@ -14,9 +14,12 @@ export function DeleteModal(props: props) {
     <Modal
           opened={props.opened}
           onClose={props.onClose}
-          title="¿Seguro quiere borrar este registro?"
+          size={'lg'}
+          title="¿Seguro quiere borrar este registro? (Esta acción no es reversible)"
           centered
         >
+           
+
           <Flex gap="xl" justify="center" align="center">
             <Button variant="light" color={mainColor} onClick={props.handleOnDelete}>
               Sí, estoy seguro

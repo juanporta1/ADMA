@@ -57,8 +57,8 @@ export function useGetFilterSelectsData(): UseGetFilterSelectsData {
     ],
     neighborhood: [{ value: '', text: 'Todos' }, ...neighborhoodsData],
     orderBy: [
-      { value: 'id-desc', text: 'Más nuevo a más antiguo' },
-      { value: 'id-asc', text: 'Más antiguo a más nuevo' },
+      { value: 'id-desc', text: 'Orden de Carga(A-Z)' },
+      { value: 'id-asc', text: 'Orden de Carga(Z-A)' },
       { value: 'owner-asc', text: 'Dueño(A-Z)' },
       { value: 'owner-desc', text: 'Dueño(Z-A)' },
       { value: 'date-asc', text: 'Fecha(Ascendente)' },

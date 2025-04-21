@@ -33,7 +33,8 @@ export enum Reasons {
   postPartum = 'Post parto',
   // Male specific
   aggression = 'Agresividad',
-  territorialMarking = 'Marcaje territorial'
+  territorialMarking = 'Marcaje territorial',
+  other = 'Otro',
 }
 
 export enum Hours {

@@ -65,6 +65,9 @@ export function HourSelect(props: props) {
         color: 'yellow',
       });
   };
+  useEffect(()=>{
+    fetchDisabledHours();
+  }, [])
   useEffect(() => {
     props.form.setValues({ hour: '' });
     fetchDisabledHours();
