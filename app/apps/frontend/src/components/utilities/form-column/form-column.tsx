@@ -3,6 +3,7 @@ import { Grid, NativeSelect, Textarea, TextInput } from '@mantine/core';
 import { UseFormReturnType } from '@mantine/form';
 import { DatePickerInput, DateValue } from '@mantine/dates';
 import { ChangeEventHandler } from 'react';
+import { SelectData } from '../../../hooks/appointment/use-selects-data/use-selects-data';
 
 interface props {
   inputType: 'date' | 'text' | 'select' | 'textarea';
@@ -10,7 +11,7 @@ interface props {
   span: number;
   placeholder?: string;
   label?: string;
-  data?: { value: string; text: string; disabled?: boolean }[];
+  data?: SelectData[];
   name: string;
   notRequired?: boolean;
   minDate?: Date;

@@ -27,23 +27,36 @@ export class DataEntitiesService {
     return await this.reasonRepository.save(newReason);
   }
 
+  async createReasonsBulk(body: {reason: string}[]){
+    const newReasons = body.map((reason) => {
+      return this.reasonRepository.create(reason);
+    })
+    return await this.reasonRepository.save(newReasons);
+  }
+
   async createNeighborhood(body: {neighborhood: string}){
     const newNeighborhood = this.neighborhoodRepository.create(body);
     return await this.neighborhoodRepository.save(newNeighborhood);
   }
 
-  async createNeighborhoodsBulk(body: {neighborhoods: {neighborhood: string}[]}){
-    const newNeighborhoods = body.neighborhoods.map((neighborhood) => {
+  async createNeighborhoodsBulk(body: {neighborhood: string}[]){
+    const newNeighborhoods = body.map((neighborhood) => {
       return this.neighborhoodRepository.create(neighborhood);
     })
     return await this.neighborhoodRepository.save(newNeighborhoods);
   }
 
-  async getSpecies() {}
+  async getSpecies(){
+    return await this.specieRepository.find();
+  }
 
-  async getNeighborhoods() {}
+  async getNeighborhoods() {
+    return await this.neighborhoodRepository.find();
+  }
 
 
-  async getReasons() {}
+  async getReasons() {
+    return await this.reasonRepository.find();
+  }
 
 }

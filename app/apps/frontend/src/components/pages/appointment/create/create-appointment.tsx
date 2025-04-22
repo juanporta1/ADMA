@@ -19,8 +19,9 @@ import { useDisclosure } from '@mantine/hooks';
 import useCreateForm from '../../../../hooks/appointment/create/use-create-form/use-create-form';
 import { FormColumn } from '../../../utilities/form-column/form-column';
 import HourSelect from '../utilities/hour-select/hour-select';
-import useSelectsData from '../../../../hooks/appointment/use-selects-data/use-selects-data';
+import useSelectsData, { AppoinmentSelects } from '../../../../hooks/appointment/use-selects-data/use-selects-data';
 import useAppointment from '../../../../hooks/appointment/use-appointment/use-appointment';
+import { SelectsDataContext } from '../../../../contexts/selects-data-context';
 
 // Definición de la estructura del formulario
 class FormValues {
@@ -44,10 +45,23 @@ export function CreateAppointment() {
   const { form } = useCreateForm();  // Formulario personalizado
   const mainColor = useContext(MainColorContext);  // Color principal de la app
   const navigate = useNavigate();  // Navegación entre rutas
-  const [visible, { open: openLoading, close: closeLoading }] = useDisclosure(false);  // Control del overlay de carga
-  const selectsData = useSelectsData();  // Datos para los selectores
+  const [visible, { open: openLoading, close: closeLoading }] = useDisclosure(false);  
+  const {getSelectData} = useSelectsData();  // Control del overlay de carga
+  const [selectsData, setSelectsData] = useState<AppoinmentSelects>({
+    sex: [{value: "", text: ""}],
+    specie: [{value: "", text: ""}],
+    size: [{value: "", text: ""}],
+    neighborhood: [{value: "", text: ""}],
+    hour: [{value: "", text: ""}],
+    findBy: [{value: "", text: ""}],
+    status: [{value: "", text: ""}],
+    orderBy: [{value: "", text: ""}],
+    reason: [{value: "", text: ""}],
+    filterStatus: [{value: "", text: ""}],
+  });  // Datos para los selectores
   const {create} = useAppointment();  // Hook para crear turnos
-  const [actualDate, setActualDate] = useState<DateValue>(new Date());  // Fecha actual
+  const [actualDate, setActualDate] = useState<DateValue>(new Date());
+  console.log()  // Fecha actual
   // Función para cancelar y volver al listado
   const handleOnCancel = () => {
     navigate('/turnos/listar');
@@ -74,6 +88,15 @@ export function CreateAppointment() {
   // Inicialización de valores del formulario
   useEffect(() => {
     form.setValues({ hour: '', date: undefined });
+    const fetchData =async () => {
+      try {
+        const data = await getSelectData();
+        setSelectsData(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
   }, []);
   
   // Renderizado del componente

@@ -13,7 +13,8 @@ import useEditForm from '../../../../hooks/appointment/edit/use-edit-form/use-ed
 import { useDisclosure } from '@mantine/hooks';
 import { Appointment } from '../filter/filter-appointments';
 import { useAppointment } from '../../../../hooks/appointment/use-appointment/use-appointment';
-import useSelectsData from '../../../../hooks/appointment/use-selects-data/use-selects-data';
+import useSelectsData, { AppoinmentSelects } from '../../../../hooks/appointment/use-selects-data/use-selects-data';
+import { SelectsDataContext } from '../../../../contexts/selects-data-context';
 
 // Definición de la estructura del formulario
 export interface EditFormValues {
@@ -52,7 +53,19 @@ export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
   const mainColor = useContext(MainColorContext); // Color principal de la app
   const [actualStatus, setActualStatus] = useState<string>(appointment.status);
   const [actualDate, setActualDate] = useState<DateValue>(new Date());
-  const selectsData = useSelectsData(); // Datos para los selectores
+  const {getSelectData} = useSelectsData();
+  const [selectsData, setSelectsData] = useState<AppoinmentSelects>({
+    sex: [{value: "", text: ""}],
+    specie: [{value: "", text: ""}],
+    size: [{value: "", text: ""}],
+    neighborhood: [{value: "", text: ""}],
+    hour: [{value: "", text: ""}],
+    findBy: [{value: "", text: ""}],
+    status: [{value: "", text: ""}],
+    orderBy: [{value: "", text: ""}],
+    reason: [{value: "", text: ""}],
+    filterStatus: [{value: "", text: ""}],
+  }) // Datos para los selectores
   const [visible, { open, close }] = useDisclosure(false);
   const { edit } = useAppointment();
   // Función para cancelar y volver al listado
@@ -72,6 +85,16 @@ export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
 
   // Inicialización de valores del formulario
   useEffect(() => {
+
+    const fetchData =async () => {
+      try {
+        const data = await getSelectData();
+        setSelectsData(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
     const twoNames = appointment.owner.split(',');
     const dateWithoutTimezone = new Date(appointment.date + 'T00:00:00');
 

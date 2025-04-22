@@ -32,7 +32,9 @@ import AppointmentRow from '../utilities/appointment-row/appointment-row';
 import DeleteModal from './delete-modal/delete-modal';
 import EditAppointment from '../edit/edit-appointment';
 import { useAppointment } from '../../../../hooks/appointment/use-appointment/use-appointment';
-import useSelectsData from '../../../../hooks/appointment/use-selects-data/use-selects-data';
+import useSelectsData, { AppoinmentSelects } from '../../../../hooks/appointment/use-selects-data/use-selects-data';
+import { SelectsDataContext } from '../../../../contexts/selects-data-context';
+import { DataEntities } from '../../../../hooks/general/use-data-entities/use-data-entities';
 
 // Interfaz para los parámetros de filtrado de turnos
 export interface FilterParams {
@@ -107,7 +109,19 @@ export function FilterAppointments() {
   // Contexto para el color principal de la aplicación
   const mainColor = useContext(MainColorContext);
   // Hook para obtener los datos de los selectores del filtro
-  const selectsData = useSelectsData();
+  const {getSelectData} = useSelectsData();
+  const [selectsData, setSelectsData] = useState<AppoinmentSelects>({
+    sex: [{value: "", text: ""}],
+    specie: [{value: "", text: ""}],
+    size: [{value: "", text: ""}],
+    neighborhood: [{value: "", text: ""}],
+    hour: [{value: "", text: ""}],
+    findBy: [{value: "", text: ""}],
+    status: [{value: "", text: ""}],
+    orderBy: [{value: "", text: ""}],
+    reason: [{value: "", text: ""}],
+    filterStatus: [{value: "", text: ""}],
+  });
   // Hook para filtrar turnos
   const { filter, remove } = useAppointment();
   
@@ -189,7 +203,17 @@ export function FilterAppointments() {
 
   // useEffect para cargar los turnos al montar el componente
   useEffect(() => {
+    const fetchData =async () => {
+      try {
+        const data = await getSelectData();
+        setSelectsData(data);
+      } catch (err) {
+        console.log(err);
+      }
+    };
+    fetchData();
     handleOnSubmit();
+    
     console.log(mainColor);
   }, []);
 

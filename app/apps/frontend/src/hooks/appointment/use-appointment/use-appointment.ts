@@ -85,11 +85,11 @@ export function useAppointment(): UseAppointment {
           [findBy]: input,
           ...otherParams,
         };
-        res = await axios.get(`${host}/aappointment`, {
+        res = await axios.get(`${host}/appointment`, {
           params: newObject,
         });
       } else {
-        res = await axios.get(`${host}/aappointment`, {
+        res = await axios.get(`${host}/appointment`, {
           params,
         });
       }
@@ -103,7 +103,7 @@ export function useAppointment(): UseAppointment {
   async function remove(id: number) {
     try {
       await axios
-        .delete(`${host}/aappointment/${id}`)
+        .delete(`${host}/appointment/${id}`)
         .then((res) => {
           console.log(res.data);
           notifications.show({
@@ -126,7 +126,7 @@ export function useAppointment(): UseAppointment {
   async function edit(aappointment: EditFormValues, id: number): Promise<void> {
     try {
       const editedAppointment: Appointment = {
-        ID_aappointment: id,
+        ID_appointment: id,
         owner: `${aappointment.lastName},${aappointment.name}`,
         home: aappointment.home,
         neighborhood: aappointment.neighborhood,
@@ -143,7 +143,7 @@ export function useAppointment(): UseAppointment {
         specie: aappointment.specie,
         size: aappointment.size,
       };
-      const res = await axios.put(`${host}/aappointment/${id}`, editedAppointment);
+      const res = await axios.put(`${host}/appointment/${id}`, editedAppointment);
       console.log(res.data);
     } catch (error) {
       console.error(error);
