@@ -5,7 +5,7 @@ import { UpdateAppointmentDto } from '../appointment-DTOs/update-appointment.dto
 import { FilterAppointmentDto } from '../appointment-DTOs/filter-appointment.dto';
 import { QueryBuilder, ReturnDocument } from 'typeorm';
 import PDFDocumentWithTables from 'pdfkit-table';
-import type { Response } from 'express';
+import type { query, Response } from 'express';
 @Controller('appointment')
 export class AppointmentController {
 
@@ -38,7 +38,7 @@ export class AppointmentController {
     }
 
     @Get("pdf")
-    async generatePDF(@Res() res: Response, @Body() body: FilterAppointmentDto): Promise<void> {
+    async generatePDF(@Res() res: Response, @Query() querys: FilterAppointmentDto): Promise<void> {
 
         const doc = new PDFDocumentWithTables({
             info: {
@@ -59,7 +59,7 @@ export class AppointmentController {
         res.setHeader('Content-Disposition', 'attachment; filename=ADMA.pdf');
         doc.pipe(res);
         console.log("haciendo")
-        await this.appointmentService.generatePDF(doc, body);
+        await this.appointmentService.generatePDF(doc, querys);
         console.log("hecho")
         doc.end();
     }

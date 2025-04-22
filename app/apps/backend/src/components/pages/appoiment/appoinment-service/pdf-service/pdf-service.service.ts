@@ -21,7 +21,11 @@ export class PdfService {
     }
 
     async generateFooter(doc: PDFDocumnetWithTables) {
-
+        const date = new Date();
+        doc.moveDown(1)
+        doc.text(`Este registro fue generado el dia ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`, {
+            align: 'center',
+        });
     }
 
     generateRow(appointment: Appointment, id: number) {
@@ -46,7 +50,7 @@ export class PdfService {
                 { label: "Razon", property: "reason" },
                 { label: "Observaciones", property: "obs" }
             ],
-            rows: [...registers.map((a, id) => (this.generateRow(a, id)))]
+            rows: [...registers.map((a, id) => (this.generateRow(a, id).map(item => String(item))))]
 
         }, {
             minRowHeight: 30,

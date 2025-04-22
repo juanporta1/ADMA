@@ -17,6 +17,7 @@ export class AppointmentService {
   ) { }
 
   async getAll(querys: FilterAppointmentDto) {
+    
     if (Object.keys(querys).length != 0) {
       const filterQueryBuilder =
         this.appointmentRepository.createQueryBuilder('a');
@@ -155,15 +156,10 @@ export class AppointmentService {
 
   async generatePDF(doc: PDFDocumentWithTables, filters: FilterAppointmentDto) {
     const registers = await this.getAll(filters);
-    const registersPerPage = 15;
+    console.log(filters)
+
     this.pdfService.generateHeader(doc)
-    const groups: Appointment[][] = [];
-    
-
-    
     this.pdfService.newTable(doc, registers)
-      
-    
-
+    this.pdfService.generateFooter(doc)
   }
 }
