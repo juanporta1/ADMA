@@ -17,4 +17,5 @@ export class FilterAppointmentDto{
     byDate?: Date;
     byHour?: '8:00' | '10:00' | '12:00';
     values?: string[]
+    dateFilterWay?: "all" | "onlyOne" | "interval"
 }

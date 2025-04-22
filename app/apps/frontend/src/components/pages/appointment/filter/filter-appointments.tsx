@@ -37,12 +37,9 @@ import useSelectsData, {
   AppoinmentSelects,
 } from '../../../../hooks/appointment/use-selects-data/use-selects-data';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {
-  faArrowDown,
-  faFilePdf,
-  faPlus,
-} from '@fortawesome/free-solid-svg-icons';
+import { faFilePdf, faPlus } from '@fortawesome/free-solid-svg-icons';
 import ColumnsMenu from '../utilities/columns-menu/columns-menu';
+import DateFilter from './date-filter/date-filter';
 
 // Interfaz para los parámetros de filtrado de turnos
 export interface FilterParams {
@@ -94,6 +91,9 @@ export function FilterAppointments() {
   const [isLoading, setIsLoading] = useState<string | null>(null);
   // Estado para la página actual de la paginación
   const [actualPage, setPage] = useState(1);
+  const [dateFilterWay, setDateFilterWay] = useState<
+    'all' | 'interval' | 'onlyOne'
+  >('all');
   // Estado y funciones para mostrar/ocultar el overlay de carga de filas
   const [loadingRows, { open: startLoadingRows, close: finishLoadingRows }] =
     useDisclosure(false);
@@ -145,6 +145,7 @@ export function FilterAppointments() {
     orderBy: [{ value: '', text: '' }],
     reason: [{ value: '', text: '' }],
     filterStatus: [{ value: '', text: '' }],
+    dateFilterWay: [{ value: '', text: '' }],
   });
   // Hook para filtrar turnos
   const { filter, remove, generatePDF } = useAppointment();
@@ -152,6 +153,7 @@ export function FilterAppointments() {
   // Función para limpiar los filtros y volver a listar todos los turnos
   const handleOnReset = () => {
     form!.reset();
+    setDateFilterWay("all")
     handleOnSubmit();
   };
 
@@ -177,7 +179,7 @@ export function FilterAppointments() {
         )
       );
       console.log(params);
-      
+
       // Llama al hook para filtrar los turnos
       const data = await filter(params);
       if (!data) {
@@ -189,13 +191,13 @@ export function FilterAppointments() {
       finishLoadingRows();
       setPage(1);
       setIsLoading('loaded');
-      return params
+      return params;
     } catch (err) {
       setIsLoading('error');
       finishLoadingRows();
       setPage(1);
       console.log(err);
-      return {}
+      return {};
     }
   };
 
@@ -312,26 +314,25 @@ export function FilterAppointments() {
               <Flex direction="row" justify="space-between">
                 <Title text="Turnos" c={mainColor} />
                 <Flex gap={'md'}>
-                  <ColumnsMenu
-                    values={columnsValues}
-                    setValues={setColumnsValues}
-                  />
                   <Tooltip label="Generar PDF en base a los filtros actuales">
                     <Button
                       onClick={async () => {
                         const filterParams = await handleOnSubmit();
-                        console.log(filterParams)
-                        generatePDF(filterParams,columnsValues);
+                        console.log(filterParams);
+                        generatePDF(filterParams, columnsValues);
                       }}
                       leftSection={<FontAwesomeIcon icon={faFilePdf} />}
                       color={mainColor}
                       variant="filled"
-                      style={{ width: '150px', marginRight: '20px' }}
+                      style={{ width: '150px' }}
                     >
                       Generar PDF
                     </Button>
                   </Tooltip>
-
+                  <ColumnsMenu
+                    values={columnsValues}
+                    setValues={setColumnsValues}
+                  />
                   <Tooltip label="Nuevo Turno">
                     <Button
                       onClick={() => {
@@ -355,24 +356,29 @@ export function FilterAppointments() {
                     {/* Campo para fecha de inicio */}
                     <FormColumn
                       form={form}
-                      inputType="date"
-                      name="startDate"
-                      span={5}
-                      label="Intervalo de Fecha"
-                      placeholder="Desde"
+                      inputType="select"
+                      name="dateFilterWay"
+                      span={4}
                       notRequired
+                      label="Filtros por fecha: "
+                      data={selectsData.dateFilterWay}
+                      onChangeSelectFunc={(e) => {
+                        
+                        setDateFilterWay(
+                          e.currentTarget.value as
+                            | 'all'
+                            | 'interval'
+                            | 'onlyOne'
+                        );
+                        form.setValues({
+                          dateFilterWay: e.currentTarget.value,
+                          date: null, 
+                          startDate: null,
+                          endDate: null
+                        });
+                      }}
                     />
-
-                    {/* Campo para fecha de fin */}
-                    <FormColumn
-                      label=" "
-                      placeholder="Hasta"
-                      name="endDate"
-                      form={form}
-                      inputType="date"
-                      span={5}
-                      notRequired
-                    />
+                    {<DateFilter type={dateFilterWay} form={form}/>}
                     {/* Selector para buscar por DNI o dueño */}
                     <FormColumn
                       form={form}

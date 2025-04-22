@@ -13,13 +13,16 @@ export function AppointmentProvider({ children }: props) {
       specie: '',
       size: '',
       neighborhood: '',
-      startDate: new Date(),
+      startDate: null,
       endDate: null,
       input: '',
       status: '',
       orderBy: 'id-desc',
       byHour: '',
-      findBy: 'dni'
+      findBy: 'dni',
+      dateFilterWay: "all",
+      date: null,
+      all: ""
     }
   });
   return (

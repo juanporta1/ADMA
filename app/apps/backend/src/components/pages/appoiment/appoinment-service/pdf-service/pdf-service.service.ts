@@ -6,7 +6,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Neighborhood } from '../../../../data-entities/entities/neighborhood.entity';
 import { Specie } from '../../../../data-entities/entities/specie.entity';
-import { title } from 'process';
 
 interface TextElement {
   title: string;
@@ -50,6 +49,13 @@ export class PdfService {
       const date = new Date(filters.endDate);
       textsList.push({
         title: 'Son antes de',
+        value: `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`,
+      });
+    }
+    if(filters.date){
+      const date = new Date(filters.date);
+      textsList.push({
+        title: 'Son unicamente del día',
         value: `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`,
       });
     }

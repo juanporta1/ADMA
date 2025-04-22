@@ -1,4 +1,4 @@
-import { useState, useCallback, useContext } from 'react';
+import { useContext } from 'react';
 import {
   Appointment,
   FilterParams,
@@ -66,10 +66,7 @@ export function useAppointment(): UseAppointment {
       observations: values.observations ? values.observations?.trim() : null,
     };
 
-    const response = await axios.post(
-      `${host}/appointment`,
-      newAppointment
-    );
+    const response = await axios.post(`${host}/appointment`, newAppointment);
     console.log(response.data);
 
     notifications.show({
@@ -132,8 +129,7 @@ export function useAppointment(): UseAppointment {
   async function edit(appointment: EditFormValues, id: number): Promise<void> {
     try {
       const editedAppointment: NewAppointment = {
-        
-        lastName: appointment.lastName.trim(), 
+        lastName: appointment.lastName.trim(),
         name: appointment.name.trim(),
         home: appointment.home.trim(),
         neighborhood: Number(appointment.neighborhood),
@@ -150,31 +146,36 @@ export function useAppointment(): UseAppointment {
         specie: Number(appointment.specie),
         size: appointment.size,
       };
-      const res = await axios.put(`${host}/appointment/${id}`, editedAppointment);
+      const res = await axios.put(
+        `${host}/appointment/${id}`,
+        editedAppointment
+      );
       console.log(res.data);
     } catch (error) {
       console.error(error);
       throw error; // Lanzar nuevamente el error para que sea manejado por el llamad
     }
   }
-    async function generatePDF(filters: FilterParams, values: string[]): Promise<void> {
-      try{
-        const res = await axios.get(`${host}/appointment/pdf`, {
-          responseType: 'blob',
-          params: {...filters, values: values},
-          
-        })
+  async function generatePDF(
+    filters: FilterParams,
+    values: string[]
+  ): Promise<void> {
+    try {
+      const res = await axios.get(`${host}/appointment/pdf`, {
+        responseType: 'blob',
+        params: { ...filters, values: values },
+      });
 
-        const blob = res.data;
-        const link = document.createElement('a');
-        const url = window.URL.createObjectURL(blob);  
-        link.href = url;
-        link.download = 'ADMA.pdf'; 
-        link.click();
-      }catch(err){
-        throw err;
-      }
+      const blob = res.data;
+      const link = document.createElement('a');
+      const url = window.URL.createObjectURL(blob);
+      link.href = url;
+      link.download = 'ADMA.pdf';
+      link.click();
+    } catch (err) {
+      throw err;
     }
+  }
 
   return { filter, create, edit, remove, generatePDF };
 }

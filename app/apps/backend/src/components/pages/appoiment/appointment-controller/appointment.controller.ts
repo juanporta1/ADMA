@@ -4,7 +4,6 @@ import {
   Delete,
   Get,
   Param,
-  Patch,
   Post,
   Put,
   Query,
@@ -14,9 +13,8 @@ import { CreateAppointmentDTO } from '../appointment-DTOs/create-appointment.dto
 import { AppointmentService } from '../appoinment-service/appointment.service';
 import { UpdateAppointmentDto } from '../appointment-DTOs/update-appointment.dto';
 import { FilterAppointmentDto } from '../appointment-DTOs/filter-appointment.dto';
-import { QueryBuilder, ReturnDocument } from 'typeorm';
 import PDFDocumentWithTables from 'pdfkit-table';
-import type { query, Response } from 'express';
+import type {  Response } from 'express';
 @Controller('appointment')
 export class AppointmentController {
   constructor(private appointmentService: AppointmentService) {}

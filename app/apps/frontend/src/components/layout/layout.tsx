@@ -7,7 +7,9 @@ import {
   Center,
   createTheme,
   Divider,
+  Flex,
   Group,
+  Image,
   MantineProvider,
   NavLink,
   Stack,
@@ -26,7 +28,7 @@ import {
 import NavLinksContainer from '../utilities/nav-links-containter/nav-links-container';
 export function Layout() {
   const [opened, { toggle }] = useDisclosure();
-  
+
   return (
     <MantineProvider>
       <AppShell
@@ -39,14 +41,26 @@ export function Layout() {
         padding="md"
       >
         <AppShell.Header style={{ backgroundColor: '#6c5b7b', border: 'none' }}>
+          <Flex direction={"row"}>
           <Group h="100%" px="md">
             <Burger
               opened={opened}
               onClick={toggle}
               hiddenFrom="sm"
               size="sm"
+              style={{ marginRight: '10px' }}
             />
+            
           </Group>
+          
+          </Flex>
+          
+          {/* <Image
+              src="https://altagracia.gob.ar/wp-content/uploads/2022/11/SALUD_ANIMAL_LOGO-removebg-preview.png"
+              h={"60px"}
+              radius={"md"}
+              style={{zIndex: 1000}}
+            /> */}
         </AppShell.Header>
         <AppShell.Navbar style={{ backgroundColor: '#f3f0f9' }}>
           <Stack h="100%" justify="space-between">

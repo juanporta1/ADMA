@@ -1,11 +1,10 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { DataSource, Filter, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateAppointmentDTO } from '../appointment-DTOs/create-appointment.dto';
 import { Appointment } from '../appointment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateAppointmentDto } from '../appointment-DTOs/update-appointment.dto';
 import { FilterAppointmentDto } from '../appointment-DTOs/filter-appointment.dto';
-import fs from 'fs';
 import PDFDocumentWithTables from 'pdfkit-table';
 import { PdfService } from './pdf-service/pdf-service.service';
 @Injectable()
@@ -47,14 +46,39 @@ export class AppointmentService {
         });
       if (querys.date)
         filterQueryBuilder.andWhere('a.date = :date', { date: querys.date });
-      if (querys.startDate)
-        filterQueryBuilder.andWhere('a.date >= :startDate', {
-          startDate: new Date(querys.startDate),
-        });
-      if (querys.endDate)
-        filterQueryBuilder.andWhere('a.date <= :endDate', {
-          endDate: new Date(querys.endDate),
-        });
+      if (querys.dateFilterWay) {
+        if (querys.dateFilterWay === 'interval') {
+          if (querys.startDate) {
+            const date = new Date(querys.startDate);
+            const findDate = `${date.getFullYear()}-${
+              date.getMonth() + 1
+            }-${date.getDate()}`;
+            filterQueryBuilder.andWhere('a.date >= :startDate', {
+              startDate: findDate,
+            });
+          }
+          if (querys.endDate) {
+            const date = new Date(querys.endDate);
+            const findDate = `${date.getFullYear()}-${
+              date.getMonth() + 1
+            }-${date.getDate()}`;
+            filterQueryBuilder.andWhere('a.date <= :endDate', {
+              endDate: findDate,
+            });
+          }
+        } else if (querys.dateFilterWay === 'onlyOne') {
+          if (querys.date) {
+            const date = new Date(querys.date);
+            const findDate = `${date.getFullYear()}-${
+              date.getMonth() + 1
+            }-${date.getDate()}`;
+            filterQueryBuilder.andWhere('a.date = :date', {
+              date: findDate,
+            });
+          }
+        }
+      }
+
       if (querys.dni)
         filterQueryBuilder.andWhere('a.dni ILIKE :dni', {
           dni: `${querys.dni}%`,
@@ -79,10 +103,7 @@ export class AppointmentService {
         filterQueryBuilder.andWhere('a.status = :status', {
           status: querys.status,
         });
-      if (querys.byDate)
-        filterQueryBuilder.andWhere('a.date = :byHour', {
-          byHour: querys.byDate,
-        });
+
       if (querys.byHour)
         filterQueryBuilder.andWhere(`a.hour = :hour`, { hour: querys.byHour });
       filterQueryBuilder.leftJoinAndSelect('a.neighborhood', 'neighborhood');

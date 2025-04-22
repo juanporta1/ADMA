@@ -1,5 +1,6 @@
 import { useState, useCallback, useContext } from 'react';
 import useDataEntities from '../../general/use-data-entities/use-data-entities';
+import { text } from 'stream/consumers';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface UseSelectsData {
@@ -17,6 +18,7 @@ export interface AppoinmentSelects {
   orderBy: SelectData[];
   hour: SelectData[];
   reason: SelectData[];
+  dateFilterWay: SelectData[];
 }
 export interface SelectData {
   value: string | number;
@@ -27,22 +29,22 @@ export interface SelectData {
 export function useSelectsData(): UseSelectsData {
   const { getData } = useDataEntities();
   const getSelectData = async () => {
-    const {neighborhoods, reasons, species} = await getData();
+    const { neighborhoods, reasons, species } = await getData();
     const neighborhoodsData: SelectData[] = neighborhoods.map((neig) => ({
       value: neig.ID_neighborhood,
       text: neig.neighborhood,
     }));
-  
+
     const speciesData: SelectData[] = species.map((spec) => ({
       value: spec.ID_specie,
       text: spec.specie,
     }));
-  
+
     const reasonsData: SelectData[] = reasons.map((reason) => ({
       value: reason.ID_reason,
       text: reason.reason,
     }));
-  
+
     return {
       findBy: [
         { text: 'DNI', value: 'dni' },
@@ -71,6 +73,7 @@ export function useSelectsData(): UseSelectsData {
         { value: 'No Realizado', text: 'No Realizado' },
       ],
       status: [
+        { value: '', text: 'Todos' },
         { value: 'Pendiente', text: 'Pendiente' },
         { value: 'Cancelado', text: 'Cancelado' },
       ],
@@ -93,8 +96,13 @@ export function useSelectsData(): UseSelectsData {
         { value: '', text: 'Seleccione un motivo', disabled: true },
         ...reasonsData,
       ],
+      dateFilterWay: [
+        { value: 'all', text: 'Todas' },
+        { value: 'interval', text: 'Por Intervalo' },
+        { value: 'onlyOne', text: 'Por dia único' },
+      ],
     };
-  }
+  };
   return { getSelectData }; // return the useDataEntities hook objec
 }
 
