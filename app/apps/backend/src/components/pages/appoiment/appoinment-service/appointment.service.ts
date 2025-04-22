@@ -91,7 +91,9 @@ export class AppointmentService {
 
       return await filterQueryBuilder.getMany();
     } else {
-      return await this.appointmentRepository.find();
+      return await this.appointmentRepository.find({
+        relations: ['neighborhood', 'specie', 'reason']
+      });
     }
   }
   async createAppointmentsBulk(
@@ -153,16 +155,15 @@ export class AppointmentService {
 
   async generatePDF(doc: PDFDocumentWithTables, filters: FilterAppointmentDto) {
     const registers = await this.getAll(filters);
+    const registersPerPage = 15;
     this.pdfService.generateHeader(doc)
-    this.pdfService.newTable(doc)
-    registers.forEach((a, id) => {
-      id++;
-      this.pdfService.generateRow(doc, a, id)
-      if (id % 10 === 0) {
-        doc.addPage()
-      }
-    })
+    const groups: Appointment[][] = [];
+    
 
     
+    this.pdfService.newTable(doc, registers)
+      
+    
+
   }
 }

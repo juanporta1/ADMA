@@ -45,6 +45,7 @@ export class AppointmentController {
                 Title: "ADMA",
             },
             layout: 'landscape',
+
             size: 'A4',
             margins: {
                 top: 25,
@@ -53,13 +54,13 @@ export class AppointmentController {
                 right: 20
             }
         })
-        
+        doc.moveDown(2);
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', 'attachment; filename=ADMA.pdf');
         doc.pipe(res);
-
+        console.log("haciendo")
         await this.appointmentService.generatePDF(doc, body);
-
+        console.log("hecho")
         doc.end();
     }
 }

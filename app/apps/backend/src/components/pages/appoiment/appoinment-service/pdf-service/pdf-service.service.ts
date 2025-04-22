@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import PDFDocumnetWithTables from 'pdfkit-table';
 import { FilterAppointmentDto } from '../../appointment-DTOs/filter-appointment.dto';
 import { Appointment } from '../../appointment.entity';
+import { register } from 'module';
 
 
 
@@ -22,48 +23,36 @@ export class PdfService {
     async generateFooter(doc: PDFDocumnetWithTables) {
 
     }
-    generateRow(doc: PDFDocumnetWithTables, appointment: Appointment, id: number) {
-        const neighborhoodName = appointment.neighborhood?.neighborhood || 'No especificado';
-        const specieName = appointment.specie?.specie || 'No especificado';
-        
-        doc.table({
-            rows: [[
-                id.toString(), 
-                appointment.lastName, 
-                appointment.name, 
-                appointment.dni, 
-                neighborhoodName,
-                appointment.home, 
-                appointment.sex, 
-                appointment.size, 
-                specieName
-            ]]
-        }, {
-            columnsSize: [30, 130, 130, 130, 130, 130, 50, 60, 47],
-        });
-        
-        const obs = appointment.observations?.trim() || '';
-        doc.table({
-            rows: [["Observaciones", obs]]
-        });
+
+    generateRow(appointment: Appointment, id: number) {
+        return [(id + 1).toString(), appointment.lastName, appointment.name, appointment.dni, appointment?.phone || "Sin Telefono", appointment.neighborhood?.neighborhood || " ", appointment.home, appointment.sex, appointment.size, appointment.specie?.specie || " ", appointment.status, appointment?.reason || "Sin Rázon", appointment?.observations || "Sin Observaciones"]
     }
 
-    async newTable(doc: PDFDocumnetWithTables) {
-        doc.x = 15;
+    async newTable(doc: PDFDocumnetWithTables, registers: Appointment[]) {
+        const registersPerPage = 15
         doc.table({
             headers: [
-                { label: "N°", property: "number", width: 30 },
-                { label: "Apellido", property: "lastName", width: 130 },
-                { label: "Nombre", property: "name", width: 130 },
-                { label: "DNI", property: "dni", width: 130 },
-                { label: "Barrio", property: "neighborhood", width: 130 },
-                { label: "Domicilio", property: "home", width: 130 },
-                { label: "Sexo", property: "sex", width: 50 },
-                { label: "Tamaño", property: "size", width: 60 },
-                { label: "Especie", property: "specie", width: 47 }
+                { label: "N°", property: "number" },
+                { label: "Apellido", property: "lastName" },
+                { label: "Nombre", property: "name" },
+                { label: "DNI", property: "dni" },
+                { label: "Teléfono", property: "phone" },
+                { label: "Barrio", property: "neighborhood" },
+                { label: "Domicilio", property: "home" },
+                { label: "Sexo", property: "sex" },
+                { label: "Tamaño", property: "size" },
+                { label: "Especie", property: "specie" },
+                { label: "Estado", property: "status" },
+                { label: "Razon", property: "reason" },
+                { label: "Observaciones", property: "obs" }
             ],
-            
+            rows: [...registers.map((a, id) => (this.generateRow(a, id)))]
+
+        }, {
+            minRowHeight: 30,
+            padding: [1, 1, 1, 1]
         })
+
     }
 
 }

@@ -67,7 +67,7 @@ export function useAppointment(): UseAppointment {
     };
 
     const response = await axios.post(
-      'http://localhost:3000/api/appointment',
+      `${host}/appointment`,
       newAppointment
     );
     console.log(response.data);
@@ -157,16 +157,23 @@ export function useAppointment(): UseAppointment {
       throw error; // Lanzar nuevamente el error para que sea manejado por el llamad
     }
   }
-  async function generatePDF(filters: FilterParams): Promise<void> {
-    try{
-      axios.get(`${host}/appointment/pdf`, {
-        responseType: 'blob',
-        params: filters,
-      })
-    }catch(err){
-      throw err;
+    async function generatePDF(filters: FilterParams): Promise<void> {
+      try{
+        const res = await axios.get(`${host}/appointment/pdf`, {
+          responseType: 'blob',
+          params: filters,
+        })
+
+        const blob = res.data;
+        const link = document.createElement('a');
+        const url = window.URL.createObjectURL(blob);  
+        link.href = url;
+        link.download = 'ADMA.pdf'; 
+        link.click();
+      }catch(err){
+        throw err;
+      }
     }
-  }
 
   return { filter, create, edit, remove, generatePDF };
 }

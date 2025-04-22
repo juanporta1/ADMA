@@ -35,6 +35,8 @@ import { useAppointment } from '../../../../hooks/appointment/use-appointment/us
 import useSelectsData, { AppoinmentSelects } from '../../../../hooks/appointment/use-selects-data/use-selects-data';
 import { SelectsDataContext } from '../../../../contexts/selects-data-context';
 import { DataEntities } from '../../../../hooks/general/use-data-entities/use-data-entities';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFilePdf, faNewspaper, faPlus } from '@fortawesome/free-solid-svg-icons';
 
 // Interfaz para los parámetros de filtrado de turnos
 export interface FilterParams {
@@ -58,24 +60,24 @@ export interface Appointment {
   lastName: string;
   name: string // Nombre del dueño
   home: string; // Domicilio
-  neighborhood: {ID_neighborhood: number, neighborhood: string}; // Barrio
+  neighborhood: { ID_neighborhood: number, neighborhood: string }; // Barrio
   phone: string | null; // Teléfono
   dni: string; // DNI del dueño
   date: Date; // Fecha del turno
   hour: string; // Hora del turno
   size: 'Grande' | 'Pequeño' | 'Mediano'; // Tamaño de la mascota
   sex: 'Macho' | 'Hembra'; // Sexo de la mascota
-  specie: {ID_specie: number, specie: string}; // Especie de la mascota
+  specie: { ID_specie: number, specie: string }; // Especie de la mascota
   status:
-    | 'Pendiente'
-    | 'Cancelado'
-    | 'Ausentado'
-    | 'Esperando Actualización'
-    | 'En Proceso'
-    | 'Realizado'
-    | 'No Realizado'; // Estado del turno
+  | 'Pendiente'
+  | 'Cancelado'
+  | 'Ausentado'
+  | 'Esperando Actualización'
+  | 'En Proceso'
+  | 'Realizado'
+  | 'No Realizado'; // Estado del turno
   observations: string | null; // Observaciones adicionales
-  reason: {ID_reason: number, reason: string} | null; // Razón de cancelación u otra
+  reason: { ID_reason: number, reason: string } | null; // Razón de cancelación u otra
 }
 
 // Componente principal para filtrar y mostrar turnos
@@ -111,22 +113,22 @@ export function FilterAppointments() {
   // Contexto para el color principal de la aplicación
   const mainColor = useContext(MainColorContext);
   // Hook para obtener los datos de los selectores del filtro
-  const {getSelectData} = useSelectsData();
+  const { getSelectData } = useSelectsData();
   const [selectsData, setSelectsData] = useState<AppoinmentSelects>({
-    sex: [{value: "", text: ""}],
-    specie: [{value: "", text: ""}],
-    size: [{value: "", text: ""}],
-    neighborhood: [{value: "", text: ""}],
-    hour: [{value: "", text: ""}],
-    findBy: [{value: "", text: ""}],
-    status: [{value: "", text: ""}],
-    orderBy: [{value: "", text: ""}],
-    reason: [{value: "", text: ""}],
-    filterStatus: [{value: "", text: ""}],
+    sex: [{ value: "", text: "" }],
+    specie: [{ value: "", text: "" }],
+    size: [{ value: "", text: "" }],
+    neighborhood: [{ value: "", text: "" }],
+    hour: [{ value: "", text: "" }],
+    findBy: [{ value: "", text: "" }],
+    status: [{ value: "", text: "" }],
+    orderBy: [{ value: "", text: "" }],
+    reason: [{ value: "", text: "" }],
+    filterStatus: [{ value: "", text: "" }],
   });
   // Hook para filtrar turnos
-  const { filter, remove, generatePDF} = useAppointment();
-  
+  const { filter, remove, generatePDF } = useAppointment();
+
   // Función para limpiar los filtros y volver a listar todos los turnos
   const handleOnReset = () => {
     form!.reset();
@@ -206,7 +208,7 @@ export function FilterAppointments() {
 
   // useEffect para cargar los turnos al montar el componente
   useEffect(() => {
-    const fetchData =async () => {
+    const fetchData = async () => {
       try {
         const data = await getSelectData();
         setSelectsData(data);
@@ -216,7 +218,7 @@ export function FilterAppointments() {
     };
     fetchData();
     handleOnSubmit();
-    
+
     console.log(mainColor);
   }, []);
 
@@ -228,7 +230,7 @@ export function FilterAppointments() {
       }, 2000);
       return () => clearTimeout(timeout);
     } else {
-      return () => {};
+      return () => { };
     }
   }, [isLoading]);
 
@@ -288,25 +290,27 @@ export function FilterAppointments() {
               <Flex direction="row" justify="space-between">
                 <Title text="Turnos" c={mainColor} />
                 <Flex gap={"md"}>
-                <Button
-                  onClick={async () => {
-                    await handleOnSubmit();
-                    generatePDF(filterParams);
-                  }}
-                  color={mainColor}
-                  variant="filled"
-                  style={{ width: '200px' }}
-                >
-                  Generar PDF
-                </Button>
-                <Button onClick={() => {
+                  <Button
+                    onClick={async () => {
+                      await handleOnSubmit();
+                      generatePDF(filterParams);
+                    }}
+                    leftSection={<FontAwesomeIcon icon={faFilePdf} />}
+                    color={mainColor}
+                    variant="filled"
+                    style={{ width: '200px' }}
+                  >
+                    Generar PDF
+                  </Button>
+                  <Button onClick={() => {
                     navigate('/turnos/nuevo');
                   }}
-                  color={mainColor}
-                  variant="filled"
-                  style={{ width: '200px' }}>Nuevo</Button>
+                    leftSection={<FontAwesomeIcon icon={faPlus} />}
+                    color={mainColor}
+                    variant="filled"
+                    style={{ width: '200px' }}>Nuevo</Button>
                 </Flex>
-                
+
               </Flex>
 
               {/* Formulario de filtros */}
@@ -486,7 +490,7 @@ export function FilterAppointments() {
                             <Table.Th>Apellido</Table.Th>
                             <Table.Th>Nombre</Table.Th>
                             <Table.Th>DNI</Table.Th>
-                            
+
                             <Table.Th>Telefono</Table.Th>
                             <Table.Th>Domicilio</Table.Th>
                             <Table.Th>Barrio</Table.Th>
