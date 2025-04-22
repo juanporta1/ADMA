@@ -15,5 +15,6 @@ export class FilterAppointmentDto{
     orderBy?: "owner-asc" | "owner-desc" | "date-asc" | "date-desc" | "id-asc" | "id-desc";
     status?: "Pendiente" | "Cancelado" | "Realizado" | "Ausentado" | "En Proceso" | "No Realizado";
     byDate?: Date;
-    byHour?: '8:00' | '10:00' | '12:00'
+    byHour?: '8:00' | '10:00' | '12:00';
+    values?: string[]
 }

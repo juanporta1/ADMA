@@ -9,6 +9,7 @@ import {
   Pagination,
   Table,
   Text,
+  Tooltip,
 } from '@mantine/core';
 
 // Importación de proveedor de fechas y configuración de idioma
@@ -32,11 +33,16 @@ import AppointmentRow from '../utilities/appointment-row/appointment-row';
 import DeleteModal from './delete-modal/delete-modal';
 import EditAppointment from '../edit/edit-appointment';
 import { useAppointment } from '../../../../hooks/appointment/use-appointment/use-appointment';
-import useSelectsData, { AppoinmentSelects } from '../../../../hooks/appointment/use-selects-data/use-selects-data';
-import { SelectsDataContext } from '../../../../contexts/selects-data-context';
-import { DataEntities } from '../../../../hooks/general/use-data-entities/use-data-entities';
+import useSelectsData, {
+  AppoinmentSelects,
+} from '../../../../hooks/appointment/use-selects-data/use-selects-data';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faFilePdf, faNewspaper, faPlus } from '@fortawesome/free-solid-svg-icons';
+import {
+  faArrowDown,
+  faFilePdf,
+  faPlus,
+} from '@fortawesome/free-solid-svg-icons';
+import ColumnsMenu from '../utilities/columns-menu/columns-menu';
 
 // Interfaz para los parámetros de filtrado de turnos
 export interface FilterParams {
@@ -58,26 +64,26 @@ export interface FilterParams {
 export interface Appointment {
   ID_appointment: number; // ID único del turno
   lastName: string;
-  name: string // Nombre del dueño
+  name: string; // Nombre del dueño
   home: string; // Domicilio
-  neighborhood: { ID_neighborhood: number, neighborhood: string }; // Barrio
+  neighborhood: { ID_neighborhood: number; neighborhood: string }; // Barrio
   phone: string | null; // Teléfono
   dni: string; // DNI del dueño
   date: Date; // Fecha del turno
   hour: string; // Hora del turno
   size: 'Grande' | 'Pequeño' | 'Mediano'; // Tamaño de la mascota
   sex: 'Macho' | 'Hembra'; // Sexo de la mascota
-  specie: { ID_specie: number, specie: string }; // Especie de la mascota
+  specie: { ID_specie: number; specie: string }; // Especie de la mascota
   status:
-  | 'Pendiente'
-  | 'Cancelado'
-  | 'Ausentado'
-  | 'Esperando Actualización'
-  | 'En Proceso'
-  | 'Realizado'
-  | 'No Realizado'; // Estado del turno
+    | 'Pendiente'
+    | 'Cancelado'
+    | 'Ausentado'
+    | 'Esperando Actualización'
+    | 'En Proceso'
+    | 'Realizado'
+    | 'No Realizado'; // Estado del turno
   observations: string | null; // Observaciones adicionales
-  reason: { ID_reason: number, reason: string } | null; // Razón de cancelación u otra
+  reason: { ID_reason: number; reason: string } | null; // Razón de cancelación u otra
 }
 
 // Componente principal para filtrar y mostrar turnos
@@ -88,7 +94,6 @@ export function FilterAppointments() {
   const [isLoading, setIsLoading] = useState<string | null>(null);
   // Estado para la página actual de la paginación
   const [actualPage, setPage] = useState(1);
-  const [filterParams, setFilterParams] = useState<FilterParams>({}); // Estado para almacenar los parámetros de filtrado
   // Estado y funciones para mostrar/ocultar el overlay de carga de filas
   const [loadingRows, { open: startLoadingRows, close: finishLoadingRows }] =
     useDisclosure(false);
@@ -106,25 +111,40 @@ export function FilterAppointments() {
   // Estado para almacenar el turno seleccionado para eliminar
 
   const [actualRegister, setActualRegister] = useState<Appointment>();
+
+  const [columnsValues, setColumnsValues] = useState<string[]>([
+    'Dueño',
+    'Fecha',
+    'Hora',
+    'DNI',
+    'Teléfono',
+    'Barrio',
+    'Domicilio',
+    'Sexo',
+    'Tamaño',
+    'Especie',
+  ]);
+
   // Cantidad de registros por página
   const registersPerPage = 7;
   // Contexto del formulario de filtros
   const form = useContext(AppointmentContext);
+
   // Contexto para el color principal de la aplicación
   const mainColor = useContext(MainColorContext);
   // Hook para obtener los datos de los selectores del filtro
   const { getSelectData } = useSelectsData();
   const [selectsData, setSelectsData] = useState<AppoinmentSelects>({
-    sex: [{ value: "", text: "" }],
-    specie: [{ value: "", text: "" }],
-    size: [{ value: "", text: "" }],
-    neighborhood: [{ value: "", text: "" }],
-    hour: [{ value: "", text: "" }],
-    findBy: [{ value: "", text: "" }],
-    status: [{ value: "", text: "" }],
-    orderBy: [{ value: "", text: "" }],
-    reason: [{ value: "", text: "" }],
-    filterStatus: [{ value: "", text: "" }],
+    sex: [{ value: '', text: '' }],
+    specie: [{ value: '', text: '' }],
+    size: [{ value: '', text: '' }],
+    neighborhood: [{ value: '', text: '' }],
+    hour: [{ value: '', text: '' }],
+    findBy: [{ value: '', text: '' }],
+    status: [{ value: '', text: '' }],
+    orderBy: [{ value: '', text: '' }],
+    reason: [{ value: '', text: '' }],
+    filterStatus: [{ value: '', text: '' }],
   });
   // Hook para filtrar turnos
   const { filter, remove, generatePDF } = useAppointment();
@@ -157,23 +177,25 @@ export function FilterAppointments() {
         )
       );
       console.log(params);
-      setFilterParams(params);
+      
       // Llama al hook para filtrar los turnos
       const data = await filter(params);
       if (!data) {
         setIsLoading('error');
         finishLoadingRows();
-        return;
+        return params;
       }
       setAppointmentData(data);
       finishLoadingRows();
       setPage(1);
       setIsLoading('loaded');
+      return params
     } catch (err) {
       setIsLoading('error');
       finishLoadingRows();
       setPage(1);
-      throw err;
+      console.log(err);
+      return {}
     }
   };
 
@@ -230,7 +252,7 @@ export function FilterAppointments() {
       }, 2000);
       return () => clearTimeout(timeout);
     } else {
-      return () => { };
+      return () => {};
     }
   }, [isLoading]);
 
@@ -289,28 +311,41 @@ export function FilterAppointments() {
               {/* Encabezado con título y botón para crear nuevo turno */}
               <Flex direction="row" justify="space-between">
                 <Title text="Turnos" c={mainColor} />
-                <Flex gap={"md"}>
-                  <Button
-                    onClick={async () => {
-                      await handleOnSubmit();
-                      generatePDF(filterParams);
-                    }}
-                    leftSection={<FontAwesomeIcon icon={faFilePdf} />}
-                    color={mainColor}
-                    variant="filled"
-                    style={{ width: '200px' }}
-                  >
-                    Generar PDF
-                  </Button>
-                  <Button onClick={() => {
-                    navigate('/turnos/nuevo');
-                  }}
-                    leftSection={<FontAwesomeIcon icon={faPlus} />}
-                    color={mainColor}
-                    variant="filled"
-                    style={{ width: '200px' }}>Nuevo</Button>
-                </Flex>
+                <Flex gap={'md'}>
+                  <ColumnsMenu
+                    values={columnsValues}
+                    setValues={setColumnsValues}
+                  />
+                  <Tooltip label="Generar PDF en base a los filtros actuales">
+                    <Button
+                      onClick={async () => {
+                        const filterParams = await handleOnSubmit();
+                        console.log(filterParams)
+                        generatePDF(filterParams,columnsValues);
+                      }}
+                      leftSection={<FontAwesomeIcon icon={faFilePdf} />}
+                      color={mainColor}
+                      variant="filled"
+                      style={{ width: '150px', marginRight: '20px' }}
+                    >
+                      Generar PDF
+                    </Button>
+                  </Tooltip>
 
+                  <Tooltip label="Nuevo Turno">
+                    <Button
+                      onClick={() => {
+                        navigate('/turnos/nuevo');
+                      }}
+                      leftSection={<FontAwesomeIcon icon={faPlus} />}
+                      color={mainColor}
+                      variant="filled"
+                      style={{ width: '150px' }}
+                    >
+                      Nuevo
+                    </Button>
+                  </Tooltip>
+                </Flex>
               </Flex>
 
               {/* Formulario de filtros */}

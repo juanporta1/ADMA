@@ -14,10 +14,9 @@ export class AppointmentService {
     @InjectRepository(Appointment)
     private appointmentRepository: Repository<Appointment>,
     private pdfService: PdfService
-  ) { }
+  ) {}
 
   async getAll(querys: FilterAppointmentDto) {
-    
     if (Object.keys(querys).length != 0) {
       const filterQueryBuilder =
         this.appointmentRepository.createQueryBuilder('a');
@@ -86,14 +85,14 @@ export class AppointmentService {
         });
       if (querys.byHour)
         filterQueryBuilder.andWhere(`a.hour = :hour`, { hour: querys.byHour });
-      filterQueryBuilder.leftJoinAndSelect("a.neighborhood", "neighborhood")
-      filterQueryBuilder.leftJoinAndSelect("a.specie", "specie")
-      filterQueryBuilder.leftJoinAndSelect("a.reason", "reason")
+      filterQueryBuilder.leftJoinAndSelect('a.neighborhood', 'neighborhood');
+      filterQueryBuilder.leftJoinAndSelect('a.specie', 'specie');
+      filterQueryBuilder.leftJoinAndSelect('a.reason', 'reason');
 
       return await filterQueryBuilder.getMany();
     } else {
       return await this.appointmentRepository.find({
-        relations: ['neighborhood', 'specie', 'reason']
+        relations: ['neighborhood', 'specie', 'reason'],
       });
     }
   }
@@ -156,10 +155,11 @@ export class AppointmentService {
 
   async generatePDF(doc: PDFDocumentWithTables, filters: FilterAppointmentDto) {
     const registers = await this.getAll(filters);
-    console.log(filters)
+    console.log(filters.values);
 
-    this.pdfService.generateHeader(doc)
-    this.pdfService.newTable(doc, registers)
-    this.pdfService.generateFooter(doc)
+    await this.pdfService.generateHeader(doc, filters);
+    if (filters.values)
+      this.pdfService.newTable(doc, registers, filters.values);
+    this.pdfService.generateFooter(doc);
   }
 }

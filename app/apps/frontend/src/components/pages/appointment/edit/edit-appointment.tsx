@@ -95,25 +95,24 @@ export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
       }
     };
     fetchData();
-    const twoNames = appointment.owner.split(',');
+    
     const dateWithoutTimezone = new Date(appointment.date + 'T00:00:00');
 
     const settings: typeof form.values = {
-      lastName: twoNames[0],
-      name: twoNames[1],
+      lastName: appointment.lastName,
+      name: appointment.name,
       dni: appointment.dni,
       phone: appointment.phone,
       home: appointment.home,
-      neighborhood: appointment.neighborhood,
+      neighborhood: appointment.neighborhood.ID_neighborhood.toString(),
       size: appointment.size,
       sex: appointment.sex,
-      specie: appointment.specie,
+      specie: appointment.specie.ID_specie.toString(),
       date: dateWithoutTimezone,
       hour: appointment.hour,
       observations: appointment.observations || '',
       status: appointment.status,
     };
-
     form.setValues(settings);
   }, []);
 

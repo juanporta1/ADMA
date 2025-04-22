@@ -14,7 +14,7 @@ export interface UseAppointment {
   edit: (appointment: EditFormValues, id: number) => Promise<void>;
   remove: (id: number) => void;
   create: (values: FormValues) => void;
-  generatePDF: (filters: FilterParams) => Promise<void>;
+  generatePDF: (filters: FilterParams, values: string[]) => Promise<void>;
 }
 interface FormValues {
   lastName: string;
@@ -157,11 +157,12 @@ export function useAppointment(): UseAppointment {
       throw error; // Lanzar nuevamente el error para que sea manejado por el llamad
     }
   }
-    async function generatePDF(filters: FilterParams): Promise<void> {
+    async function generatePDF(filters: FilterParams, values: string[]): Promise<void> {
       try{
         const res = await axios.get(`${host}/appointment/pdf`, {
           responseType: 'blob',
-          params: filters,
+          params: {...filters, values: values},
+          
         })
 
         const blob = res.data;

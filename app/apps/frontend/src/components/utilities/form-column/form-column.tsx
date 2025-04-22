@@ -1,14 +1,21 @@
 // Componente reutilizable para renderizar diferentes tipos de campos de formulario en una columna de Grid
-import { Grid, NativeSelect, Textarea, TextInput } from '@mantine/core';
+import {
+  Checkbox,
+  Grid,
+  NativeSelect,
+  Textarea,
+  TextInput,
+} from '@mantine/core';
 import { UseFormReturnType } from '@mantine/form';
 import { DatePickerInput, DateValue } from '@mantine/dates';
 import { ChangeEventHandler } from 'react';
 import { SelectData } from '../../../hooks/appointment/use-selects-data/use-selects-data';
 
 interface props {
-  inputType: 'date' | 'text' | 'select' | 'textarea';
+  inputType: 'date' | 'text' | 'select' | 'textarea' | 'checkbox';
   form: UseFormReturnType<any>;
-  span: number;
+  withoutGrid?: boolean | undefined;
+  span?: number;
   placeholder?: string;
   label?: string;
   data?: SelectData[];
@@ -22,7 +29,7 @@ interface props {
 // Renderiza el campo adecuado según el tipo especificado
 export function FormColumn(props: props) {
   let inputElement: JSX.Element;
-  
+
   if (props.inputType === 'date') {
     // Campo de fecha
     inputElement = (
@@ -33,10 +40,13 @@ export function FormColumn(props: props) {
         placeholder={props.placeholder}
         minDate={props.minDate}
         required={props.notRequired === undefined ? true : false}
-        onChange={props.onChangeDateFunc ? props.onChangeDateFunc : (date: DateValue) => {
-          props.form.setValues({[props.name] : date})
-        }}
-        
+        onChange={
+          props.onChangeDateFunc
+            ? props.onChangeDateFunc
+            : (date: DateValue) => {
+                props.form.setValues({ [props.name]: date });
+              }
+        }
       />
     );
   } else if (props.inputType === 'select') {
@@ -61,9 +71,13 @@ export function FormColumn(props: props) {
         key={props.form.key(props.name)}
         {...props.form.getInputProps(props.name)}
         required={props.notRequired === undefined ? true : false}
-        onChange={props.onChangeSelectFunc ? props.onChangeSelectFunc : (e) => {
-          props.form.setValues({[props.name] : e.target.value})
-        }}
+        onChange={
+          props.onChangeSelectFunc
+            ? props.onChangeSelectFunc
+            : (e) => {
+                props.form.setValues({ [props.name]: e.target.value });
+              }
+        }
       >
         {Options}
       </NativeSelect>
@@ -74,6 +88,14 @@ export function FormColumn(props: props) {
       <Textarea
         label={props.label}
         placeholder={props.placeholder}
+        key={props.form.key(props.name)}
+        {...props.form.getInputProps(props.name)}
+      />
+    );
+  } else if (props.inputType === 'checkbox') {
+    inputElement = (
+      <Checkbox
+        label={props.label}
         key={props.form.key(props.name)}
         {...props.form.getInputProps(props.name)}
       />
@@ -92,7 +114,8 @@ export function FormColumn(props: props) {
   }
 
   // Devuelve el campo dentro de una columna del grid
-  return <Grid.Col span={props.span}>{inputElement}</Grid.Col>;
+  if(props.withoutGrid === undefined) return <Grid.Col span={props.span}>{inputElement}</Grid.Col>;
+  else return inputElement
 }
 
 export default FormColumn;

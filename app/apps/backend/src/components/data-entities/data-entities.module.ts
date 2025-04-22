@@ -10,5 +10,6 @@ import { DataEntitiesService } from './services/data-entities.service';
     imports:[TypeOrmModule.forFeature([Neighborhood, Specie, Reason])],
     controllers: [DataEntitiesController],
     providers: [DataEntitiesService],
+    exports: [TypeOrmModule]
 })
 export class DataEntitiesModule {}
