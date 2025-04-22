@@ -6,6 +6,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { faComment } from '@fortawesome/free-regular-svg-icons';
 import { MainColorContext } from '../../../../../contexts/color-context';
+import useDataEntities from '../../../../../hooks/general/use-data-entities/use-data-entities';
 
 interface props{
   clickDeleteFunc: () => void,
@@ -29,7 +30,6 @@ export function AppointmentRow({appointment, clickDeleteFunc, clickEditFunc, cli
     ? `No puede editar este registro.`
     : 'Editar Registro';
   // Separa el nombre y apellido del dueño
-  const twoNames = appointment.owner.split(',');
   // Determina si se puede borrar el turno
   const canDelete = appointment.status === 'Pendiente' ? false : true;
   const deleteLabel = !canDelete ? 'Borrar' : 'No puede borrar este registro';
@@ -40,18 +40,18 @@ export function AppointmentRow({appointment, clickDeleteFunc, clickEditFunc, cli
     <Table.Tr  key={appointment.ID_appointment} mah={"60px"} mih={"50px"}>
       <Table.Td>{appointment.date.toString()}</Table.Td>
       <Table.Td>{appointment.hour}</Table.Td>
-      <Table.Td>{twoNames[0]}</Table.Td>
-      <Table.Td>{twoNames[1]}</Table.Td>
+      <Table.Td>{appointment.lastName}</Table.Td>
+      <Table.Td>{appointment.name}</Table.Td>
       <Table.Td>{appointment.dni}</Table.Td>
       <Table.Td>{appointment.phone ? appointment.phone : <Text c={"#aaaa"}>Sin Teléfono</Text>}</Table.Td>
       <Table.Td>{appointment.home}</Table.Td>
-      <Table.Td>{appointment.neighborhood}</Table.Td>
-      <Table.Td>{appointment.specie}</Table.Td>
+      <Table.Td>{appointment.neighborhood.neighborhood}</Table.Td>
+      <Table.Td>{appointment.specie.specie}</Table.Td>
       <Table.Td>{appointment.sex}</Table.Td>
       <Table.Td>{appointment.size}</Table.Td>
       <Table.Td>{appointment.status}</Table.Td>
       <Table.Td c={appointment.reason ? '#000' : '#aaaa'}>
-        {appointment.reason ? appointment.reason : 'Sin Razon'}
+        {appointment.reason ? appointment.reason.reason : 'Sin Razon'}
       </Table.Td>
       {/* Botón para editar el turno */}
       <Table.Td>

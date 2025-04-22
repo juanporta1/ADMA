@@ -11,9 +11,10 @@ import { EditFormValues } from '../../../components/pages/appointment/edit/edit-
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface UseAppointment {
   filter: (params: FilterParams) => Promise<Appointment[] | null>;
-  edit: (aappointment: EditFormValues, id: number) => Promise<void>;
+  edit: (appointment: EditFormValues, id: number) => Promise<void>;
   remove: (id: number) => void;
   create: (values: FormValues) => void;
+  generatePDF: (filters: FilterParams) => Promise<void>;
 }
 interface FormValues {
   lastName: string;
@@ -31,30 +32,33 @@ interface FormValues {
 }
 
 interface NewAppointment {
-  owner: string;
+  lastName: string;
+  name: string;
   home: string;
-  neighborhood: string;
-  phone: string;
+  neighborhood: number;
+  phone?: string | null;
   dni: string;
   date: Date;
   hour: string;
   size: string;
   sex: string;
-  specie: string;
+  specie: number;
   observations: string | null;
+  status?: string;
+  reason?: number;
 }
 
 export function useAppointment(): UseAppointment {
   const host = useContext(ApiHostContext);
   async function create(values: FormValues): Promise<void> {
-    const newOwner = `${values.lastName},${values.name}`;
     const newAppointment: NewAppointment = {
-      owner: newOwner,
+      lastName: values.lastName,
+      name: values.name,
       home: values.home,
-      neighborhood: values.neighborhood,
+      neighborhood: Number(values.neighborhood),
       dni: values.dni,
       phone: values.phone,
-      specie: values.specie,
+      specie: Number(values.specie),
       size: values.size,
       sex: values.sex,
       date: values.date,
@@ -63,7 +67,7 @@ export function useAppointment(): UseAppointment {
     };
 
     const response = await axios.post(
-      'http://localhost:3000/api/aappointment',
+      'http://localhost:3000/api/appointment',
       newAppointment
     );
     console.log(response.data);
@@ -79,10 +83,12 @@ export function useAppointment(): UseAppointment {
     let res;
     try {
       if (params.input) {
-        const { input, findBy, ...otherParams } = params;
+        const { input, findBy, neighborhood, specie, ...otherParams } = params;
         if (!findBy) return null;
         const newObject = {
           [findBy]: input,
+          neighborhood: Number(neighborhood),
+          specie: Number(specie),
           ...otherParams,
         };
         res = await axios.get(`${host}/appointment`, {
@@ -123,25 +129,26 @@ export function useAppointment(): UseAppointment {
       throw err;
     }
   }
-  async function edit(aappointment: EditFormValues, id: number): Promise<void> {
+  async function edit(appointment: EditFormValues, id: number): Promise<void> {
     try {
-      const editedAppointment: Appointment = {
-        ID_appointment: id,
-        owner: `${aappointment.lastName},${aappointment.name}`,
-        home: aappointment.home,
-        neighborhood: aappointment.neighborhood,
-        phone: aappointment.phone,
-        dni: aappointment.dni,
-        status: aappointment.status,
-        reason: aappointment.reason,
-        observations: aappointment.observations
-          ? aappointment.observations?.trim()
+      const editedAppointment: NewAppointment = {
+        
+        lastName: appointment.lastName.trim(), 
+        name: appointment.name.trim(),
+        home: appointment.home.trim(),
+        neighborhood: Number(appointment.neighborhood),
+        phone: appointment.phone,
+        dni: appointment.dni.trim(),
+        status: appointment.status,
+        reason: Number(appointment.reason),
+        observations: appointment.observations
+          ? appointment.observations?.trim()
           : null,
-        date: aappointment.date,
-        hour: aappointment.hour,
-        sex: aappointment.sex,
-        specie: aappointment.specie,
-        size: aappointment.size,
+        date: appointment.date,
+        hour: appointment.hour,
+        sex: appointment.sex,
+        specie: Number(appointment.specie),
+        size: appointment.size,
       };
       const res = await axios.put(`${host}/appointment/${id}`, editedAppointment);
       console.log(res.data);
@@ -150,7 +157,18 @@ export function useAppointment(): UseAppointment {
       throw error; // Lanzar nuevamente el error para que sea manejado por el llamad
     }
   }
-  return { filter, create, edit, remove };
+  async function generatePDF(filters: FilterParams): Promise<void> {
+    try{
+      axios.get(`${host}/appointment/pdf`, {
+        responseType: 'blob',
+        params: filters,
+      })
+    }catch(err){
+      throw err;
+    }
+  }
+
+  return { filter, create, edit, remove, generatePDF };
 }
 
 export default useAppointment;

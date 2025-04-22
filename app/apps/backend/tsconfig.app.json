@@ -9,6 +9,6 @@
     "emitDecoratorMetadata": true,
     "target": "es2021"
   },
-  "include": ["src/**/*.ts"],
+  "include": ["src/**/*.ts", "src/components/pages/appoinment/appoinment-service/pdf-service/pdf-service.service.js", "src/components/pages/appoinment/appoinment-service/pdf-service/pdf-service.service.js"],
   "exclude": []
 }

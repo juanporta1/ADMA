@@ -39,7 +39,7 @@ import { DataEntities } from '../../../../hooks/general/use-data-entities/use-da
 // Interfaz para los parámetros de filtrado de turnos
 export interface FilterParams {
   sex?: string; // Sexo de la mascota
-  specie?: string; // Especie de la mascota
+  specie?: number; // Especie de la mascota
   size?: string; // Tamaño de la mascota
   neighborhood?: string; // Barrio
   startDate?: Date; // Fecha de inicio del filtro
@@ -55,16 +55,17 @@ export interface FilterParams {
 // Interfaz para la estructura de un turno
 export interface Appointment {
   ID_appointment: number; // ID único del turno
-  owner: string; // Nombre del dueño
+  lastName: string;
+  name: string // Nombre del dueño
   home: string; // Domicilio
-  neighborhood: string; // Barrio
+  neighborhood: {ID_neighborhood: number, neighborhood: string}; // Barrio
   phone: string | null; // Teléfono
   dni: string; // DNI del dueño
   date: Date; // Fecha del turno
   hour: string; // Hora del turno
   size: 'Grande' | 'Pequeño' | 'Mediano'; // Tamaño de la mascota
   sex: 'Macho' | 'Hembra'; // Sexo de la mascota
-  specie: 'Canino' | 'Felino'; // Especie de la mascota
+  specie: {ID_specie: number, specie: string}; // Especie de la mascota
   status:
     | 'Pendiente'
     | 'Cancelado'
@@ -74,7 +75,7 @@ export interface Appointment {
     | 'Realizado'
     | 'No Realizado'; // Estado del turno
   observations: string | null; // Observaciones adicionales
-  reason: string | null; // Razón de cancelación u otra
+  reason: {ID_reason: number, reason: string} | null; // Razón de cancelación u otra
 }
 
 // Componente principal para filtrar y mostrar turnos
@@ -85,6 +86,7 @@ export function FilterAppointments() {
   const [isLoading, setIsLoading] = useState<string | null>(null);
   // Estado para la página actual de la paginación
   const [actualPage, setPage] = useState(1);
+  const [filterParams, setFilterParams] = useState<FilterParams>({}); // Estado para almacenar los parámetros de filtrado
   // Estado y funciones para mostrar/ocultar el overlay de carga de filas
   const [loadingRows, { open: startLoadingRows, close: finishLoadingRows }] =
     useDisclosure(false);
@@ -123,7 +125,7 @@ export function FilterAppointments() {
     filterStatus: [{value: "", text: ""}],
   });
   // Hook para filtrar turnos
-  const { filter, remove } = useAppointment();
+  const { filter, remove, generatePDF} = useAppointment();
   
   // Función para limpiar los filtros y volver a listar todos los turnos
   const handleOnReset = () => {
@@ -153,6 +155,7 @@ export function FilterAppointments() {
         )
       );
       console.log(params);
+      setFilterParams(params);
       // Llama al hook para filtrar los turnos
       const data = await filter(params);
       if (!data) {
@@ -284,16 +287,26 @@ export function FilterAppointments() {
               {/* Encabezado con título y botón para crear nuevo turno */}
               <Flex direction="row" justify="space-between">
                 <Title text="Turnos" c={mainColor} />
+                <Flex gap={"md"}>
                 <Button
-                  onClick={() => {
-                    navigate('/turnos/nuevo');
+                  onClick={async () => {
+                    await handleOnSubmit();
+                    generatePDF(filterParams);
                   }}
                   color={mainColor}
                   variant="filled"
                   style={{ width: '200px' }}
                 >
-                  Nuevo
+                  Generar PDF
                 </Button>
+                <Button onClick={() => {
+                    navigate('/turnos/nuevo');
+                  }}
+                  color={mainColor}
+                  variant="filled"
+                  style={{ width: '200px' }}>Nuevo</Button>
+                </Flex>
+                
               </Flex>
 
               {/* Formulario de filtros */}

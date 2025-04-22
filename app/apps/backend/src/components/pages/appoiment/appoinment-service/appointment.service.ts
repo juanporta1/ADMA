@@ -5,13 +5,16 @@ import { Appointment } from '../appointment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateAppointmentDto } from '../appointment-DTOs/update-appointment.dto';
 import { FilterAppointmentDto } from '../appointment-DTOs/filter-appointment.dto';
-
+import fs from 'fs';
+import PDFDocumentWithTables from 'pdfkit-table';
+import { PdfService } from './pdf-service/pdf-service.service';
 @Injectable()
 export class AppointmentService {
   constructor(
     @InjectRepository(Appointment)
-    private appointmentRepository: Repository<Appointment>
-  ) {}
+    private appointmentRepository: Repository<Appointment>,
+    private pdfService: PdfService
+  ) { }
 
   async getAll(querys: FilterAppointmentDto) {
     if (Object.keys(querys).length != 0) {
@@ -59,9 +62,9 @@ export class AppointmentService {
 
       if (querys.orderBy) {
         if (querys.orderBy === 'owner-asc')
-          filterQueryBuilder.orderBy('a.owner', 'ASC');
+          filterQueryBuilder.orderBy('a.lastName', 'ASC');
         else if (querys.orderBy === 'owner-desc')
-          filterQueryBuilder.orderBy('a.owner', 'DESC');
+          filterQueryBuilder.orderBy('a.lastName', 'DESC');
         else if (querys.orderBy === 'date-asc')
           filterQueryBuilder.orderBy('a.date', 'ASC');
         else if (querys.orderBy === 'date-desc')
@@ -82,6 +85,10 @@ export class AppointmentService {
         });
       if (querys.byHour)
         filterQueryBuilder.andWhere(`a.hour = :hour`, { hour: querys.byHour });
+      filterQueryBuilder.leftJoinAndSelect("a.neighborhood", "neighborhood")
+      filterQueryBuilder.leftJoinAndSelect("a.specie", "specie")
+      filterQueryBuilder.leftJoinAndSelect("a.reason", "reason")
+
       return await filterQueryBuilder.getMany();
     } else {
       return await this.appointmentRepository.find();
@@ -142,5 +149,20 @@ export class AppointmentService {
     } catch (error) {
       throw error;
     }
+  }
+
+  async generatePDF(doc: PDFDocumentWithTables, filters: FilterAppointmentDto) {
+    const registers = await this.getAll(filters);
+    this.pdfService.generateHeader(doc)
+    this.pdfService.newTable(doc)
+    registers.forEach((a, id) => {
+      id++;
+      this.pdfService.generateRow(doc, a, id)
+      if (id % 10 === 0) {
+        doc.addPage()
+      }
+    })
+
+    
   }
 }
