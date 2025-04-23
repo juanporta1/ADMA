@@ -24,14 +24,11 @@ export class AppointmentService {
         filterQueryBuilder.andWhere('a.ID_appointment = :id', {
           id: querys.id,
         });
-      if (querys.lastName)
-        filterQueryBuilder.andWhere('a.owner ILIKE :lastName', {
-          lastName: `%${querys.lastName}%`,
+      if (querys.owner)
+        filterQueryBuilder.andWhere('(a.lastName || " " || a.name) ILIKE :owner', {
+          owner: `%${querys.owner}%`,
         });
-      if (querys.name)
-        filterQueryBuilder.andWhere('a.owner ILIKE :name', {
-          name: `%${querys.name}%`,
-        });
+    
       if (querys.neighborhood)
         filterQueryBuilder.andWhere('a.neighborhood = :neighborhood', {
           neighborhood: querys.neighborhood,
@@ -81,7 +78,7 @@ export class AppointmentService {
 
       if (querys.dni)
         filterQueryBuilder.andWhere('a.dni ILIKE :dni', {
-          dni: `${querys.dni}%`,
+          dni: `${querys.dni}%`,  
         });
 
       if (querys.orderBy) {

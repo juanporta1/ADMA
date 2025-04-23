@@ -177,7 +177,7 @@ export function CreateAppointment() {
                   }}
                 />
                 <Grid.Col span={4}>{<HourSelect form={form} dateValue={actualDate}/>}</Grid.Col>
-                {/* Campos para datos de la mascota */}
+                }
                 <FormColumn
                   inputType="select"
                   form={form}

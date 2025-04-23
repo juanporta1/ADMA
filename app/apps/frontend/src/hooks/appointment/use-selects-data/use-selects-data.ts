@@ -48,7 +48,8 @@ export function useSelectsData(): UseSelectsData {
     return {
       findBy: [
         { text: 'DNI', value: 'dni' },
-        { text: 'Nombre y Apellido', value: 'owner' },
+        { text: 'Apellido y Nombre', value: 'owner' },
+        
       ],
       sex: [
         { value: '', text: 'Todos' },

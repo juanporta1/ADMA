@@ -81,11 +81,15 @@ export function useAppointment(): UseAppointment {
     try {
       if (params.input) {
         const { input, findBy, neighborhood, specie, ...otherParams } = params;
+
+        console.log(input)
         if (!findBy) return null;
         const newObject = {
           [findBy]: input,
-          neighborhood: Number(neighborhood),
-          specie: Number(specie),
+          ...{
+            neighborhood: neighborhood ? Number(neighborhood) : {},
+            specie: specie ? Number(specie) : {},
+          },
           ...otherParams,
         };
         res = await axios.get(`${host}/appointment`, {

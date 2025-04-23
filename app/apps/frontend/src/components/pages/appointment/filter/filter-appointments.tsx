@@ -409,6 +409,7 @@ export function FilterAppointments() {
                       data={selectsData.sex}
                       notRequired
                     />
+                    
                     {/* Selector de especie */}
                     <FormColumn
                       span={4}
