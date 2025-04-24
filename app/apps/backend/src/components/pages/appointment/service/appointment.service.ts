@@ -17,7 +17,6 @@ export class AppointmentService {
     private appointmentRepository: Repository<Appointment>,
     private pdfService: PdfService,
     @InjectRepository(ResidualNumber)
-    private residualNumberRepository: Repository<ResidualNumber>,
     private readonly dataEntitiesService: DataEntitiesService
   ) {}
 
