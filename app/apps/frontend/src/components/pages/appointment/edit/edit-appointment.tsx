@@ -65,6 +65,11 @@ export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
     orderBy: [{value: "", text: ""}],
     reason: [{value: "", text: ""}],
     filterStatus: [{value: "", text: ""}],
+    dateFilterWay: [{value: "", text: ""}],
+    restrictedNeighborhood: [{value: "", text: ""}],
+    restrictedSex: [{value: "", text: ""}],
+    restrictedSize: [{value: "", text: ""}],
+    restrictedSpecie: [{value: "", text: ""}],
   }) // Datos para los selectores
   const [visible, { open, close }] = useDisclosure(false);
   const { edit } = useAppointment();

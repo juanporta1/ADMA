@@ -19,6 +19,10 @@ export interface AppoinmentSelects {
   hour: SelectData[];
   reason: SelectData[];
   dateFilterWay: SelectData[];
+  restrictedNeighborhood: SelectData[];
+  restrictedSize: SelectData[];
+  restrictedSpecie: SelectData[];
+  restrictedSex: SelectData[];
 }
 export interface SelectData {
   value: string | number;
@@ -56,9 +60,21 @@ export function useSelectsData(): UseSelectsData {
         { value: 'Macho', text: 'Macho' },
         { value: 'Hembra', text: 'Hembra' },
       ],
+      restrictedSex: [
+        { value: '', text: 'Seleccione un sexo', disabled: true },
+        { value: 'Macho', text: 'Macho' },
+        { value: 'Hembra', text: 'Hembra' },
+      ],
       specie: [{ value: '', text: 'Todos' }, ...speciesData],
+      restrictedSpecie: [{ value: '', text: 'Seleccione una especie', disabled: true }, ...speciesData],
       size: [
         { value: '', text: 'Todos' },
+        { value: 'Grande', text: 'Grande' },
+        { value: 'Mediano', text: 'Mediano' },
+        { value: 'Pequeño', text: 'Pequeño' },
+      ],
+      restrictedSize: [
+        { value: '', text: 'Seleccione un tamaño', disabled: true },
         { value: 'Grande', text: 'Grande' },
         { value: 'Mediano', text: 'Mediano' },
         { value: 'Pequeño', text: 'Pequeño' },
@@ -79,6 +95,7 @@ export function useSelectsData(): UseSelectsData {
         { value: 'Cancelado', text: 'Cancelado' },
       ],
       neighborhood: [{ value: '', text: 'Todos' }, ...neighborhoodsData],
+      restrictedNeighborhood: [{ value: '', text: 'Seleccione un barrio', disabled: true }, ...neighborhoodsData],
       orderBy: [
         { value: 'id-desc', text: 'Orden de Carga(A-Z)' },
         { value: 'id-asc', text: 'Orden de Carga(Z-A)' },

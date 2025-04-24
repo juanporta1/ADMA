@@ -58,6 +58,10 @@ export function CreateAppointment() {
     reason: [{value: "", text: ""}],
     filterStatus: [{value: "", text: ""}],
     dateFilterWay: [{value: "", text: ""}],
+    restrictedNeighborhood: [{value: "", text: ""}],
+     restrictedSex: [{value: "", text: ""}],
+     restrictedSize: [{value: "", text: ""}],
+     restrictedSpecie: [{value: "", text: ""}]
   });  // Datos para los selectores
   const {create} = useAppointment();  // Hook para crear turnos
   const [actualDate, setActualDate] = useState<DateValue>(new Date());
@@ -184,7 +188,7 @@ export function CreateAppointment() {
                   name="sex"
                   span={3}
                   label="Sexo: "
-                  data={selectsData.sex}
+                  data={selectsData.restrictedSex}
                 />
                 <FormColumn
                   inputType="select"
@@ -192,7 +196,7 @@ export function CreateAppointment() {
                   name="specie"
                   span={3}
                   label="Especie: "
-                  data={selectsData.specie}
+                  data={selectsData.restrictedSpecie}
                 />
                 <FormColumn
                   inputType="select"
@@ -200,7 +204,7 @@ export function CreateAppointment() {
                   name="size"
                   span={3}
                   label="Tamaño: "
-                  data={selectsData.size}
+                  data={selectsData.restrictedSize}
                 />
                 <FormColumn
                   inputType="select"
@@ -208,7 +212,7 @@ export function CreateAppointment() {
                   name="neighborhood"
                   span={3}
                   label="Barrio: "
-                  data={selectsData.neighborhood}
+                  data={selectsData.restrictedNeighborhood}
                 />
                 {/* Campo de observaciones */}
                 <FormColumn

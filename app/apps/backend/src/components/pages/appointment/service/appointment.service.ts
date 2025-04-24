@@ -206,8 +206,9 @@ export class AppointmentService {
     try {
       let updateResult: UpdateResult;
       const appointment = await this.getAll({ id });
+      console.log(updatedAppointment)
       if (updatedAppointment.status in ["Ausentado", "Cancelado", "No Realizado"]) {
-
+        console.log("Entra en el if de updateAppointment")
         updateResult = await this.appointmentRepository.update(
           id,
           {
