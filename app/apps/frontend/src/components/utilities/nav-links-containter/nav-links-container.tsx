@@ -66,7 +66,10 @@ export function NavLinksContainer(props: props) {
         fw={700}
         style={{ marginBottom: 0 }}
         onClick={() => {
-          setNavLink?.(props.mainNavLink.label);
+          if(navLink === props.mainNavLink.label)
+            setNavLink?.("");
+          else
+            setNavLink?.(props.mainNavLink.label);
         }}
       >
         {<ChildrenNavLinks />}

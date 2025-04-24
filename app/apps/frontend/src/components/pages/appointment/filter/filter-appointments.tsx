@@ -146,6 +146,11 @@ export function FilterAppointments() {
     reason: [{ value: '', text: '' }],
     filterStatus: [{ value: '', text: '' }],
     dateFilterWay: [{ value: '', text: '' }],
+    restrictedNeighborhood: [{ value: '', text: '' }],
+    restrictedSex: [{ value: '', text: '' }],
+    restrictedSize: [{ value: '', text: '' }],
+    restrictedSpecie: [{ value: '', text: '' }],
+  
   });
   // Hook para filtrar turnos
   const { filter, remove, generatePDF } = useAppointment();
@@ -447,7 +452,7 @@ export function FilterAppointments() {
                       label="Estado"
                       form={form}
                       inputType="select"
-                      data={selectsData.status}
+                      data={selectsData.filterStatus}
                       notRequired
                     />
                     {/* Selector para ordenar por campo */}

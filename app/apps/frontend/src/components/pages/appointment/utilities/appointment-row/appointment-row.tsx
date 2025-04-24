@@ -20,8 +20,7 @@ export function AppointmentRow({appointment, clickDeleteFunc, clickEditFunc, cli
   
   // Determina si se puede editar el turno según su estado
   const canEdit =
-    appointment.status === 'Pendiente' ||
-    appointment.status === 'Esperando Actualización'
+    appointment.status === 'Pendiente'
       ? false
       : true;
 
