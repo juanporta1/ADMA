@@ -90,7 +90,7 @@ export function useSelectsData(): UseSelectsData {
         { value: 'No Realizado', text: 'No Realizado' },
       ],
       status: [
-        { value: '', text: 'Todos' },
+        { value: '', text: 'Seleccione un estado', disabled: true  },
         { value: 'Pendiente', text: 'Pendiente' },
         { value: 'Cancelado', text: 'Cancelado' },
       ],

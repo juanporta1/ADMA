@@ -1,22 +1,14 @@
 import { useDisclosure } from '@mantine/hooks';
 import {
-  Accordion,
   AppShell,
-  Avatar,
   Burger,
-  Center,
-  createTheme,
-  Divider,
   Flex,
   Group,
-  Image,
   MantineProvider,
-  NavLink,
   Stack,
   Text,
 } from '@mantine/core';
-import { Outlet, useNavigate } from 'react-router-dom';
-import styles from './layout.module.css';
+import { Outlet } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import {
@@ -24,6 +16,8 @@ import {
   faCalendarCheck,
   faFilter,
   faArrowUpFromBracket,
+  faTableList,
+  faUserDoctor,
 } from '@fortawesome/free-solid-svg-icons';
 import NavLinksContainer from '../utilities/nav-links-containter/nav-links-container';
 export function Layout() {
@@ -41,20 +35,18 @@ export function Layout() {
         padding="md"
       >
         <AppShell.Header style={{ backgroundColor: '#6c5b7b', border: 'none' }}>
-          <Flex direction={"row"}>
-          <Group h="100%" px="md">
-            <Burger
-              opened={opened}
-              onClick={toggle}
-              hiddenFrom="sm"
-              size="sm"
-              style={{ marginRight: '10px' }}
-            />
-            
-          </Group>
-          
+          <Flex direction={'row'}>
+            <Group h="100%" px="md">
+              <Burger
+                opened={opened}
+                onClick={toggle}
+                hiddenFrom="sm"
+                size="sm"
+                style={{ marginRight: '10px' }}
+              />
+            </Group>
           </Flex>
-          
+
           {/* <Image
               src="https://altagracia.gob.ar/wp-content/uploads/2022/11/SALUD_ANIMAL_LOGO-removebg-preview.png"
               h={"60px"}
@@ -90,6 +82,22 @@ export function Layout() {
                     icon: <FontAwesomeIcon icon={faArrowUpFromBracket} />,
                   },
                 ]}
+              />
+              <NavLinksContainer
+                mainNavLink={{
+                  goTo: '/planilla-de-ingreso',
+                  label: 'Planilla de ingreso',
+                  icon: <FontAwesomeIcon icon={faTableList} />,
+                }}
+                childrenNavs={[]}
+              />
+              <NavLinksContainer
+                mainNavLink={{
+                  goTo: '/castraciones',
+                  label: 'Castraciones',
+                  icon: <FontAwesomeIcon icon={faUserDoctor} />,
+                }}
+                childrenNavs={[]}
               />
 
               <Text size="md" fw={700} tt="uppercase" c="dimmed" p="xs">

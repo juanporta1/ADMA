@@ -13,7 +13,9 @@ import useEditForm from '../../../../hooks/appointment/edit/use-edit-form/use-ed
 import { useDisclosure } from '@mantine/hooks';
 import { Appointment } from '../filter/filter-appointments';
 import { useAppointment } from '../../../../hooks/appointment/use-appointment/use-appointment';
-import useSelectsData, { AppoinmentSelects } from '../../../../hooks/appointment/use-selects-data/use-selects-data';
+import useSelectsData, {
+  AppoinmentSelects,
+} from '../../../../hooks/appointment/use-selects-data/use-selects-data';
 import { SelectsDataContext } from '../../../../contexts/selects-data-context';
 
 // Definición de la estructura del formulario
@@ -50,33 +52,33 @@ interface props {
 export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
   // Inicialización de hooks y estados
   const { form } = useEditForm(); // Formulario personalizado
+
   const mainColor = useContext(MainColorContext); // Color principal de la app
   const [actualStatus, setActualStatus] = useState<string>(appointment.status);
   const [actualDate, setActualDate] = useState<DateValue>(new Date());
-  const {getSelectData} = useSelectsData();
+  const { getSelectData } = useSelectsData();
   const [selectsData, setSelectsData] = useState<AppoinmentSelects>({
-    sex: [{value: "", text: ""}],
-    specie: [{value: "", text: ""}],
-    size: [{value: "", text: ""}],
-    neighborhood: [{value: "", text: ""}],
-    hour: [{value: "", text: ""}],
-    findBy: [{value: "", text: ""}],
-    status: [{value: "", text: ""}],
-    orderBy: [{value: "", text: ""}],
-    reason: [{value: "", text: ""}],
-    filterStatus: [{value: "", text: ""}],
-    dateFilterWay: [{value: "", text: ""}],
-    restrictedNeighborhood: [{value: "", text: ""}],
-    restrictedSex: [{value: "", text: ""}],
-    restrictedSize: [{value: "", text: ""}],
-    restrictedSpecie: [{value: "", text: ""}],
-  }) // Datos para los selectores
+    sex: [{ value: '', text: '' }],
+    specie: [{ value: '', text: '' }],
+    size: [{ value: '', text: '' }],
+    neighborhood: [{ value: '', text: '' }],
+    hour: [{ value: '', text: '' }],
+    findBy: [{ value: '', text: '' }],
+    status: [{ value: '', text: '' }],
+    orderBy: [{ value: '', text: '' }],
+    reason: [{ value: '', text: '' }],
+    filterStatus: [{ value: '', text: '' }],
+    dateFilterWay: [{ value: '', text: '' }],
+    restrictedNeighborhood: [{ value: '', text: '' }],
+    restrictedSex: [{ value: '', text: '' }],
+    restrictedSize: [{ value: '', text: '' }],
+    restrictedSpecie: [{ value: '', text: '' }],
+  }); // Datos para los selectores
   const [visible, { open, close }] = useDisclosure(false);
   const { edit } = useAppointment();
   // Función para cancelar y volver al listado
   const handleOnCancel = () => {
     cancelFunc();
-    
   };
 
   // Manejador del envío del formulario
@@ -90,35 +92,34 @@ export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
 
   // Inicialización de valores del formulario
   useEffect(() => {
-
-    const fetchData =async () => {
+    const fetchData = async () => {
       try {
         const data = await getSelectData();
         setSelectsData(data);
+        const dateWithoutTimezone = new Date(appointment.date + 'T00:00:00');
+
+        const settings: typeof form.values = {
+          lastName: appointment.lastName,
+          name: appointment.name,
+          dni: appointment.dni,
+          phone: appointment.phone,
+          home: appointment.home,
+          neighborhood: appointment.neighborhood.ID_neighborhood.toString(),
+          size: appointment.size,
+          sex: appointment.sex,
+          specie: appointment.specie.ID_specie.toString(),
+          date: dateWithoutTimezone,
+          hour: appointment.hour,
+          observations: appointment.observations || '',
+          status: appointment.status,
+        };
+        console.log(settings);
+        form.setValues(settings);
       } catch (err) {
         console.log(err);
       }
     };
     fetchData();
-    
-    const dateWithoutTimezone = new Date(appointment.date + 'T00:00:00');
-
-    const settings: typeof form.values = {
-      lastName: appointment.lastName,
-      name: appointment.name,
-      dni: appointment.dni,
-      phone: appointment.phone,
-      home: appointment.home,
-      neighborhood: appointment.neighborhood.ID_neighborhood.toString(),
-      size: appointment.size,
-      sex: appointment.sex,
-      specie: appointment.specie.ID_specie.toString(),
-      date: dateWithoutTimezone,
-      hour: appointment.hour,
-      observations: appointment.observations || '',
-      status: appointment.status,
-    };
-    form.setValues(settings);
   }, []);
 
   // Renderizado del componente
@@ -209,7 +210,7 @@ export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
                   name="sex"
                   span={3}
                   label="Sexo: "
-                  data={selectsData.sex}
+                  data={selectsData.restrictedSex}
                 />
                 <FormColumn
                   inputType="select"
@@ -217,7 +218,7 @@ export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
                   name="specie"
                   span={3}
                   label="Especie: "
-                  data={selectsData.specie}
+                  data={selectsData.restrictedSpecie}
                 />
                 <FormColumn
                   inputType="select"
@@ -225,7 +226,7 @@ export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
                   name="size"
                   span={3}
                   label="Tamaño: "
-                  data={selectsData.size}
+                  data={selectsData.restrictedSize}
                 />
                 <FormColumn
                   inputType="select"
@@ -233,7 +234,7 @@ export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
                   name="neighborhood"
                   span={3}
                   label="Barrio: "
-                  data={selectsData.neighborhood}
+                  data={selectsData.restrictedNeighborhood}
                 />
                 {/* Campo de observaciones */}
                 <FormColumn
