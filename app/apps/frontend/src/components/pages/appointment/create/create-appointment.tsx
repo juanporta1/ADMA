@@ -21,7 +21,6 @@ import { FormColumn } from '../../../utilities/form-column/form-column';
 import HourSelect from '../utilities/hour-select/hour-select';
 import useSelectsData, { AppoinmentSelects } from '../../../../hooks/appointment/use-selects-data/use-selects-data';
 import useAppointment from '../../../../hooks/appointment/use-appointment/use-appointment';
-import { SelectsDataContext } from '../../../../contexts/selects-data-context';
 
 // Definición de la estructura del formulario
 class FormValues {
@@ -58,6 +57,7 @@ export function CreateAppointment() {
     orderBy: [{value: "", text: ""}],
     reason: [{value: "", text: ""}],
     filterStatus: [{value: "", text: ""}],
+    dateFilterWay: [{value: "", text: ""}],
   });  // Datos para los selectores
   const {create} = useAppointment();  // Hook para crear turnos
   const [actualDate, setActualDate] = useState<DateValue>(new Date());
@@ -177,7 +177,7 @@ export function CreateAppointment() {
                   }}
                 />
                 <Grid.Col span={4}>{<HourSelect form={form} dateValue={actualDate}/>}</Grid.Col>
-                }
+                
                 <FormColumn
                   inputType="select"
                   form={form}

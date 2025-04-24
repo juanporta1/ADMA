@@ -5,6 +5,7 @@ import { Neighborhood } from '../entities/neighborhood.entity';
 import { Specie } from '../entities/specie.entity';
 import { Reason } from '../entities/reason.entity';
 import { privateDecrypt } from 'crypto';
+import { ResidualNumber } from '../entities/residual-number.entity';
 
 @Injectable()
 export class DataEntitiesService {
@@ -14,7 +15,9 @@ export class DataEntitiesService {
     @InjectRepository(Specie)
     private specieRepository: Repository<Specie>,
     @InjectRepository(Reason)
-    private reasonRepository: Repository<Reason>
+    private reasonRepository: Repository<Reason>,
+    @InjectRepository(ResidualNumber)
+    private residualNumberRepository: Repository<ResidualNumber>,
   ) {}
 
   async createSpecie(body: {specie: string}){
@@ -46,6 +49,8 @@ export class DataEntitiesService {
     return await this.neighborhoodRepository.save(newNeighborhoods);
   }
 
+
+
   async getSpecies(){
     return await this.specieRepository.find();
   }
@@ -57,6 +62,19 @@ export class DataEntitiesService {
 
   async getReasons() {
     return await this.reasonRepository.find();
+  }
+
+  async getResidualNumbers(){
+    return await this.residualNumberRepository.find();
+  }
+  
+  async createResidualNumber(number: number){
+    const newResidualNumber = this.residualNumberRepository.create({number});
+    return await this.residualNumberRepository.save(newResidualNumber);
+  }
+
+  async deleteResidualNumber(id: number){
+    return await this.residualNumberRepository.delete(id);
   }
 
 }

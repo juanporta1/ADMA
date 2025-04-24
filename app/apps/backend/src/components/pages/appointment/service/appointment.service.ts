@@ -1,19 +1,24 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { Repository } from 'typeorm';
-import { CreateAppointmentDTO } from '../appointment-DTOs/create-appointment.dto';
+import { Repository, UpdateResult } from 'typeorm';
+import { CreateAppointmentDTO } from '../DTOs/create-appointment.dto';
 import { Appointment } from '../appointment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { UpdateAppointmentDto } from '../appointment-DTOs/update-appointment.dto';
-import { FilterAppointmentDto } from '../appointment-DTOs/filter-appointment.dto';
+import { UpdateAppointmentDto } from '../DTOs/update-appointment.dto';
+import { FilterAppointmentDto } from '../DTOs/filter-appointment.dto';
 import PDFDocumentWithTables from 'pdfkit-table';
 import { PdfService } from './pdf-service/pdf-service.service';
+import { ResidualNumber } from '../../../data-entities/entities/residual-number.entity';
+import { DataEntitiesService } from '../../../data-entities/services/data-entities.service';
 @Injectable()
 export class AppointmentService {
   constructor(
     @InjectRepository(Appointment)
     private appointmentRepository: Repository<Appointment>,
-    private pdfService: PdfService
-  ) {}
+    private pdfService: PdfService,
+    @InjectRepository(ResidualNumber)
+    private residualNumberRepository: Repository<ResidualNumber>,
+    private readonly dataEntitiesService: DataEntitiesService
+  ) { }
 
   async getAll(querys: FilterAppointmentDto) {
     if (Object.keys(querys).length != 0) {
@@ -28,7 +33,7 @@ export class AppointmentService {
         filterQueryBuilder.andWhere('(a.lastName || " " || a.name) ILIKE :owner', {
           owner: `%${querys.owner}%`,
         });
-    
+
       if (querys.neighborhood)
         filterQueryBuilder.andWhere('a.neighborhood = :neighborhood', {
           neighborhood: querys.neighborhood,
@@ -47,18 +52,16 @@ export class AppointmentService {
         if (querys.dateFilterWay === 'interval') {
           if (querys.startDate) {
             const date = new Date(querys.startDate);
-            const findDate = `${date.getFullYear()}-${
-              date.getMonth() + 1
-            }-${date.getDate()}`;
+            const findDate = `${date.getFullYear()}-${date.getMonth() + 1
+              }-${date.getDate()}`;
             filterQueryBuilder.andWhere('a.date >= :startDate', {
               startDate: findDate,
             });
           }
           if (querys.endDate) {
             const date = new Date(querys.endDate);
-            const findDate = `${date.getFullYear()}-${
-              date.getMonth() + 1
-            }-${date.getDate()}`;
+            const findDate = `${date.getFullYear()}-${date.getMonth() + 1
+              }-${date.getDate()}`;
             filterQueryBuilder.andWhere('a.date <= :endDate', {
               endDate: findDate,
             });
@@ -66,9 +69,8 @@ export class AppointmentService {
         } else if (querys.dateFilterWay === 'onlyOne') {
           if (querys.date) {
             const date = new Date(querys.date);
-            const findDate = `${date.getFullYear()}-${
-              date.getMonth() + 1
-            }-${date.getDate()}`;
+            const findDate = `${date.getFullYear()}-${date.getMonth() + 1
+              }-${date.getDate()}`;
             filterQueryBuilder.andWhere('a.date = :date', {
               date: findDate,
             });
@@ -78,7 +80,7 @@ export class AppointmentService {
 
       if (querys.dni)
         filterQueryBuilder.andWhere('a.dni ILIKE :dni', {
-          dni: `${querys.dni}%`,  
+          dni: `${querys.dni}%`,
         });
 
       if (querys.orderBy) {
@@ -118,11 +120,22 @@ export class AppointmentService {
     appointments: CreateAppointmentDTO[]
   ): Promise<Appointment[]> {
     const allAppointments: Appointment[] = [];
+    let surgeryNumber: number;
+    const residualNumbersRegisters = await this.dataEntitiesService.getResidualNumbers();
+    if (residualNumbersRegisters.length === 0) {
+      const max = await this.appointmentRepository.createQueryBuilder('a')
+        .select('MAX(a.surgeryNumber)', 'max')
+        .getRawOne();
+      surgeryNumber = (max?.max || 0) + 1;
+    } else {
+      surgeryNumber = residualNumbersRegisters[0].number;
+    }
     appointments.forEach(async (appointment) => {
       try {
-        const newAppointment = this.appointmentRepository.create(appointment);
+        const newAppointment = await this.createOneAppointment(appointment, surgeryNumber);
         await this.appointmentRepository.save(newAppointment);
         allAppointments.push(newAppointment);
+        surgeryNumber++;
       } catch (error) {
         throw error;
       }
@@ -131,13 +144,32 @@ export class AppointmentService {
   }
 
   async createOneAppointment(
-    appointment: CreateAppointmentDTO
+    appointment: CreateAppointmentDTO,
+    number: number | null = null
   ): Promise<Appointment> {
     try {
-      const newAppointment = await this.appointmentRepository.create(
-        appointment
+      let surgeryNumber;
+      const residualNumbersRegisters = await this.dataEntitiesService.getResidualNumbers();
+      if (number !== null) surgeryNumber = number;
+      else if (residualNumbersRegisters.length === 0) {
+        const max = await this.appointmentRepository.createQueryBuilder('a')
+          .select('MAX(a.surgeryNumber)', 'max')
+          .getRawOne();
+        surgeryNumber = (max?.max || 0) + 1;
+      } else {
+        surgeryNumber = residualNumbersRegisters[0].number;
+      }
+
+      const newAppointment = await this.appointmentRepository.create({
+        surgeryNumber: surgeryNumber,
+        ...appointment
+      }
       );
-      return await this.appointmentRepository.save(newAppointment);
+      const createdAppointment = await this.appointmentRepository.save(newAppointment);
+
+      if (residualNumbersRegisters.length !== 0) this.dataEntitiesService.deleteResidualNumber(residualNumbersRegisters[0].ID_residualNumber);
+
+      return createdAppointment;
     } catch (error) {
       throw error;
     }
@@ -154,7 +186,14 @@ export class AppointmentService {
       return new HttpException('No se puede borrar este recurso', 403);
 
     try {
-      return await this.appointmentRepository.delete(id);
+      const deletedAppointment = await this.getAll({ id })
+      const deleteResult = await this.appointmentRepository.delete(id)
+      if (deleteResult.affected && deleteResult.affected > 0 && deletedAppointment[0]?.surgeryNumber !== undefined) {
+        if (deletedAppointment[0].surgeryNumber) {
+          this.dataEntitiesService.createResidualNumber(deletedAppointment[0].surgeryNumber);
+        }
+      }
+      return deleteResult;
     } catch (error) {
       throw error;
     }
@@ -165,7 +204,24 @@ export class AppointmentService {
     updatedAppointment: UpdateAppointmentDto
   ) {
     try {
-      return await this.appointmentRepository.update(id, updatedAppointment);
+      let updateResult: UpdateResult;
+      const appointment = await this.getAll({ id });
+      if (updatedAppointment.status in ["Ausentado", "Cancelado", "No Realizado"]) {
+
+        updateResult = await this.appointmentRepository.update(
+          id,
+          {
+            ...updatedAppointment,
+            surgeryNumber: null
+          }
+        );
+        if (appointment[0].surgeryNumber && updateResult.affected && updateResult.affected > 0) {
+          this.dataEntitiesService.createResidualNumber(appointment[0].surgeryNumber)
+        }
+      } else {
+        updateResult = await this.appointmentRepository.update(id, updatedAppointment);
+      }
+      return updateResult;
     } catch (error) {
       throw error;
     }

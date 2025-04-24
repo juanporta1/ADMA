@@ -14,7 +14,7 @@ export class UpdateAppointmentDto {
   size!: 'Pequeño' | 'Mediano' | 'Grande';
   sex!: 'Macho' | 'Hembra';
   specie!: Specie;
-  status!: 'Pendiente' | 'Cancelado' | 'Realizado';
+  status!: 'Pendiente' | 'Cancelado' | "Ausentado" | "Esperando Actualización" | "En Proceso" | "No Realizado" | 'Realizado';
   observations!: string;
-  reasons!:Reason;
+  reasons!: Reason;
 }

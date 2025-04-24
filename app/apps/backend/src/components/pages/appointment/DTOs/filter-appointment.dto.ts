@@ -1,8 +1,8 @@
 export class FilterAppointmentDto{
     id?:number;
     owner?: string;
-    name!: string;
-    lastName!: string;
+    name?: string;
+    lastName?: string;
     home?: string;
     phone?:string;
     neighborhood?: number;

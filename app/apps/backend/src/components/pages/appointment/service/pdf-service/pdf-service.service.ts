@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import PDFDocumnetWithTables from 'pdfkit-table';
-import { FilterAppointmentDto } from '../../appointment-DTOs/filter-appointment.dto';
+import { FilterAppointmentDto } from '../../DTOs/filter-appointment.dto';
 import { Appointment } from '../../appointment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';

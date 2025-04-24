@@ -9,10 +9,10 @@ import {
   Query,
   Res,
 } from '@nestjs/common';
-import { CreateAppointmentDTO } from '../appointment-DTOs/create-appointment.dto';
-import { AppointmentService } from '../appoinment-service/appointment.service';
-import { UpdateAppointmentDto } from '../appointment-DTOs/update-appointment.dto';
-import { FilterAppointmentDto } from '../appointment-DTOs/filter-appointment.dto';
+import { CreateAppointmentDTO } from '../DTOs/create-appointment.dto';
+import { AppointmentService } from '../service/appointment.service';
+import { UpdateAppointmentDto } from '../DTOs/update-appointment.dto';
+import { FilterAppointmentDto } from '../DTOs/filter-appointment.dto';
 import PDFDocumentWithTables from 'pdfkit-table';
 import type {  Response } from 'express';
 @Controller('appointment')

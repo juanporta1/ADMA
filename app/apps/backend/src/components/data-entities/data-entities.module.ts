@@ -5,9 +5,10 @@ import { Reason } from './entities/reason.entity';
 import { DataEntitiesController } from './controller/data-entities.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataEntitiesService } from './services/data-entities.service';
+import { ResidualNumber } from './entities/residual-number.entity';
 
 @Module({
-    imports:[TypeOrmModule.forFeature([Neighborhood, Specie, Reason])],
+    imports:[TypeOrmModule.forFeature([Neighborhood, Specie, Reason, ResidualNumber])],
     controllers: [DataEntitiesController],
     providers: [DataEntitiesService],
     exports: [TypeOrmModule]

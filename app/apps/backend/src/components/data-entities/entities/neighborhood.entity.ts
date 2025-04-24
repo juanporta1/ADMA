@@ -1,5 +1,5 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
-import { Appointment } from '../../pages/appoiment/appointment.entity';
+import { Appointment } from '../../pages/appointment/appointment.entity';
 
 @Entity({ name: 'Neighborhood' })
 export class Neighborhood {
@@ -11,4 +11,7 @@ export class Neighborhood {
 
   @OneToMany(() => Appointment, (appointment) => appointment.neighborhood)
   appointments!: Appointment[];
+
+  @Column({type: "boolean", default: true})
+  inUse!: boolean;
 }

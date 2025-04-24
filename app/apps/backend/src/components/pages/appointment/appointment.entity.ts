@@ -1,8 +1,10 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Status, Sex, Size,  Hours} from './appointment-DTOs/appointment.enum';
+import { BeforeInsert, Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Status, Sex, Size,  Hours} from './DTOs/appointment.enum';
 import { Reason } from '../../data-entities/entities/reason.entity';
 import { Specie } from '../../data-entities/entities/specie.entity';
 import { Neighborhood } from '../../data-entities/entities/neighborhood.entity';
+import { IncomeForm } from '../income-form/income-form.entity';
+import { Castration } from '../castration/castration.entity';
 
 @Entity({ name: 'Appointment' })
 export class Appointment {
@@ -50,4 +52,15 @@ export class Appointment {
 
   @ManyToOne(() => Reason, (reasons) => reasons.appointments)
   reason!: Reason;
+
+  @Column({ type: 'int', nullable: true })
+  surgeryNumber?: number | null;
+
+  @OneToOne(() => IncomeForm,{nullable: true})
+  IncomeForm?: IncomeForm;
+
+  @OneToOne(() => Castration)
+  castration?: Castration;
+
+  
 }
