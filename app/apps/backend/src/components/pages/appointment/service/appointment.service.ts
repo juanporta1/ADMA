@@ -271,15 +271,5 @@ export class AppointmentService {
     this.pdfService.generateFooter(doc);
   }
 
-  @Cron(CronExpression.EVERY_MINUTE)
-  async updateStatus() {
-    console.log('Actualizando status de citas...');
-    const today = new Date();
-    await this.appointmentRepository.update(
-      { date: LessThanOrEqual(today),
-        status: Not(In(['Ausentado', 'Cancelado', 'No Realizado', "Realizado", "En Proceso"]))
-      },
-      { status: "Esperando Actualización" }
-    );
-  }
+  
 }

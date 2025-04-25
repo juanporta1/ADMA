@@ -7,9 +7,10 @@ import { DataEntitiesModule } from '../components/data-entities/data-entities.mo
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { IncomeForm } from '../components/pages/income-form/income-form.entity';
 import { Castration } from '../components/pages/castration/castration.entity';
+import { SchedulesModule } from '../components/schedule/schedule.module';
 
 @Module({
-  imports: [DataSourceModule, AppoimentModule, DataEntitiesModule, IncomeForm, Castration],
+  imports: [DataSourceModule, AppoimentModule, DataEntitiesModule, IncomeForm, Castration, SchedulesModule],
   controllers: [AppController],
   providers: [AppService],
 
