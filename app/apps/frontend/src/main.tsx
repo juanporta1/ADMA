@@ -9,28 +9,31 @@ import '@mantine/dates/styles.css';
 import { Notifications } from '@mantine/notifications';
 import { DatesProvider } from '@mantine/dates';
 import { ContextsProvider } from './contexts-provider';
+import OidcAuthProvider from './auth/oidc-auth-provider';
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 
 root.render(
   <StrictMode>
-    <ContextsProvider>
-      <MantineProvider>
-        <DatesProvider
-          settings={{
-            locale: 'es',
-            firstDayOfWeek: 0,
-            weekendDays: [0, 6],
-            timezone: 'America/Argentina/Buenos_Aires',
-          }}
-        >
-          <Notifications />
-          <BrowserRouter>
-            <App />
-          </BrowserRouter>
-        </DatesProvider>
-      </MantineProvider>
-    </ContextsProvider>
+    <OidcAuthProvider>
+      <ContextsProvider>
+        <MantineProvider>
+          <DatesProvider
+            settings={{
+              locale: 'es',
+              firstDayOfWeek: 0,
+              weekendDays: [0, 6],
+              timezone: 'America/Argentina/Buenos_Aires',
+            }}
+          >
+            <Notifications />
+            <BrowserRouter>
+              <App />
+            </BrowserRouter>
+          </DatesProvider>
+        </MantineProvider>
+      </ContextsProvider>
+    </OidcAuthProvider>
   </StrictMode>
 );

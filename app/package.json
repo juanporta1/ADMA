@@ -43,6 +43,8 @@
     "apps/*"
   ],
   "dependencies": {
+    "@flowcore/microservice": "^5.0.0",
+    "@flowcore/nestjs-oidc-protect": "^3.4.1",
     "@fortawesome/fontawesome-svg-core": "^6.7.2",
     "@fortawesome/free-brands-svg-icons": "^6.7.2",
     "@fortawesome/free-regular-svg-icons": "^6.7.2",
@@ -61,12 +63,14 @@
     "@types/pdfkit": "^0.13.9",
     "axios": "^1.8.4",
     "fs": "^0.0.1-security",
+    "oidc-client-ts": "^3.2.0",
     "pdfkit": "^0.17.0",
     "pdfkit-table": "^0.1.99",
     "pdfkit-table-ts": "^0.0.14",
     "pg": "^8.14.1",
     "react": "18.3.1",
     "react-dom": "18.3.1",
+    "react-oidc-context": "^3.3.0",
     "react-router-dom": "^7.5.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.0",

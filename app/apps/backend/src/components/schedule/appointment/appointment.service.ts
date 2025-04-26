@@ -6,7 +6,10 @@ import { Appointment } from '../../pages/appointment/appointment.entity';
 
 @Injectable()
 export class AppointmentService {
-    constructor(@InjectRepository(Appointment) private readonly appointmentRepository: Repository<Appointment>){}
+  constructor(
+    @InjectRepository(Appointment)
+    private readonly appointmentRepository: Repository<Appointment>
+  ) {}
   @Cron(CronExpression.EVERY_MINUTE)
   async updateStatus() {
     console.log('Actualizando status de citas...');
