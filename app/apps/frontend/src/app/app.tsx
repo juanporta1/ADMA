@@ -6,10 +6,12 @@ import CreateAppointment from '../components/pages/appointment/create/create-app
 import Layout from '../components/layout/layout';
 import Castration from '../components/pages/castration/castration';
 import IncomeForm from '../components/pages/income-form/income-form';
+import Login from '../components/login/login';
 
 export function App() {
   return (
     <Routes>
+      <Route path='/login' element={<Login/>} />
       <Route path="/" element={<Layout />}>
         <Route
           path="/turnos/listar"
