@@ -67,7 +67,7 @@ export class DataEntitiesService {
     return await this.reasonRepository.find();
   }
 
-  async getResidualNumbers(){
+  async getResidualNumbers() {
     return await this.residualNumberRepository.find();
   }
   

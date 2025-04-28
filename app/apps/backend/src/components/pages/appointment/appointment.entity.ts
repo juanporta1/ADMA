@@ -5,6 +5,7 @@ import { Specie } from '../../data-entities/entities/specie.entity';
 import { Neighborhood } from '../../data-entities/entities/neighborhood.entity';
 import { IncomeForm } from '../income-form/income-form.entity';
 import { Castration } from '../castration/castration.entity';
+import { User } from '../../data-entities/entities/user.entity';
 
 @Entity({ name: 'Appointment' })
 export class Appointment {
@@ -62,5 +63,6 @@ export class Appointment {
   @OneToOne(() => Castration)
   castration?: Castration;
 
-  
+  @ManyToOne(() => User, user => user.appointment)
+  user!: User;
 }

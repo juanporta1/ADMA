@@ -1,4 +1,5 @@
-import {  Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {  Column, Entity, OneToMany, PrimaryGeneratedColumn } from 'typeorm';
+import { Appointment } from '../../pages/appointment/appointment.entity';
 
 @Entity({ name: 'User' })
 export class User {
@@ -10,4 +11,10 @@ export class User {
 
   @Column({type: "enum", enum: ["admin", "user", "main"]})
   role!: string;
+
+  @Column({type: "boolean", default: true})
+  inUse!: boolean;
+
+  @OneToMany(() => Appointment, appointment => appointment.user)
+  appointment!: Appointment;
 }

@@ -7,6 +7,7 @@ import { faPenToSquare, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { faComment } from '@fortawesome/free-regular-svg-icons';
 import { MainColorContext } from '../../../../../contexts/color-context';
 import useDataEntities from '../../../../../hooks/general/use-data-entities/use-data-entities';
+import { UserContext } from '../../../../../contexts/user-context';
 
 interface props{
   clickDeleteFunc: () => void,
@@ -28,13 +29,13 @@ export function AppointmentRow({appointment, clickDeleteFunc, clickEditFunc, cli
   const tooltipLabel = canEdit
     ? `No puede editar este registro.`
     : 'Editar Registro';
-  // Separa el nombre y apellido del dueño
+ 
   // Determina si se puede borrar el turno
   const canDelete = appointment.status === 'Pendiente' ? false : true;
   const deleteLabel = !canDelete ? 'Borrar' : 'No puede borrar este registro';
   const observationLabel = appointment.observations ? "Ver observaciones" : 'Este registro no tiene observaciones';
   const mainColor = useContext(MainColorContext);
-  
+  const {currentUser} = useContext(UserContext)
   return (
     <Table.Tr  key={appointment.ID_appointment} mah={"60px"} mih={"50px"}>
       <Table.Td>{appointment.date.toString()}</Table.Td>

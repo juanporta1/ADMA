@@ -16,8 +16,7 @@ export class AppointmentService {
     @InjectRepository(Appointment)
     private appointmentRepository: Repository<Appointment>,
     private pdfService: PdfService,
-    @InjectRepository(ResidualNumber)
-    private readonly dataEntitiesService: DataEntitiesService
+    private dataEntitiesService: DataEntitiesService
   ) {}
 
   async getAll(querys: FilterAppointmentDto) {
