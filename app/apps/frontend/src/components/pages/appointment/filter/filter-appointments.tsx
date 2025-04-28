@@ -525,7 +525,7 @@ export function FilterAppointments() {
                   <div>
                     {/* Tabla de resultados */}
                     <div
-                      style={{ minHeight: `${(registersPerPage + 1) * 45}px` }}
+                      style={{ minHeight: `${(registersPerPage + 1) * 45}px`, maxWidth: "100%" }}
                     >
                       {/* Overlay de carga mientras se obtienen los datos */}
                       <LoadingOverlay visible={loadingRows} zIndex={10} />

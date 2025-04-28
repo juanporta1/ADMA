@@ -57,7 +57,7 @@ export function AddUsers(props: porps) {
   >(null)
   const UsersItems = () =>
     users.map((user) => {
-      const disabled = currentUser?.role !== 'main' || user.role === "main";
+      const disabled = currentUser?.role === 'user' || user.role === "main" || user.role === currentUser?.role;
       const disabledLabel = disabled ? "No puedes realizar esta accion." : false;
       return (
         <Table.Tr
@@ -221,24 +221,28 @@ export function AddUsers(props: porps) {
       >
         <Title>Usuarios</Title>
         <Text>Definir y administrar los usuarios y sus roles.</Text>
-        <Table
-          style={{
-            border: '1px solid #e8e8e8',
-            width: '500px',
-            maxHeight: '200px',
-          }}
-        >
-          <Table.Thead style={{}}>
-            <Table.Tr>
-              <Table.Td>Email</Table.Td>
-              <Table.Td>Rol</Table.Td>
-            </Table.Tr>
+        <Box style={{
+          maxHeight: '200px',
+          overflow: "auto",
+          border: '1px solid #e8e8e8',
+          width: '500px',
+        }}>
+          <Table>
+            <Table.Thead >
+              <Table.Tr>
+                <Table.Td>Email</Table.Td>
+                <Table.Td>Rol</Table.Td>
+              </Table.Tr>
 
-          </Table.Thead>
-          <Table.Tbody>
-            <UsersItems />
-          </Table.Tbody>
-        </Table>
+            </Table.Thead>
+
+            <Table.Tbody>
+              <UsersItems />
+            </Table.Tbody>
+
+
+          </Table>
+        </Box>
         <Button bg={mainColor} disabled={currentUser?.role === "user"} onClick={open}>
           Cargar Usuario
         </Button>

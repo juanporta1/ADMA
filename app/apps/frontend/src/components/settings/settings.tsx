@@ -3,6 +3,7 @@ import styles from './settings.module.css';
 import AddUsers from './sections/add-users/add-users';
 import { useContext } from 'react';
 import { MainColorContext } from '../../contexts/color-context';
+import Sesion from './sections/sesion/sesion';
 
 export function Settings() {
   const mainColor = useContext(MainColorContext);
@@ -36,8 +37,10 @@ export function Settings() {
         w={'50%'}
         style={{ overflowY: 'auto', maxHeight: '80%' }}
         direction={'column'}
+        gap={"xl"}
       >
         <AddUsers id="add-users" />
+        <Sesion />
       </Flex>
     </Flex>
   );
