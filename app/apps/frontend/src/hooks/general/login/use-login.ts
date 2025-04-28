@@ -1,5 +1,5 @@
 import axios, { AxiosResponse } from 'axios';
-import { useState, useCallback, useContext } from 'react';
+import { useContext } from 'react';
 import { ApiHostContext } from '../../../contexts/api-host-context';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -44,6 +44,7 @@ export function useLogin(): UseLogin {
       email: email,
       role: role
     })
+    console.log(res)
     return res
   }
 
