@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query } from '@nestjs/common';
 import { DataEntitiesService } from '../services/data-entities.service';
 
 @Controller('data-entities')
@@ -62,5 +62,16 @@ export class DataEntitiesController {
   async createUser(@Body() body: {email: string, role: string}) {
     console.log(body);
     return await this.dataService.createUser(body);
+  }
+
+  @Put('user/:id')
+  async editUser(@Body() body: {email: string, role: string}, @Param("id") id: number ) {
+    console.log(body);
+    return await this.dataService.editUser(body,id);
+  }
+
+  @Delete("user/:id")
+  async deleteUser(@Param("id") id: number ){
+    return await this.dataService.deleteUser(id)
   }
 }

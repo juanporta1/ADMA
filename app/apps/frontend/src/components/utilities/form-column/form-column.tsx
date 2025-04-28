@@ -47,6 +47,7 @@ export function FormColumn(props: props) {
                 props.form.setValues({ [props.name]: date });
               }
         }
+        
       />
     );
   } else if (props.inputType === 'select') {

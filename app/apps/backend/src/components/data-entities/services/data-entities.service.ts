@@ -92,4 +92,12 @@ export class DataEntitiesService {
   async getUserByEmail(email: string){
     return await this.userRepository.findOne({where: {email}});
   }
+
+  async editUser(body: {email: string, role: string}, id: number){
+    return await this.userRepository.update(id, body)
+  }
+
+  async deleteUser(id: number){
+    return await this.userRepository.delete(id)
+  }
 }

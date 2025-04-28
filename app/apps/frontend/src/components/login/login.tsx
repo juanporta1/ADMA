@@ -11,22 +11,24 @@ import { notifications } from '@mantine/notifications';
 export function Login() {
   const auth = useAuth();
   const mainColor = useContext(MainColorContext);
-  const {getUserByEmail} = useLogin();
-  const {setUser} = useContext(UserContext);
+  const { getUserByEmail } = useLogin();
+  const { setCurrentUser } = useContext(UserContext);
   const navigate = useNavigate();
 
 
 
   const signInSilent = async () => {
     if (auth.isAuthenticated) {
-      if(auth.user?.profile.email){
+      if (auth.user?.profile.email) {
         console.log(auth.user?.profile.email)
         const user = await getUserByEmail(auth.user.profile.email);
         console.log(user)
-        setUser(user);
-        if(user) {
+        await localStorage.setItem("currentUser", JSON.stringify(user));
+        const userString = localStorage.getItem("currentUser");
+        if (userString)setCurrentUser(JSON.parse(userString));
+        if (user) {
           navigate('/');
-        }else{
+        } else {
           notifications.show({
             title: 'Acceso denegado',
             message: 'Ha intentado ingresar con una cuenta sin permisos',
@@ -34,7 +36,7 @@ export function Login() {
           })
           auth.signoutSilent();
         }
-      
+
       }
     }
   };
