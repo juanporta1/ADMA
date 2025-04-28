@@ -105,7 +105,7 @@ export function Layout() {
               </Text>
               <NavLinksContainer
                 mainNavLink={{
-                  goTo: '',
+                  goTo: '/configuracion',
                   label: 'Configuración',
                   icon: <FontAwesomeIcon icon={faGear} />,
                 }}

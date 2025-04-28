@@ -10,9 +10,13 @@ import { Notifications } from '@mantine/notifications';
 import { DatesProvider } from '@mantine/dates';
 import { ContextsProvider } from './contexts-provider';
 import OidcAuthProvider from './auth/oidc-auth-provider';
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
+
+
+
 
 root.render(
   <StrictMode>
@@ -34,6 +38,6 @@ root.render(
           </DatesProvider>
         </MantineProvider>
       </ContextsProvider>
-    </OidcAuthProvider>
+      </OidcAuthProvider>
   </StrictMode>
 );

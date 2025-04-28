@@ -6,6 +6,7 @@ import { Specie } from '../entities/specie.entity';
 import { Reason } from '../entities/reason.entity';
 import { privateDecrypt } from 'crypto';
 import { ResidualNumber } from '../entities/residual-number.entity';
+import { User } from '../entities/user.entity';
 
 @Injectable()
 export class DataEntitiesService {
@@ -18,6 +19,8 @@ export class DataEntitiesService {
     private reasonRepository: Repository<Reason>,
     @InjectRepository(ResidualNumber)
     private residualNumberRepository: Repository<ResidualNumber>,
+    @InjectRepository(User)
+    private userRepository: Repository<User>,
   ) {}
 
   async createSpecie(body: {specie: string}){
@@ -77,4 +80,16 @@ export class DataEntitiesService {
     return await this.residualNumberRepository.delete(id);
   }
 
+  async createUser(user: {email: string, role: string}){
+    const newUser = this.userRepository.create(user);
+    return await this.userRepository.save(newUser);
+  }
+
+  async getUsers(){
+    return await this.userRepository.find();
+  }
+
+  async getUserByEmail(email: string){
+    return await this.userRepository.findOne({where: {email}});
+  }
 }

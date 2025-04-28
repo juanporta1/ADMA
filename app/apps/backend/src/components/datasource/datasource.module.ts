@@ -8,6 +8,7 @@ import { Reason } from "../data-entities/entities/reason.entity";
 import { Castration } from "../pages/castration/castration.entity";
 import { IncomeForm } from "../pages/income-form/income-form.entity";
 import { ResidualNumber } from "../data-entities/entities/residual-number.entity";
+import { User } from "../data-entities/entities/user.entity";
 
 dotenv.config()
 
@@ -23,7 +24,7 @@ dotenv.config()
                     const dataSource = new DataSource({
                         type:"postgres",
                         url: process.env.DB_HOST,
-                        entities:[Appointment, Neighborhood, Specie, Reason, Castration, IncomeForm, ResidualNumber],
+                        entities:[Appointment, Neighborhood, Specie, Reason, Castration, IncomeForm, ResidualNumber, User],
                         synchronize: true,
                     });
                     await dataSource.initialize();

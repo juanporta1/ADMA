@@ -1,0 +1,10 @@
+.control {
+    
+    transition: transform 100ms ease;
+
+    &[data-active] {
+      background-color: #7e6c88;
+      color: var(--mantine-color-white);
+      transform: scale(1.1);
+    }
+  }

@@ -7,17 +7,19 @@ import Layout from '../components/layout/layout';
 import Castration from '../components/pages/castration/castration';
 import IncomeForm from '../components/pages/income-form/income-form';
 import Login from '../components/login/login';
+import PrivateRoute from '../auth/private-route/private-route';
+import Settings from '../components/settings/settings';
 
 export function App() {
   return (
     <Routes>
-      <Route path='/login' element={<Login/>} />
-      <Route path="/" element={<Layout />}>
+      <Route index path='/login' element={<Login/>} />
+      <Route path="/" element={<PrivateRoute component={Layout}/>}>
         <Route
           path="/turnos/listar"
           element={
             <Suspense fallback={<LoadingOverlay visible />}>
-              <FilterAppointments />
+              <PrivateRoute component={FilterAppointments} />
             </Suspense>
           }
         />
@@ -25,7 +27,8 @@ export function App() {
           path="/turnos/nuevo"
           element={
             <Suspense fallback={<LoadingOverlay visible />}>
-              <CreateAppointment />
+              <PrivateRoute component={CreateAppointment} />
+              
             </Suspense>
           }
         />
@@ -33,7 +36,7 @@ export function App() {
           path="/castraciones"
           element={
             <Suspense fallback={<LoadingOverlay visible />}>
-              <Castration />
+              <PrivateRoute component={Castration} />
             </Suspense>
           }
         />
@@ -41,10 +44,16 @@ export function App() {
           path="/planilla-de-ingreso"
           element={
             <Suspense fallback={<LoadingOverlay visible />}>
-              <IncomeForm />
+              <PrivateRoute component={IncomeForm} />
             </Suspense>
           }
         />
+        <Route path="/configuracion" 
+          element={
+            <Suspense fallback={<LoadingOverlay visible />}>
+              <PrivateRoute component={Settings} />
+            </Suspense>
+          }/>
       </Route>
     </Routes>
   );
