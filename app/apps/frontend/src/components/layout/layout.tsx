@@ -1,9 +1,12 @@
 import { useDisclosure } from '@mantine/hooks';
 import {
   AppShell,
+  Avatar,
   Burger,
   Flex,
   Group,
+  Image,
+  Indicator,
   MantineProvider,
   Stack,
   Text,
@@ -20,9 +23,11 @@ import {
   faUserDoctor,
 } from '@fortawesome/free-solid-svg-icons';
 import NavLinksContainer from '../utilities/nav-links-containter/nav-links-container';
+import { useAuth } from 'react-oidc-context';
+import UserMenu from './user-menu/user-menu';
 export function Layout() {
   const [opened, { toggle }] = useDisclosure();
-
+  const auth = useAuth();
   return (
     <MantineProvider>
       <AppShell
@@ -32,10 +37,11 @@ export function Layout() {
           breakpoint: 'sm',
           collapsed: { mobile: !opened },
         }}
+        
         padding="md"
       >
-        <AppShell.Header style={{ backgroundColor: '#6c5b7b', border: 'none' }}>
-          <Flex direction={'row'}>
+        <AppShell.Header style={{ backgroundColor: '#8b7a9a', border: 'none' }}>
+          <Flex direction={'row'} justify={'space-between'} h={'100%'}>
             <Group h="100%" px="md">
               <Burger
                 opened={opened}
@@ -44,7 +50,36 @@ export function Layout() {
                 size="sm"
                 style={{ marginRight: '10px' }}
               />
+              <img
+                src={
+                  'https://altagracia.gob.ar//wp-content/uploads/2022/11/SALUD_ANIMAL_LOGO-removebg-preview.png'
+                }
+                style={{
+                  height: '100%',
+                }}
+              />
+              <img
+                src="https://altagracia.gob.ar/wp-content/uploads/2022/05/cropped-logo_alta_gracia_muni.png"
+                alt=""
+                style={{
+                  height: '60%',
+                }}
+              />
             </Group>
+
+            <Flex
+              direction={'row'}
+              gap={'md'}
+              justify={'center'}
+              align={'center'}
+              h={'100%'}
+              p={'sm'}
+            >
+              <Text c={'white'} fw={700}>
+                {auth.user?.profile.email}
+              </Text>
+              <UserMenu/>
+            </Flex>
           </Flex>
 
           {/* <Image
@@ -118,7 +153,7 @@ export function Layout() {
             </Text>
           </Stack>
         </AppShell.Navbar>
-        <AppShell.Main>
+        <AppShell.Main h={"100%"}>
           <Outlet></Outlet>
         </AppShell.Main>
       </AppShell>

@@ -10,7 +10,6 @@ import {
   Title,
   Tooltip,
 } from '@mantine/core';
-import styles from './add-users.module.css';
 import useLogin from '../../../../hooks/general/login/use-login';
 import { useContext, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -21,7 +20,6 @@ import { useDisclosure } from '@mantine/hooks';
 import FormColumn from '../../../utilities/form-column/form-column';
 import { useForm } from '@mantine/form';
 import { SelectData } from '../../../../hooks/appointment/use-selects-data/use-selects-data';
-import { notifications } from '@mantine/notifications';
 import { User } from '../../../../hooks/general/login/use-login';
 
 interface porps {

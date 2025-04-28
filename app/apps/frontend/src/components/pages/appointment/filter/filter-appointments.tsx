@@ -55,6 +55,8 @@ export interface FilterParams {
   byHour?: string; // Filtrar por hora específica
   status?: string; // Estado del turno
   findBy?: 'dni' | 'owner'; // Buscar por DNI o dueño
+  dateFilterWay?: "all" | "onlyOne" | "interval"
+  date?: Date;
 }
 
 // Interfaz para la estructura de un turno

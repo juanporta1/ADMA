@@ -7,9 +7,7 @@ import { UpdateAppointmentDto } from '../DTOs/update-appointment.dto';
 import { FilterAppointmentDto } from '../DTOs/filter-appointment.dto';
 import PDFDocumentWithTables from 'pdfkit-table';
 import { PdfService } from './pdf-service/pdf-service.service';
-import { ResidualNumber } from '../../../data-entities/entities/residual-number.entity';
 import { DataEntitiesService } from '../../../data-entities/services/data-entities.service';
-import { Cron, CronExpression } from '@nestjs/schedule';
 @Injectable()
 export class AppointmentService {
   constructor(
