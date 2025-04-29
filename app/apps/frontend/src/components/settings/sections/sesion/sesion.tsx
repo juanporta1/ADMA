@@ -7,7 +7,7 @@ export function Sesion() {
   const auth = useAuth();
   const navigate = useNavigate();
   return (
-    <Flex justify={"center"} align={"start"} direction={"column"} gap={"md"}>
+    <Flex justify={"left"} align={"start"} direction={"column"}  gap={"md"}>
       <Title>Sesión</Title>
       <Button color='red' variant='light' onClick={() => {
         auth.signoutSilent();

@@ -58,7 +58,13 @@ export interface FilterParams {
   dateFilterWay?: "all" | "onlyOne" | "interval"
   date?: Date;
 }
-
+interface IncomeForm{
+  ID_income: number;
+  age: string;
+  weight: number;
+  features: string;
+  animalName: string;
+}
 // Interfaz para la estructura de un turno
 export interface Appointment {
   ID_appointment: number; // ID único del turno
@@ -74,15 +80,17 @@ export interface Appointment {
   sex: 'Macho' | 'Hembra'; // Sexo de la mascota
   specie: { ID_specie: number; specie: string }; // Especie de la mascota
   status:
-    | 'Pendiente'
-    | 'Cancelado'
-    | 'Ausentado'
-    | 'Esperando Actualización'
-    | 'En Proceso'
-    | 'Realizado'
-    | 'No Realizado'; // Estado del turno
+  | 'Pendiente'
+  | 'Cancelado'
+  | 'Ausentado'
+  | 'Esperando Actualización'
+  | 'En Proceso'
+  | 'Realizado'
+  | 'No Realizado'; // Estado del turno
   observations: string | null; // Observaciones adicionales
   reason: { ID_reason: number; reason: string } | null; // Razón de cancelación u otra
+  incomeForm: IncomeForm | null;
+  surgeryNumber: number | null;
 }
 
 // Componente principal para filtrar y mostrar turnos
@@ -152,7 +160,7 @@ export function FilterAppointments() {
     restrictedSex: [{ value: '', text: '' }],
     restrictedSize: [{ value: '', text: '' }],
     restrictedSpecie: [{ value: '', text: '' }],
-  
+
   });
   // Hook para filtrar turnos
   const { filter, remove, generatePDF } = useAppointment();
@@ -261,7 +269,7 @@ export function FilterAppointments() {
       }, 2000);
       return () => clearTimeout(timeout);
     } else {
-      return () => {};
+      return () => { };
     }
   }, [isLoading]);
 
@@ -316,7 +324,7 @@ export function FilterAppointments() {
           }}
         >
           <Box>
-            <Flex direction="column" gap="md">
+            <Flex direction="column" gap="md" >
               {/* Encabezado con título y botón para crear nuevo turno */}
               <Flex direction="row" justify="space-between">
                 <Title text="Turnos" c={mainColor} />
@@ -370,22 +378,22 @@ export function FilterAppointments() {
                       label="Filtros por fecha: "
                       data={selectsData.dateFilterWay}
                       onChangeSelectFunc={(e) => {
-                        
+
                         setDateFilterWay(
                           e.currentTarget.value as
-                            | 'all'
-                            | 'interval'
-                            | 'onlyOne'
+                          | 'all'
+                          | 'interval'
+                          | 'onlyOne'
                         );
                         form.setValues({
                           dateFilterWay: e.currentTarget.value,
-                          date: null, 
+                          date: null,
                           startDate: null,
                           endDate: null
                         });
                       }}
                     />
-                    {<DateFilter type={dateFilterWay} form={form}/>}
+                    {<DateFilter type={dateFilterWay} form={form} />}
                     {/* Selector para buscar por DNI o dueño */}
                     <FormColumn
                       form={form}
@@ -416,7 +424,7 @@ export function FilterAppointments() {
                       data={selectsData.sex}
                       notRequired
                     />
-                    
+
                     {/* Selector de especie */}
                     <FormColumn
                       span={4}
@@ -527,7 +535,7 @@ export function FilterAppointments() {
                   <div>
                     {/* Tabla de resultados */}
                     <div
-                      style={{ minHeight: `${(registersPerPage + 1) * 45}px`, maxWidth: "100%" }}
+                      style={{ minHeight: `${(registersPerPage + 1) * 45}px` }}
                     >
                       {/* Overlay de carga mientras se obtienen los datos */}
                       <LoadingOverlay visible={loadingRows} zIndex={10} />
@@ -539,7 +547,6 @@ export function FilterAppointments() {
                             <Table.Th>Apellido</Table.Th>
                             <Table.Th>Nombre</Table.Th>
                             <Table.Th>DNI</Table.Th>
-
                             <Table.Th>Telefono</Table.Th>
                             <Table.Th>Domicilio</Table.Th>
                             <Table.Th>Barrio</Table.Th>

@@ -1,4 +1,4 @@
-import { BeforeInsert, Column, Entity, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
 import { Status, Sex, Size,  Hours} from './DTOs/appointment.enum';
 import { Reason } from '../../data-entities/entities/reason.entity';
 import { Specie } from '../../data-entities/entities/specie.entity';
@@ -58,7 +58,8 @@ export class Appointment {
   surgeryNumber?: number | null;
 
   @OneToOne(() => IncomeForm,{nullable: true})
-  IncomeForm?: IncomeForm;
+  @JoinColumn()
+  incomeForm?: IncomeForm;
 
   @OneToOne(() => Castration)
   castration?: Castration;

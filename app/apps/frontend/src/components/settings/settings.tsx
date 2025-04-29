@@ -22,6 +22,7 @@ export function Settings() {
         borderLeft: `1px solid ${mainColor}aa`,
       }}>
         <TableOfContents
+        style={{paddingRight: "20px"}}
           getControlProps={({ data }) => ({
             onClick: () => data.getNode().scrollIntoView(),
             children: data.value,
@@ -35,11 +36,11 @@ export function Settings() {
 
       <Flex
         w={'50%'}
-        style={{ overflowY: 'auto', maxHeight: '80%' }}
+        style={{ overflowY: 'auto', maxHeight: '100%' }}
         direction={'column'}
         gap={"xl"}
       >
-        <AddUsers id="add-users" />
+        <AddUsers />
         <Sesion />
       </Flex>
     </Flex>

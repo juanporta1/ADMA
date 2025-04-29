@@ -2,6 +2,7 @@ import { useDisclosure } from '@mantine/hooks';
 import {
   AppShell,
   Avatar,
+  Box,
   Burger,
   Flex,
   Group,
@@ -37,7 +38,7 @@ export function Layout() {
           breakpoint: 'sm',
           collapsed: { mobile: !opened },
         }}
-        
+        style={{ height: "100vh" }}
         padding="md"
       >
         <AppShell.Header style={{ backgroundColor: '#8b7a9a', border: 'none' }}>
@@ -54,8 +55,10 @@ export function Layout() {
                 src={
                   'https://altagracia.gob.ar//wp-content/uploads/2022/11/SALUD_ANIMAL_LOGO-removebg-preview.png'
                 }
+                
                 style={{
                   height: '100%',
+
                 }}
               />
               <img
@@ -78,7 +81,7 @@ export function Layout() {
               <Text c={'white'} fw={700}>
                 {auth.user?.profile.email}
               </Text>
-              <UserMenu/>
+              <UserMenu />
             </Flex>
           </Flex>
 
@@ -153,8 +156,10 @@ export function Layout() {
             </Text>
           </Stack>
         </AppShell.Navbar>
-        <AppShell.Main h={"100%"}>
-          <Outlet></Outlet>
+        <AppShell.Main h={"100%"} w={"100%"}>
+          
+            <Outlet />
+          
         </AppShell.Main>
       </AppShell>
     </MantineProvider>

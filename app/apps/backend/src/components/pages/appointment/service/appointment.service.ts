@@ -15,12 +15,13 @@ export class AppointmentService {
     private appointmentRepository: Repository<Appointment>,
     private pdfService: PdfService,
     private dataEntitiesService: DataEntitiesService
-  ) {}
+  ) { }
 
   async getAll(querys: FilterAppointmentDto) {
     if (Object.keys(querys).length != 0) {
       const filterQueryBuilder =
-        this.appointmentRepository.createQueryBuilder('a');
+        this.appointmentRepository
+          .createQueryBuilder('a')
 
       if (querys.id)
         filterQueryBuilder.andWhere('a.ID_appointment = :id', {
@@ -52,18 +53,16 @@ export class AppointmentService {
         if (querys.dateFilterWay === 'interval') {
           if (querys.startDate) {
             const date = new Date(querys.startDate);
-            const findDate = `${date.getFullYear()}-${
-              date.getMonth() + 1
-            }-${date.getDate()}`;
+            const findDate = `${date.getFullYear()}-${date.getMonth() + 1
+              }-${date.getDate()}`;
             filterQueryBuilder.andWhere('a.date >= :startDate', {
               startDate: findDate,
             });
           }
           if (querys.endDate) {
             const date = new Date(querys.endDate);
-            const findDate = `${date.getFullYear()}-${
-              date.getMonth() + 1
-            }-${date.getDate()}`;
+            const findDate = `${date.getFullYear()}-${date.getMonth() + 1
+              }-${date.getDate()}`;
             filterQueryBuilder.andWhere('a.date <= :endDate', {
               endDate: findDate,
             });
@@ -71,9 +70,8 @@ export class AppointmentService {
         } else if (querys.dateFilterWay === 'onlyOne') {
           if (querys.date) {
             const date = new Date(querys.date);
-            const findDate = `${date.getFullYear()}-${
-              date.getMonth() + 1
-            }-${date.getDate()}`;
+            const findDate = `${date.getFullYear()}-${date.getMonth() + 1
+              }-${date.getDate()}`;
             filterQueryBuilder.andWhere('a.date = :date', {
               date: findDate,
             });
@@ -111,6 +109,7 @@ export class AppointmentService {
       filterQueryBuilder.leftJoinAndSelect('a.neighborhood', 'neighborhood');
       filterQueryBuilder.leftJoinAndSelect('a.specie', 'specie');
       filterQueryBuilder.leftJoinAndSelect('a.reason', 'reason');
+      filterQueryBuilder.leftJoinAndSelect('a.incomeForm','incomeForm')
 
       return await filterQueryBuilder.getMany();
     } else {
@@ -268,5 +267,5 @@ export class AppointmentService {
     this.pdfService.generateFooter(doc);
   }
 
-  
+
 }

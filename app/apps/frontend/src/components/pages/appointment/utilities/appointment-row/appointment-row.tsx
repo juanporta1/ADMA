@@ -37,7 +37,7 @@ export function AppointmentRow({appointment, clickDeleteFunc, clickEditFunc, cli
   const mainColor = useContext(MainColorContext);
   const {currentUser} = useContext(UserContext)
   return (
-    <Table.Tr  key={appointment.ID_appointment} mah={"60px"} mih={"50px"}>
+    <Table.Tr  key={appointment.ID_appointment}>
       <Table.Td>{appointment.date.toString()}</Table.Td>
       <Table.Td>{appointment.hour}</Table.Td>
       <Table.Td>{appointment.lastName}</Table.Td>

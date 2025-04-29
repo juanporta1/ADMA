@@ -7,11 +7,10 @@ export class IncomeForm{
     ID_income!: number;
 
     @OneToOne(() => Appointment)
-    @JoinColumn()
     appointment!: Appointment;
 
-    @Column({type: "int", nullable: true})
-    age?: number;
+    @Column({type: "varchar", nullable: true})
+    age?: string;
 
     @Column({type: "varchar",length: 30, nullable: true})
     animalName?: string;

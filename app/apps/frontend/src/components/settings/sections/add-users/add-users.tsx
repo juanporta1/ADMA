@@ -22,10 +22,8 @@ import { useForm } from '@mantine/form';
 import { SelectData } from '../../../../hooks/appointment/use-selects-data/use-selects-data';
 import { User } from '../../../../hooks/general/login/use-login';
 
-interface porps {
-  id: string;
-}
-export function AddUsers(props: porps) {
+
+export function AddUsers() {
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: {
@@ -256,7 +254,7 @@ export function AddUsers(props: porps) {
       </Modal>
 
       <Flex
-        id={props.id}
+        
         direction={'column'}
         justify={'center'}
         align={'start'}
