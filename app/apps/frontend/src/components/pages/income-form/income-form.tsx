@@ -88,7 +88,7 @@ export function IncomeForm() {
         />
       </Grid>
       <Box style={{ border: '1px solid #aaaa', width: '100%' }}>
-        <Accordion variant='separated' classNames={{panel: styles.row}}>{Accordions}</Accordion>
+        <Accordion variant='contained' classNames={{panel: styles.row}}>{Accordions}</Accordion>
       </Box>
     </Flex>
   );

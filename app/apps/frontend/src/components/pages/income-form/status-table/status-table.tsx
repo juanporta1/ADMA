@@ -43,6 +43,19 @@ export function StatusTable({ appointments }: props) {
     bgColor = '#fff'
     icon = faClock;
   }
+
+  const extraColumns = () => {
+    if(["En Proceso", "Realizado"].includes(appointments[0].status)){
+      return {
+        surgeryNumber: <Table.Th>N° de Cirugia</Table.Th>,
+        weight: <Table.Th>Peso</Table.Th>,
+        age: <Table.Th>Edad</Table.Th>,
+        animalName: <Table.Th>Nombre del Paciente</Table.Th>
+      }
+    }
+  }
+
+  
   return (
     <Accordion.Item value={appointments[0].status}>
       <Accordion.Control bg={bgColor} icon={<FontAwesomeIcon icon={icon}/>}>
@@ -52,16 +65,16 @@ export function StatusTable({ appointments }: props) {
         <Table>
           <Table.Thead>
             <Table.Tr>
-              <Table.Th>N° de Cirugia</Table.Th>
+              {extraColumns()?.surgeryNumber}
               <Table.Th>Apellido</Table.Th>
               <Table.Th>Nombre</Table.Th>
               <Table.Th>Domicilio</Table.Th>
               <Table.Th>Teléfono</Table.Th>
-              <Table.Th>Nombre del Paciente</Table.Th>
-              <Table.Th>Edad</Table.Th>
+              {extraColumns()?.animalName}
+              {extraColumns()?.age}
               <Table.Th>Especie</Table.Th>
               <Table.Th>Sexo</Table.Th>
-              <Table.Th>Peso</Table.Th>
+              {extraColumns()?.weight}
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>{Rows}</Table.Tbody>
