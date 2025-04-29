@@ -67,7 +67,6 @@ export function useAppointment(): UseAppointment {
     };
 
     const response = await axios.post(`${host}/appointment`, newAppointment);
-    console.log(response.data);
 
     notifications.show({
       title: 'Carga del nuevo turno exitosa',
@@ -82,7 +81,6 @@ export function useAppointment(): UseAppointment {
       if (params.input) {
         const { input, findBy, neighborhood, specie, ...otherParams } = params;
 
-        console.log(input)
         if (!findBy) return null;
         const newObject = {
           [findBy]: input,
@@ -100,7 +98,6 @@ export function useAppointment(): UseAppointment {
           params,
         });
       }
-      console.log(res.data);
       return res.data;
     } catch (err) {
       console.log(err);
@@ -112,7 +109,6 @@ export function useAppointment(): UseAppointment {
       await axios
         .delete(`${host}/appointment/${id}`)
         .then((res) => {
-          console.log(res.data);
           notifications.show({
             title: 'Se ha eliminado el registro',
             message: 'La operacion ha sido exitosa',
@@ -154,7 +150,6 @@ export function useAppointment(): UseAppointment {
         `${host}/appointment/${id}`,
         editedAppointment
       );
-      console.log(res.data);
     } catch (error) {
       console.error(error);
       throw error; // Lanzar nuevamente el error para que sea manejado por el llamad

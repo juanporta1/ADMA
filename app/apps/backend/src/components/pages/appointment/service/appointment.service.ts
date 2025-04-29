@@ -47,8 +47,7 @@ export class AppointmentService {
         filterQueryBuilder.andWhere('a.specie = :specie', {
           specie: querys.specie,
         });
-      if (querys.date)
-        filterQueryBuilder.andWhere('a.date = :date', { date: querys.date });
+      
       if (querys.dateFilterWay) {
         if (querys.dateFilterWay === 'interval') {
           if (querys.startDate) {

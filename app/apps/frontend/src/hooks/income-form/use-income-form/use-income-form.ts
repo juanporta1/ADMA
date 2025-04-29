@@ -17,7 +17,6 @@ export function useIncomeForm(): UseIncomeForm {
       }-${actualDate.getDate()} ${hour === "8:00" ? "0" : ""}${hour}`
     );
     if(actualDate >= dateWithHour) {currentHour = hour};
-    console.log(currentHour)
   });
   const form = useForm({
     mode: 'controlled',

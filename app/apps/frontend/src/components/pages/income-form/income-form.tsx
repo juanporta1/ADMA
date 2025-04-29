@@ -1,4 +1,4 @@
-import { Box, Flex, Grid } from '@mantine/core';
+import { Accordion, Box, Flex, Grid } from '@mantine/core';
 import styles from './income-form.module.css';
 import useIncomeForm from '../../../hooks/income-form/use-income-form/use-income-form';
 import FormColumn from '../../utilities/form-column/form-column';
@@ -16,31 +16,43 @@ export function IncomeForm() {
     { value: '12:00', text: '12:00' },
   ];
   const { filter } = useAppointment();
-  const [appointments, setAppointments] = useState<(Appointment[] | null)[]>([]);
+  const [appointments, setAppointments] = useState<(Appointment[] | null)[]>(
+    []
+  );
 
   const fetchAppointments = async (date: string, hour: string) => {
-    const status = ["Esperando Actualización", "Pendiente", "Realizado", "No Realizado", "Ausentado", "Cancelado", "En Proceso"]
+    const status = [
+      'Esperando Actualización',
+      'Pendiente',
+      'Realizado',
+      'No Realizado',
+      'Ausentado',
+      'Cancelado',
+      'En Proceso',
+    ];
     const filteredAppointments = await Promise.all(
-      status.map(s => filter({ date: new Date(), hour: hour, status: s }))
-    )
+      status.map((s) => filter({ date: new Date(), byHour: hour, status: s, dateFilterWay: "onlyOne" }))
+    );
     setAppointments(filteredAppointments);
   };
 
-  const accordions = (): React.ReactNode[] => {
-    return appointments.map((a) => {
-      if (a)
-        return <StatusTable appointments={a} />
-      else return <></>
-    })
-  }
+  const Accordions = appointments
+    .filter((a) => a && a.length !== 0)
+    .map((a) => (
+      <StatusTable
+        key={`appointment-${a![0].ID_appointment}`} // prefijo para evitar duplicados
+        appointments={a!}
+      />
+    ));
+
   useEffect(() => {
     fetchAppointments(form.getValues().date, form.getValues().hour);
-
+    console.log(form.values);
   }, [form.values]);
-
+  useEffect(() => console.log(appointments), [appointments]);
   return (
     <Flex h={'100%'} direction={'row'} gap={'lg'}>
-      <Grid w={"30%"}>
+      <Grid w={'30%'}>
         <FormColumn
           inputType="date"
           form={form}
@@ -59,8 +71,8 @@ export function IncomeForm() {
           notRequired
         />
       </Grid>
-      <Box style={{ border: '1px solid #aaaa', width: "100%" }}>
-        {accordions().map()}
+      <Box style={{ border: '1px solid #aaaa', width: '100%' }}>
+        <Accordion>{Accordions}</Accordion>
       </Box>
     </Flex>
   );

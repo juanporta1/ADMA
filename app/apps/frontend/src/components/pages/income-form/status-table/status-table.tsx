@@ -8,15 +8,14 @@ interface props {
 }
 export function StatusTable({ appointments }: props) {
 
-  const Rows = appointments.map((a) => <IncomeRow appointment={a} />)
+  const Rows = appointments.map((a,i) => <IncomeRow key={a.ID_appointment} appointment={a} />)
+  
   return (
-    <Accordion.Item value={appointments[0].status}>
+    <Accordion.Item value={appointments[0].status} >
       <Accordion.Control>
         {appointments[0].status}
       </Accordion.Control>
-      <Accordion.Panel>
-
-
+      <Accordion.Panel className={styles.row}>
         <Table>
           <Table.Thead display={"none"}>
             <Table.Tr>
