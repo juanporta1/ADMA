@@ -22,18 +22,34 @@ export function IncomeForm() {
 
   const fetchAppointments = async (date: string, hour: string) => {
     const status = [
-      'Esperando Actualización',
       'Pendiente',
-      'Realizado',
+      'Esperando Actualización',
+      'En Proceso',
       'No Realizado',
       'Ausentado',
       'Cancelado',
-      'En Proceso',
+      'Realizado',
     ];
-    const filteredAppointments = await Promise.all(
-      status.map((s) => filter({ date: new Date(), byHour: hour, status: s, dateFilterWay: "onlyOne" }))
+    const filteredAppointments = await filter({date: new Date(date), hour: hour, dateFilterWay: "onlyOne"})
+    if (!filteredAppointments) return;
+    const redAppointments = filteredAppointments.filter(
+      (a) => ["Ausentado", "Cancelado", "No Realizado"].includes(a.status)
     );
-    setAppointments(filteredAppointments);
+    const inProcessA = filteredAppointments.filter(
+      (a) => a.status === "En Proceso"
+    );
+
+    const waitingA = filteredAppointments.filter(
+      (a) => a.status === "Esperando Actualización"
+    );
+    const doneA = filteredAppointments.filter((a) => a.status === "Realizado");
+    const pendingA = filteredAppointments.filter(
+      (a) => a.status === "Pendiente"
+    );
+
+    const arrays = [redAppointments, inProcessA, waitingA, doneA, pendingA];
+    
+    setAppointments(arrays.filter((a) => a.length !== 0));
   };
 
   const Accordions = appointments
@@ -72,7 +88,7 @@ export function IncomeForm() {
         />
       </Grid>
       <Box style={{ border: '1px solid #aaaa', width: '100%' }}>
-        <Accordion>{Accordions}</Accordion>
+        <Accordion variant='separated' classNames={{panel: styles.row}}>{Accordions}</Accordion>
       </Box>
     </Flex>
   );

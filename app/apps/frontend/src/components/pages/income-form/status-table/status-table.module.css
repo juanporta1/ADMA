@@ -8,3 +8,7 @@
 .row{
     padding: 0;
 }
+
+:global(.mantine-Accordion-content) {
+    padding: 0 !important;
+  }
