@@ -1,7 +1,7 @@
 import { Accordion, Table } from '@mantine/core';
 import styles from './status-table.module.css';
 import { Appointment } from '../../appointment/filter/filter-appointments';
-import IncomeRow from '../income-row/income-row';
+import IncomeRow, { ExtraColumns } from '../income-row/income-row';
 import {
   FontawesomeObject,
   IconDefinition,
@@ -15,11 +15,12 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface props {
-  appointments: Appointment[]; // agregar tipado de dat
+  appointments: Appointment[]; // agregar tipado de dato
+  setActualAppointment: React.Dispatch<React.SetStateAction<Appointment | null>>
 }
-export function StatusTable({ appointments }: props) {
+export function StatusTable({ appointments, setActualAppointment }: props) {
   const Rows = appointments.map((a, i) => (
-    <IncomeRow key={a.ID_appointment} appointment={a} />
+    <IncomeRow key={a.ID_appointment} appointment={a} setActualAppointment={setActualAppointment}/>
   ));
 
   const statusType = appointments[0].status;
@@ -34,7 +35,7 @@ export function StatusTable({ appointments }: props) {
     ['Cancelado', 'No Realizado', 'Ausentado'].includes(appointments[0].status)
   ) {
     bgColor = '#d92f0daa';
-    title = 'Cancelados, Ausentados y No Realizados';
+    title = 'Cancelado, Ausentado y No Realizado';
     icon = faBan;
   } else if (appointments[0].status === 'Realizado') {
     bgColor = '#33d45eaa';
@@ -44,13 +45,17 @@ export function StatusTable({ appointments }: props) {
     icon = faClock;
   }
 
-  const extraColumns = () => {
+  const extraColumns = (): ExtraColumns | void => {
     if(["En Proceso", "Realizado"].includes(appointments[0].status)){
       return {
         surgeryNumber: <Table.Th>N° de Cirugia</Table.Th>,
         weight: <Table.Th>Peso</Table.Th>,
         age: <Table.Th>Edad</Table.Th>,
         animalName: <Table.Th>Nombre del Paciente</Table.Th>
+      }
+    }else if(["Esperando Actualización"].includes(appointments[0].status)){
+      return {
+        surgeryNumber: <Table.Th>N° de Cirugia</Table.Th>
       }
     }
   }
