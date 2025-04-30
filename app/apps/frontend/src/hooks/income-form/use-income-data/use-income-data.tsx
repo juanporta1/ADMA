@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { Buttons } from '../../../components/pages/income-form/income-row/income-row';
-import { Table, Button } from '@mantine/core';
+import { Table, Button, ActionIcon, Tooltip } from '@mantine/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Appointment } from '../../../components/pages/appointment/filter/filter-appointments';
 import {
@@ -33,48 +33,51 @@ export function useIncomeData({
       return {
         button1: (
           <Table.Td>
-            <Button
-              color="green"
-              leftSection={<FontAwesomeIcon icon={faCircleCheck} />}
-              size="compact-md"
-              onClick={() => {
-                openAdmissionModal?.();
-                setAppointment(appointment);
-              }}
-            >
-              Admitido
-            </Button>
+            <Tooltip label="Admitido">
+              <ActionIcon
+                color="green"
+
+                size="md"
+                onClick={() => {
+                  openAdmissionModal?.();
+                  setAppointment(appointment);
+                }}
+              ><FontAwesomeIcon icon={faCircleCheck} />
+              </ActionIcon>
+            </Tooltip>
+
           </Table.Td>
         ),
         button2: (
-          <Table.Th>
-            <Button
-              color="red"
-              leftSection={<FontAwesomeIcon icon={faBan} />}
-              size="compact-md"
-              onClick={() => {
-                openCancelModal?.();
-                setAppointment(appointment);
-              }}
-            >
-              Cancelado
-            </Button>
-          </Table.Th>
+          <Table.Td>
+            <Tooltip label="Cancelado">
+              <ActionIcon
+                color="red"
+                size="md"
+                onClick={() => {
+                  openCancelModal?.();
+                  setAppointment(appointment);
+                }}
+              ><FontAwesomeIcon icon={faBan} />
+              </ActionIcon>
+            </Tooltip>
+
+          </Table.Td>
         ),
         button3: (
-          <Table.Th>
-            <Button
-              color="gray"
-              leftSection={<FontAwesomeIcon icon={faPersonCircleQuestion} />}
-              size="compact-md"
-              onClick={() => {
-                openAbsenceModal?.();
-                setAppointment(appointment);
-              }}
-            >
-              Ausentado
-            </Button>
-          </Table.Th>
+          <Table.Td>
+            <Tooltip label="Ausentado">
+              <ActionIcon
+                color="gray"
+                size="md"
+                onClick={() => {
+                  openAbsenceModal?.();
+                  setAppointment(appointment);
+                }}
+              ><FontAwesomeIcon icon={faPersonCircleQuestion} />
+              </ActionIcon>
+            </Tooltip>
+          </Table.Td>
         ),
       };
     }
