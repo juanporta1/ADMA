@@ -4,7 +4,7 @@ import { ApiHostContext } from '../../../contexts/api-host-context';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DataEntities {
-  reasons: { ID_reason: number; reason: string }[];
+  reasons: { ID_reason: number; reason: string, reasonSex: string }[];
   species: { ID_specie: number; specie: string }[];
   neighborhoods: { ID_neighborhood: number; neighborhood: string }[];
 }

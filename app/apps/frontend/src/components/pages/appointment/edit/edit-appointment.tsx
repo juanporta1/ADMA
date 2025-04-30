@@ -94,7 +94,7 @@ export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const data = await getSelectData();
+        const data = await getSelectData(appointment);
         setSelectsData(data);
         const dateWithoutTimezone = new Date(appointment.date + 'T00:00:00');
 

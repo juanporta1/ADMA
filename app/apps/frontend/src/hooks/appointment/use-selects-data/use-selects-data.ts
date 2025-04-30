@@ -1,10 +1,11 @@
 import { useState, useCallback, useContext } from 'react';
 import useDataEntities from '../../general/use-data-entities/use-data-entities';
 import { text } from 'stream/consumers';
+import { Appointment } from '../../../components/pages/appointment/filter/filter-appointments';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface UseSelectsData {
-  getSelectData: () => Promise<AppoinmentSelects>;
+  getSelectData: (appointment?: Appointment) => Promise<AppoinmentSelects>;
 }
 
 export interface AppoinmentSelects {
@@ -32,7 +33,7 @@ export interface SelectData {
 
 export function useSelectsData(): UseSelectsData {
   const { getData } = useDataEntities();
-  const getSelectData = async () => {
+  const getSelectData = async (appointment?: Appointment) => {
     const { neighborhoods, reasons, species } = await getData();
     const neighborhoodsData: SelectData[] = neighborhoods.map((neig) => ({
       value: neig.ID_neighborhood,
@@ -44,16 +45,20 @@ export function useSelectsData(): UseSelectsData {
       text: spec.specie,
     }));
 
-    const reasonsData: SelectData[] = reasons.map((reason) => ({
-      value: reason.ID_reason,
-      text: reason.reason,
-    }));
+    const sex = appointment?.sex === "Macho" ? "m" : "h";
+    const reasonsData: SelectData[] = reasons
+      .filter((r) => r.reasonSex === 'a' || r.reasonSex === sex)
+      .map((reason) => {
+        return {
+          value: reason.ID_reason,
+          text: reason.reason,
+        };
+      });
 
     return {
       findBy: [
         { text: 'DNI', value: 'dni' },
         { text: 'Apellido y Nombre', value: 'owner' },
-        
       ],
       sex: [
         { value: '', text: 'Todos' },
@@ -66,7 +71,10 @@ export function useSelectsData(): UseSelectsData {
         { value: 'Hembra', text: 'Hembra' },
       ],
       specie: [{ value: '', text: 'Todos' }, ...speciesData],
-      restrictedSpecie: [{ value: '', text: 'Seleccione una especie', disabled: true }, ...speciesData],
+      restrictedSpecie: [
+        { value: '', text: 'Seleccione una especie', disabled: true },
+        ...speciesData,
+      ],
       size: [
         { value: '', text: 'Todos' },
         { value: 'Grande', text: 'Grande' },
@@ -90,12 +98,15 @@ export function useSelectsData(): UseSelectsData {
         { value: 'No Realizado', text: 'No Realizado' },
       ],
       status: [
-        { value: '', text: 'Seleccione un estado', disabled: true  },
+        { value: '', text: 'Seleccione un estado', disabled: true },
         { value: 'Pendiente', text: 'Pendiente' },
         { value: 'Cancelado', text: 'Cancelado' },
       ],
       neighborhood: [{ value: '', text: 'Todos' }, ...neighborhoodsData],
-      restrictedNeighborhood: [{ value: '', text: 'Seleccione un barrio', disabled: true }, ...neighborhoodsData],
+      restrictedNeighborhood: [
+        { value: '', text: 'Seleccione un barrio', disabled: true },
+        ...neighborhoodsData,
+      ],
       orderBy: [
         { value: 'id-desc', text: 'Orden de Carga(A-Z)' },
         { value: 'id-asc', text: 'Orden de Carga(Z-A)' },
@@ -111,7 +122,7 @@ export function useSelectsData(): UseSelectsData {
         { value: '12:00', text: '12:00' },
       ],
       reason: [
-        { value: '', text: 'Seleccione un motivo', disabled: true },
+        { value: '', text: 'Seleccione una razón', disabled: true },
         ...reasonsData,
       ],
       dateFilterWay: [

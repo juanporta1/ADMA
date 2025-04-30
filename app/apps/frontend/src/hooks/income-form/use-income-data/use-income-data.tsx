@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Buttons } from '../../../components/pages/income-form/income-row/income-row';
+import { ButtonFunctions, Buttons } from '../../../components/pages/income-form/income-row/income-row';
 import { Table, Button, ActionIcon, Tooltip } from '@mantine/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Appointment } from '../../../components/pages/appointment/filter/filter-appointments';
@@ -15,18 +15,12 @@ export interface UseIncomeData {
 }
 export interface UseIncomeDataProps {
   appointment: Appointment;
-  setAppointment: React.Dispatch<React.SetStateAction<Appointment | null>>;
-  openAdmissionModal?: () => void;
-  openCancelModal?: () => void;
-  openAbsenceModal?: () => void;
+  buttonFunctions: ButtonFunctions
 }
 
 export function useIncomeData({
   appointment,
-  setAppointment,
-  openAbsenceModal,
-  openAdmissionModal,
-  openCancelModal,
+  buttonFunctions
 }: UseIncomeDataProps): UseIncomeData {
   const buttons = (): Buttons | void => {
     if (['Esperando Actualización'].includes(appointment.status)) {
@@ -38,10 +32,7 @@ export function useIncomeData({
                 color="green"
 
                 size="md"
-                onClick={() => {
-                  openAdmissionModal?.();
-                  setAppointment(appointment);
-                }}
+                onClick={() => buttonFunctions.admissionFunction?.(appointment)}
               ><FontAwesomeIcon icon={faCircleCheck} />
               </ActionIcon>
             </Tooltip>
@@ -54,10 +45,7 @@ export function useIncomeData({
               <ActionIcon
                 color="red"
                 size="md"
-                onClick={() => {
-                  openCancelModal?.();
-                  setAppointment(appointment);
-                }}
+                onClick={() => buttonFunctions.cancelFunction?.(appointment)}
               ><FontAwesomeIcon icon={faBan} />
               </ActionIcon>
             </Tooltip>
@@ -70,10 +58,7 @@ export function useIncomeData({
               <ActionIcon
                 color="gray"
                 size="md"
-                onClick={() => {
-                  openAbsenceModal?.();
-                  setAppointment(appointment);
-                }}
+                onClick={() => buttonFunctions.absenceFunction?.(appointment)}
               ><FontAwesomeIcon icon={faPersonCircleQuestion} />
               </ActionIcon>
             </Tooltip>

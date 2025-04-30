@@ -28,7 +28,7 @@ export function HourSelect(props: props) {
           props.dateValue.getMonth() + 1
         }-${props.dateValue.getDate()} ${hour}:00`;
         const res = await axios.get('http://localhost:3000/api/appointment', {
-          params: { byHour: `${hour}:00`, byDate: date },
+          params: { byHour: `${hour}:00`, date: date, dateFilterWay: "onlyOne"},
         });
         if (props.registerId) {
           const itsOneOf = res.data.some(

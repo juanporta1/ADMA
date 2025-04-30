@@ -9,6 +9,9 @@ export class Reason {
   @Column({ type: 'varchar', length: 150 })
   reason!: string;
 
+  @Column({ type: 'enum', enum: ['m', 'h', "a"]})
+  reasonSex!: string;
+
   @OneToMany(() => Appointment, (appointment) => appointment.reason)
   appointments!: Appointment[];
 

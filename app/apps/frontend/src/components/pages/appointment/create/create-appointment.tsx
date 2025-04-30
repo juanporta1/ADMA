@@ -65,7 +65,6 @@ export function CreateAppointment() {
   });  // Datos para los selectores
   const {create} = useAppointment();  // Hook para crear turnos
   const [actualDate, setActualDate] = useState<DateValue>(new Date());
-  console.log()  // Fecha actual
   // Función para cancelar y volver al listado
   const handleOnCancel = () => {
     navigate('/turnos/listar');

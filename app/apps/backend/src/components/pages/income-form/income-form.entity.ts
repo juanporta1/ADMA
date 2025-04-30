@@ -10,15 +10,15 @@ export class IncomeForm{
     appointment!: Appointment;
 
     @Column({type: "varchar", nullable: true})
-    age?: string;
+    age?: string | null;
 
     @Column({type: "varchar",length: 30, nullable: true})
-    animalName?: string;
+    animalName?: string | null;
 
     @Column({type: "float", nullable: true})
-    weight?: number;
+    weight?: number | null;
 
     @Column({type:  "varchar", length: 200, nullable: true})
-    features?: string;
+    features?: string | null;
 
 }

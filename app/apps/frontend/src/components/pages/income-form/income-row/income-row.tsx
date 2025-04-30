@@ -11,8 +11,7 @@ import useIncomeData from '../../../../hooks/income-form/use-income-data/use-inc
 
 interface props {
   appointment: Appointment;
-  setActualAppointment: React.Dispatch<React.SetStateAction<Appointment | null>>;
-  buttonFunctions?: ButtonFunctions;
+  buttonFunctions: ButtonFunctions;
 }
 
 export interface ExtraColumns {
@@ -20,6 +19,8 @@ export interface ExtraColumns {
   weight?: React.ReactNode;
   age?: React.ReactNode;
   animalName?: React.ReactNode;
+  status?: React.ReactNode;
+  reason?: React.ReactNode;
 }
 
 export interface Buttons {
@@ -29,12 +30,12 @@ export interface Buttons {
 }
 
 export interface ButtonFunctions{
-  openAbsenceModal?: () => void;
-  openCancelModal?: () => void;
-  openAdmissionModal?: () => void;
+  absenceFunction?: (appointment: Appointment) => void;
+  cancelFunction?: (appointment: Appointment) => void;
+  admissionFunction?: (appointment: Appointment) => void;
 }
 
-export function IncomeRow({ appointment,setActualAppointment, buttonFunctions }: props) {
+export function IncomeRow({ appointment , buttonFunctions }: props) {
   const extraColumns = (): ExtraColumns | void => {
     if (['En Proceso', 'Realizado'].includes(appointment.status)) {
       return {
@@ -49,9 +50,14 @@ export function IncomeRow({ appointment,setActualAppointment, buttonFunctions }:
       return {
         surgeryNumber: <Table.Th>{appointment.surgeryNumber}</Table.Th>,
       };
+    }else if(['Cancelado', 'No Realizado', 'Ausentado'].includes(appointment.status)){
+      return {
+        status: <Table.Td>{appointment.status}</Table.Td>,
+        reason: <Table.Td>{appointment.reason?.reason || "-"}</Table.Td>,
+      };
     }
   };
-  const {buttons} = useIncomeData({appointment, setAppointment: setActualAppointment, ...buttonFunctions})
+  const {buttons} = useIncomeData({appointment, buttonFunctions})
  
   return (
     <Table.Tr>
@@ -65,6 +71,8 @@ export function IncomeRow({ appointment,setActualAppointment, buttonFunctions }:
       <Table.Td>{appointment.specie.specie}</Table.Td>
       <Table.Td>{appointment.sex}</Table.Td>
       {extraColumns()?.weight}
+      {extraColumns()?.status}
+      {extraColumns()?.reason}
       {buttons()?.button1}
       {buttons()?.button2}
       {buttons()?.button3}

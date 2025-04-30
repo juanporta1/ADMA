@@ -19,21 +19,18 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface props {
   appointments: Appointment[];
-  setActualAppointment: React.Dispatch<
-    React.SetStateAction<Appointment | null>
-  >;
-  buttonFunctions?: ButtonFunctions;
+  
+  buttonFunctions: ButtonFunctions;  
 }
 export function StatusTable({
   appointments,
-  setActualAppointment,
+ 
   buttonFunctions,
 }: props) {
   const Rows = appointments.map((a, i) => (
     <IncomeRow
       key={a.ID_appointment}
       appointment={a}
-      setActualAppointment={setActualAppointment}
       buttonFunctions={buttonFunctions}
     />
   ));
@@ -72,6 +69,15 @@ export function StatusTable({
       return {
         surgeryNumber: <Table.Th>N° de Cirugia</Table.Th>,
       };
+    } else if (
+      ['Cancelado', 'No Realizado', 'Ausentado'].includes(
+        appointments[0].status
+      )
+    ) {
+      return {
+        status: <Table.Th>Estado</Table.Th>,
+        reason: <Table.Th>Razón</Table.Th>,
+      };
     }
   };
 
@@ -94,6 +100,8 @@ export function StatusTable({
               <Table.Th>Especie</Table.Th>
               <Table.Th>Sexo</Table.Th>
               {extraColumns()?.weight}
+              {extraColumns()?.status}
+              {extraColumns()?.reason}
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>{Rows}</Table.Tbody>

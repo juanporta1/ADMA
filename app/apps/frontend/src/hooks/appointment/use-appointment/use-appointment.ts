@@ -17,6 +17,7 @@ export interface UseAppointment {
   remove: (id: number) => void;
   create: (values: FormValues) => void;
   generatePDF: (filters: FilterParams, values: string[]) => Promise<void>;
+  editStatus: (id: number, status: string, observations?: string, reason?: string) => Promise<void>;
 }
 interface FormValues {
   lastName: string;
@@ -183,8 +184,20 @@ export function useAppointment(): UseAppointment {
       throw err;
     }
   }
-
-  return { filter, create, edit, remove, generatePDF };
+  async function editStatus(id: number, status: string, observations?: string, reason?: string): Promise<void> {
+    try {
+      const otherParams: any = {};
+      if(observations) otherParams.observations = observations;
+      if(reason) otherParams.reason = Number(reason);
+      await axios.put(`${host}/appointment/${id}`, {
+        status,
+        ...otherParams,
+      });
+    } catch (err) {
+      throw err;
+    }
+  }
+  return { filter, create, edit, remove, generatePDF, editStatus };
 }
 
 export default useAppointment;
