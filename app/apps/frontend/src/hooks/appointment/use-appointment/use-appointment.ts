@@ -7,6 +7,8 @@ import { notifications } from '@mantine/notifications';
 import axios from 'axios';
 import { ApiHostContext } from '../../../contexts/api-host-context';
 import { EditFormValues } from '../../../components/pages/appointment/edit/edit-appointment';
+import { User } from '../../general/login/use-login';
+import { UserContext } from '../../../contexts/user-context';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface UseAppointment {
@@ -46,11 +48,15 @@ interface NewAppointment {
   observations: string | null;
   status?: string;
   reason?: number;
+  user?: number;
 }
 
 export function useAppointment(): UseAppointment {
   const host = useContext(ApiHostContext);
+  const user = useContext(UserContext);
+
   async function create(values: FormValues): Promise<void> {
+
     const newAppointment: NewAppointment = {
       lastName: values.lastName,
       name: values.name,
@@ -64,6 +70,7 @@ export function useAppointment(): UseAppointment {
       date: values.date,
       hour: values.hour,
       observations: values.observations ? values.observations?.trim() : null,
+      user: Number(user.currentUser?.ID_user),
     };
 
     const response = await axios.post(`${host}/appointment`, newAppointment);
@@ -145,6 +152,7 @@ export function useAppointment(): UseAppointment {
         sex: appointment.sex,
         specie: Number(appointment.specie),
         size: appointment.size,
+
       };
       const res = await axios.put(
         `${host}/appointment/${id}`,
