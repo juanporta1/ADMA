@@ -62,7 +62,8 @@ export function IncomeForm() {
     .map((a) => (
       <StatusTable
         key={`appointment-${a![0].ID_appointment}`} // prefijo para evitar duplicados
-        appointments={a!}
+        appointments={a ? a : []}
+        setActualAppointment={setActualAppointment}
       />
     ));
 

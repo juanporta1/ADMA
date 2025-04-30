@@ -44,10 +44,8 @@ export function IncomeRow({ appointment,setActualAppointment }: props) {
       };
     }
   };
-  const {} = useIncomeData({appointment,setAppointment: setActualAppointment})
-  const buttons = (): Buttons | void => {
-    
-  };
+  const {buttons} = useIncomeData({appointment, setAppointment: setActualAppointment})
+ 
   return (
     <Table.Tr>
       {extraColumns()?.surgeryNumber}
