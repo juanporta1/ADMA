@@ -12,6 +12,7 @@ import useIncomeData from '../../../../hooks/income-form/use-income-data/use-inc
 interface props {
   appointment: Appointment;
   setActualAppointment: React.Dispatch<React.SetStateAction<Appointment | null>>;
+  buttonFunctions?: ButtonFunctions;
 }
 
 export interface ExtraColumns {
@@ -27,7 +28,13 @@ export interface Buttons {
   button3?: React.ReactNode;
 }
 
-export function IncomeRow({ appointment,setActualAppointment }: props) {
+export interface ButtonFunctions{
+  openAbsenceModal?: () => void;
+  openCancelModal?: () => void;
+  openAdmissionModal?: () => void;
+}
+
+export function IncomeRow({ appointment,setActualAppointment, buttonFunctions }: props) {
   const extraColumns = (): ExtraColumns | void => {
     if (['En Proceso', 'Realizado'].includes(appointment.status)) {
       return {
@@ -44,7 +51,7 @@ export function IncomeRow({ appointment,setActualAppointment }: props) {
       };
     }
   };
-  const {buttons} = useIncomeData({appointment, setAppointment: setActualAppointment})
+  const {buttons} = useIncomeData({appointment, setAppointment: setActualAppointment, ...buttonFunctions})
  
   return (
     <Table.Tr>

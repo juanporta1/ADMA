@@ -1,12 +1,14 @@
-import { Accordion, Box, Flex, Grid } from '@mantine/core';
+import { Accordion, Box, Button, Flex, Grid, Modal } from '@mantine/core';
 import styles from './income-form.module.css';
 import useIncomeForm from '../../../hooks/income-form/use-income-form/use-income-form';
 import FormColumn from '../../utilities/form-column/form-column';
 import { SelectData } from '../../../hooks/appointment/use-selects-data/use-selects-data';
 import useAppointment from '../../../hooks/appointment/use-appointment/use-appointment';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Appointment } from '../appointment/filter/filter-appointments';
 import StatusTable from './status-table/status-table';
+import { useDisclosure } from '@mantine/hooks';
+import { MainColorContext } from '../../../contexts/color-context';
 
 export function IncomeForm() {
   const { form } = useIncomeForm();
@@ -16,11 +18,21 @@ export function IncomeForm() {
     { value: '12:00', text: '12:00' },
   ];
   const { filter, edit } = useAppointment();
-  const [actualAppointment, setActualAppointment] = useState<Appointment | null>(null);
+  const [actualAppointment, setActualAppointment] =
+    useState<Appointment | null>(null);
   const [appointments, setAppointments] = useState<(Appointment[] | null)[]>(
     []
   );
+  const [absenceModal, { open: openAbsenceModal, close: closeAbsenceModal }] =
+    useDisclosure(false);
+  const [cancelModal, { open: openCancelModal, close: closeCancelModal }] =
+    useDisclosure(false);
 
+  const [
+    admissionModal,
+    { open: openAdmissionModal, close: closeAdmissionModal },
+  ] = useDisclosure(false);
+  const mainColor = useContext(MainColorContext);
   const fetchAppointments = async (date: string, hour: string) => {
     const status = [
       'Pendiente',
@@ -64,6 +76,11 @@ export function IncomeForm() {
         key={`appointment-${a![0].ID_appointment}`} // prefijo para evitar duplicados
         appointments={a ? a : []}
         setActualAppointment={setActualAppointment}
+        buttonFunctions={{
+          openAbsenceModal,
+          openAdmissionModal,
+          openCancelModal,
+        }}
       />
     ));
 
@@ -72,8 +89,25 @@ export function IncomeForm() {
     console.log(form.values);
   }, [form.values]);
   useEffect(() => console.log(appointments), [appointments]);
+  useEffect(() => console.log(actualAppointment), [actualAppointment]);
   return (
     <Flex h={'100%'} direction={'row'} gap={'lg'}>
+      <Modal
+        opened={absenceModal}
+        onClose={closeAbsenceModal}
+        title="¿El paciente se ha ausentado?(Esta acción no puede deshacerse)"
+        size={'lg'}
+        centered
+      >
+        <Flex direction={"row"} justify={"center"} align={"center"} gap={"xl"}>
+          <Button color={mainColor} variant="light">
+            Si, el paciente se ausentó
+          </Button>
+          <Button color={mainColor} variant="filled" onClick={() => closeAbsenceModal()}>
+            Volver
+          </Button>
+        </Flex>
+      </Modal>
       <Grid w={'30%'}>
         <FormColumn
           inputType="date"

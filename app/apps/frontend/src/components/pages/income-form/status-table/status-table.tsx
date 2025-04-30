@@ -1,7 +1,10 @@
 import { Accordion, Table } from '@mantine/core';
 import styles from './status-table.module.css';
 import { Appointment } from '../../appointment/filter/filter-appointments';
-import IncomeRow, { ExtraColumns } from '../income-row/income-row';
+import IncomeRow, {
+  ButtonFunctions,
+  ExtraColumns,
+} from '../income-row/income-row';
 import {
   FontawesomeObject,
   IconDefinition,
@@ -15,12 +18,24 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 interface props {
-  appointments: Appointment[]; // agregar tipado de dato
-  setActualAppointment: React.Dispatch<React.SetStateAction<Appointment | null>>
+  appointments: Appointment[];
+  setActualAppointment: React.Dispatch<
+    React.SetStateAction<Appointment | null>
+  >;
+  buttonFunctions?: ButtonFunctions;
 }
-export function StatusTable({ appointments, setActualAppointment }: props) {
+export function StatusTable({
+  appointments,
+  setActualAppointment,
+  buttonFunctions,
+}: props) {
   const Rows = appointments.map((a, i) => (
-    <IncomeRow key={a.ID_appointment} appointment={a} setActualAppointment={setActualAppointment}/>
+    <IncomeRow
+      key={a.ID_appointment}
+      appointment={a}
+      setActualAppointment={setActualAppointment}
+      buttonFunctions={buttonFunctions}
+    />
   ));
 
   const statusType = appointments[0].status;
@@ -41,29 +56,28 @@ export function StatusTable({ appointments, setActualAppointment }: props) {
     bgColor = '#33d45eaa';
     icon = faSquareCheck;
   } else {
-    bgColor = '#fff'
+    bgColor = '#fff';
     icon = faClock;
   }
 
   const extraColumns = (): ExtraColumns | void => {
-    if(["En Proceso", "Realizado"].includes(appointments[0].status)){
+    if (['En Proceso', 'Realizado'].includes(appointments[0].status)) {
       return {
         surgeryNumber: <Table.Th>N° de Cirugia</Table.Th>,
         weight: <Table.Th>Peso</Table.Th>,
         age: <Table.Th>Edad</Table.Th>,
-        animalName: <Table.Th>Nombre del Paciente</Table.Th>
-      }
-    }else if(["Esperando Actualización"].includes(appointments[0].status)){
+        animalName: <Table.Th>Nombre del Paciente</Table.Th>,
+      };
+    } else if (['Esperando Actualización'].includes(appointments[0].status)) {
       return {
-        surgeryNumber: <Table.Th>N° de Cirugia</Table.Th>
-      }
+        surgeryNumber: <Table.Th>N° de Cirugia</Table.Th>,
+      };
     }
-  }
+  };
 
-  
   return (
     <Accordion.Item value={appointments[0].status}>
-      <Accordion.Control bg={bgColor} icon={<FontAwesomeIcon icon={icon}/>}>
+      <Accordion.Control bg={bgColor} icon={<FontAwesomeIcon icon={icon} />}>
         Turnos en estado {title || appointments[0].status}
       </Accordion.Control>
       <Accordion.Panel className={styles.row}>
