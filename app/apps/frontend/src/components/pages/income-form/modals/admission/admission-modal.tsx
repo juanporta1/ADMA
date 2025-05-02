@@ -36,7 +36,7 @@ export function AdmissionModal({
           : 'Has ingresado un caracter no válido.',
       weight: (value: string) => {
         if (value.length === 0) return null;
-        if (/^\d+([.,]\d+)?$/.test(value))
+        if (!/^\d+([.,]\d+)?$/.test(value))
           return 'Solo puedes ingresar números y una única coma o punto decimal.';
         return null;
       },

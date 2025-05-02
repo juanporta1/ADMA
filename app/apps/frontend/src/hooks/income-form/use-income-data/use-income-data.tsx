@@ -132,7 +132,6 @@ export function useIncomeData({
         ),
       };
     }else if (['Realizado'].includes(appointment.status)) {
-      console.log(appointment);
       return {
         surgeryNumber: <Table.Td>{appointment.surgeryNumber}</Table.Td>,
         weight: (
