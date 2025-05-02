@@ -1,9 +1,4 @@
-import {
-  Accordion,
-  Box,
-  Flex,
-  Grid,
-} from '@mantine/core';
+import { Accordion, Box, Flex, Grid } from '@mantine/core';
 import styles from './income-form.module.css';
 import useIncomeForm from '../../../hooks/income-form/use-income-form/use-income-form';
 import FormColumn from '../../utilities/form-column/form-column';
@@ -16,6 +11,8 @@ import { useDisclosure } from '@mantine/hooks';
 import CanceledModal from './modals/canceled/canceled-modal';
 import AdmissionModal from './modals/admission/admission-modal';
 import AbsenceModal from './modals/absence/absence-modal';
+import NotDoneModal from './modals/not-done/not-done-modal';
+import DoneModal from './modals/done/done-modal';
 
 export function IncomeForm() {
   const { form } = useIncomeForm();
@@ -35,11 +32,14 @@ export function IncomeForm() {
     useDisclosure(false);
   const [cancelModal, { open: openCancelModal, close: closeCancelModal }] =
     useDisclosure(false);
-
   const [
     admissionModal,
     { open: openAdmissionModal, close: closeAdmissionModal },
   ] = useDisclosure(false);
+  const [doneModal, { open: openDoneModal, close: closeDoneModal }] =
+    useDisclosure(false);
+  const [notDoneModal, { open: openNotDoneModal, close: closeNotDoneModal }] =
+    useDisclosure(false);
   const fetchAppointments = async () => {
     const filteredAppointments = await filter({
       date: new Date(form.getValues().date),
@@ -82,6 +82,15 @@ export function IncomeForm() {
     openAbsenceModal();
   };
 
+  const notDoneFunction = (appointment: Appointment) => {
+    setActualAppointment(appointment);
+    openNotDoneModal();
+  };
+
+  const doneFunction = (appointment: Appointment) => {
+    setActualAppointment(appointment);
+    openDoneModal();
+  };
   const Accordions = appointments
     .filter((a) => a && a.length !== 0)
     .map((a) => (
@@ -92,6 +101,8 @@ export function IncomeForm() {
           absenceFunction,
           admissionFunction,
           cancelFunction,
+          notDoneFunction,
+          doneFunction
         }}
       />
     ));
@@ -137,6 +148,19 @@ export function IncomeForm() {
       <AdmissionModal
         admissionModal={admissionModal}
         closeAdmissionModal={closeAdmissionModal}
+        actualAppointment={actualAppointment}
+        fetch={fetchAppointments}
+      />
+      <NotDoneModal 
+        actualAppointement={actualAppointment}
+        notDoneModal={notDoneModal}
+        closeNotDoneModal={closeNotDoneModal}
+        handleOnSetStatus={handleOnSetStatus}
+        fetch={fetchAppointments}
+      />
+      <DoneModal
+        doneModal={doneModal}
+        closeDoneModal={closeDoneModal}
         actualAppointment={actualAppointment}
         fetch={fetchAppointments}
       />

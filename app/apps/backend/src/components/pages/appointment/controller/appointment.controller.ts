@@ -21,7 +21,7 @@ export class AppointmentController {
 
   @Get('')
   async getAppointments(@Query() querys: FilterAppointmentDto) {
-    console.log('Query Params:', querys);
+    // console.log('Query Params:', querys);
     return await this.appointmentService.getAll(querys);
   }
 

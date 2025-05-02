@@ -52,7 +52,10 @@ export function StatusTable({
   } else if (appointments[0].status === 'Realizado') {
     bgColor = '#33d45eaa';
     icon = faSquareCheck;
-  } else {
+  } else if (appointments[0].status === 'En Proceso') {
+    bgColor = '#aaaaaaaa';
+    icon = faClock;
+  }else {
     bgColor = '#fff';
     icon = faClock;
   }

@@ -59,9 +59,10 @@ export class Appointment {
 
   @OneToOne(() => IncomeForm,{nullable: true})
   @JoinColumn()
-  incomeForm?: IncomeForm;
+  incomeForm?: IncomeForm | null;
 
-  @OneToOne(() => Castration)
+  @OneToOne(() => Castration, {nullable: true})
+  @JoinColumn()
   castration?: Castration;
 
   @ManyToOne(() => User, user => user.appointment)

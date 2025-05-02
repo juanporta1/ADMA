@@ -7,11 +7,10 @@ export class Castration{
     ID_castration!: number;
 
     @OneToOne(() => Appointment)
-    @JoinColumn()
     appointment!: Appointment;
 
-    @Column({type: "int"})
-    age!: number;
+    @Column({type: "varchar"})
+    age!: string;
 
     @Column({type: "varchar",length: 30})
     animalName!: string;
@@ -19,7 +18,7 @@ export class Castration{
     @Column({type: "float"})
     weight!: number;
 
-    @Column({type:  "varchar", length: 200})
-    features!: string;
+    @Column({type:  "varchar", length: 200, nullable: true})
+    features?: string;
 
 }

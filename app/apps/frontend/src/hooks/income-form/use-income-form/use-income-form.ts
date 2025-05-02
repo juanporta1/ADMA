@@ -8,6 +8,7 @@ import { ApiHostContext } from '../../../contexts/api-host-context';
 export interface UseIncomeForm {
   form: UseFormReturnType<any>;
   create: (income: Income) => Promise<Income | void | AxiosResponse<any, any>>
+  createCastration: (income: DoneIncome, id: number) => Promise<void | AxiosResponse<any, any>>
 }
 
 export interface Income{
@@ -16,6 +17,14 @@ export interface Income{
   weight?: string;
   animalName?: string;
   features?: string;
+}
+
+export interface DoneIncome{
+  ID_appointment: number;
+  age: string;
+  weight: string;
+  animalName: string;
+  features?: string | null;
 }
 
 export function useIncomeForm(): UseIncomeForm {
@@ -48,7 +57,16 @@ export function useIncomeForm(): UseIncomeForm {
     }
   }
 
-  return { form, create };
+  const createCastration = async (income: DoneIncome, id: number) => {
+    try{
+      const newCastration = await axios.post(`${host}/castration`,income)
+      return newCastration;
+    }catch(err){
+      throw err
+    }
+  }
+
+  return { form, create, createCastration };
 }
 
 export default useIncomeForm;

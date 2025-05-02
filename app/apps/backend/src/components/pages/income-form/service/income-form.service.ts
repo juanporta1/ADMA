@@ -5,6 +5,7 @@ import { IncomeForm } from '../income-form.entity';
 import { Repository } from 'typeorm';
 import { CreateIncomeDTO } from '../DTOs/create-income.DTO';
 import { Appointment } from '../../appointment/appointment.entity';
+import { DoneIncomeDTO } from '../DTOs/done-income.DTO';
 
 @Injectable()
 export class IncomeFormService {
@@ -32,9 +33,9 @@ export class IncomeFormService {
     if (!appointment) return;
     const incomeObject = {
       age: body?.age || null,
-      weight: Number(body?.weight) || null ,
-      animalName: body?.animalName || null ,
-      features: body?.features || null ,
+      weight: Number(body?.weight) || null,
+      animalName: body?.animalName || null,
+      features: body?.features || null,
     };
 
     const newIncome = await this.incomeFormRepository.create(incomeObject);
@@ -42,5 +43,18 @@ export class IncomeFormService {
     return this.appointmentRepository.update(appointment.ID_appointment, {
       incomeForm: newIncome,
     });
+  }
+  async editIncome(body: DoneIncomeDTO, ID_income: number) {
+    const updatedIncome = await this.incomeFormRepository.update(
+      { ID_income },
+      {
+        age: body.age,
+        weight: Number(body.weight),
+        animalName: body.animalName,
+        features: body.features,
+      }
+    );
+    return updatedIncome;
+
   }
 }

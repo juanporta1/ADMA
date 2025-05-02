@@ -55,14 +55,22 @@ export interface FilterParams {
   byHour?: string; // Filtrar por hora específica
   status?: string; // Estado del turno
   findBy?: 'dni' | 'owner'; // Buscar por DNI o dueño
-  dateFilterWay?: "all" | "onlyOne" | "interval"
+  dateFilterWay?: 'all' | 'onlyOne' | 'interval';
   date?: Date;
 }
-interface IncomeForm{
+interface IncomeForm {
   ID_income: number;
   age: string;
   weight: number;
   features: string;
+  animalName: string;
+}
+
+export interface Castration {
+  ID_castration: number;
+  age: string;
+  weight: number;
+  features?: string | null;
   animalName: string;
 }
 // Interfaz para la estructura de un turno
@@ -80,16 +88,17 @@ export interface Appointment {
   sex: 'Macho' | 'Hembra'; // Sexo de la mascota
   specie: { ID_specie: number; specie: string }; // Especie de la mascota
   status:
-  | 'Pendiente'
-  | 'Cancelado'
-  | 'Ausentado'
-  | 'Esperando Actualización'
-  | 'En Proceso'
-  | 'Realizado'
-  | 'No Realizado'; // Estado del turno
+    | 'Pendiente'
+    | 'Cancelado'
+    | 'Ausentado'
+    | 'Esperando Actualización'
+    | 'En Proceso'
+    | 'Realizado'
+    | 'No Realizado'; // Estado del turno
   observations: string | null; // Observaciones adicionales
   reason: { ID_reason: number; reason: string } | null; // Razón de cancelación u otra
   incomeForm: IncomeForm | null;
+  castration: Castration | null;
   surgeryNumber: number | null;
 }
 
@@ -160,7 +169,6 @@ export function FilterAppointments() {
     restrictedSex: [{ value: '', text: '' }],
     restrictedSize: [{ value: '', text: '' }],
     restrictedSpecie: [{ value: '', text: '' }],
-
   });
   // Hook para filtrar turnos
   const { filter, remove, generatePDF } = useAppointment();
@@ -168,7 +176,7 @@ export function FilterAppointments() {
   // Función para limpiar los filtros y volver a listar todos los turnos
   const handleOnReset = () => {
     form!.reset();
-    setDateFilterWay("all")
+    setDateFilterWay('all');
     handleOnSubmit();
   };
 
@@ -269,7 +277,7 @@ export function FilterAppointments() {
       }, 2000);
       return () => clearTimeout(timeout);
     } else {
-      return () => { };
+      return () => {};
     }
   }, [isLoading]);
 
@@ -324,7 +332,7 @@ export function FilterAppointments() {
           }}
         >
           <Box>
-            <Flex direction="column" gap="md" >
+            <Flex direction="column" gap="md">
               {/* Encabezado con título y botón para crear nuevo turno */}
               <Flex direction="row" justify="space-between">
                 <Title text="Turnos" c={mainColor} />
@@ -378,18 +386,17 @@ export function FilterAppointments() {
                       label="Filtros por fecha: "
                       data={selectsData.dateFilterWay}
                       onChangeSelectFunc={(e) => {
-
                         setDateFilterWay(
                           e.currentTarget.value as
-                          | 'all'
-                          | 'interval'
-                          | 'onlyOne'
+                            | 'all'
+                            | 'interval'
+                            | 'onlyOne'
                         );
                         form.setValues({
                           dateFilterWay: e.currentTarget.value,
                           date: null,
                           startDate: null,
-                          endDate: null
+                          endDate: null,
                         });
                       }}
                     />

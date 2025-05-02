@@ -1,23 +1,22 @@
 import { Button, Grid, Modal } from '@mantine/core';
-import { useForm } from '@mantine/form';
 import { Appointment } from '../../../appointment/filter/filter-appointments';
+import styles from './done-modal.module.css';
 import FormColumn from '../../../../utilities/form-column/form-column';
-import { useContext, useEffect } from 'react';
-import { MainColorContext } from '../../../../../contexts/color-context';
-import useIncomeForm from '../../../../../hooks/income-form/use-income-form/use-income-form';
 import useAppointment from '../../../../../hooks/appointment/use-appointment/use-appointment';
-
+import useIncomeForm from '../../../../../hooks/income-form/use-income-form/use-income-form';
+import { useForm } from '@mantine/form';
+import { MainColorContext } from '../../../../../contexts/color-context';
+import { useContext, useEffect } from 'react';
 interface props {
-  admissionModal: boolean;
-  closeAdmissionModal: () => void;
+  doneModal: boolean;
+  closeDoneModal: () => void;
   actualAppointment: Appointment | null;
   fetch: () => void;
 }
-
-export function AdmissionModal({
-  admissionModal,
-  closeAdmissionModal,
+export function DoneModal({
   actualAppointment,
+  closeDoneModal,
+  doneModal,
   fetch,
 }: props) {
   const mainColor = useContext(MainColorContext);
@@ -34,37 +33,56 @@ export function AdmissionModal({
         /^[a-zA-ZÀ-ÿ\s]*$/.test(value)
           ? null
           : 'Has ingresado un caracter no válido.',
-      weight: (value: string) => {
-        if (value.length === 0) return null;
-        if (/^\d+([.,]\d+)?$/.test(value))
-          return 'Solo puedes ingresar números y una única coma o punto decimal.';
-        return null;
-      },
+      weight: (value: string) =>
+        /^\d+([.,]\d+)?$/.test(value)
+          ? null
+          : 'Solo puedes ingresar números y una única coma o punto decimal.',
     },
   });
-  const { create } = useIncomeForm();
+  const { createCastration } = useIncomeForm();
   const { editStatus } = useAppointment();
   const handleOnSubmit = async (v: typeof form.values) => {
     console.log(v);
     if (!actualAppointment) return;
-    await editStatus(actualAppointment.ID_appointment, 'En Proceso');
+    if (!actualAppointment.incomeForm) return;
+    await editStatus(actualAppointment.ID_appointment, 'Realizado');
     const editedWeight = v.weight.replace(',', '.');
-    const newIncome = await create({
-      ID_appointment: actualAppointment.ID_appointment,
-      age: v.age,
-      animalName: v.animalName,
-      features: v.features,
-      weight: editedWeight,
-    });
-    closeAdmissionModal();
+    await createCastration(
+      {
+        ID_appointment: actualAppointment.ID_appointment,
+        age: v.age,
+        weight: editedWeight,
+        animalName: v.animalName,
+        features: v.features || null,
+      },
+      actualAppointment.incomeForm.ID_income
+    );
+    closeDoneModal();
     fetch();
   };
 
+  // useEffect(() => {
+  //   if (!doneModal) return;
+  //   form.reset();
+  // }, [doneModal]);
+
+  useEffect(() => {
+    if (!actualAppointment || !actualAppointment.incomeForm) return;
+    form.setValues({
+      age: actualAppointment.incomeForm.age,
+      weight:
+        String(actualAppointment.incomeForm.weight) === 'null'
+          ? ''
+          : String(actualAppointment.incomeForm.weight),
+      animalName: actualAppointment.incomeForm.animalName,
+      features: actualAppointment.incomeForm.features || '',
+    });
+  }, [actualAppointment]);
   return (
     <Modal
-      opened={admissionModal}
-      onClose={closeAdmissionModal}
-      title="¿Esta el paciente listo para comenzar el proceso de castracion? (Esta información podrás editarla luego)"
+      opened={doneModal}
+      onClose={closeDoneModal}
+      title="¿Ha sido la castracion exitosa? (Completa los siguientes campos obligatorios)"
       size={'lg'}
       centered
     >
@@ -77,7 +95,6 @@ export function AdmissionModal({
             label="Nombre del Paciente:"
             placeholder="Ingrese nombre del animal"
             span={12}
-            notRequired
           />
           <FormColumn
             inputType="text"
@@ -86,7 +103,6 @@ export function AdmissionModal({
             label="Ingrese peso del animal(En KG): "
             placeholder="Peso del animal"
             span={12}
-            notRequired
           />
           <FormColumn
             inputType="text"
@@ -95,7 +111,6 @@ export function AdmissionModal({
             label="Ingrese Edad del animal y en que escala(Meses, Años, etc): "
             placeholder="Edad del animal(ej: 4años, 10 meses)"
             span={12}
-            notRequired
           />
           <FormColumn
             inputType="textarea"
@@ -107,7 +122,7 @@ export function AdmissionModal({
           />
           <Grid.Col span={12}>
             <Button color={mainColor} variant="light" type="submit" fullWidth>
-              Si, esta listo
+              Si, ha sido exitosa
             </Button>
           </Grid.Col>
           <Grid.Col span={12}>
@@ -115,7 +130,7 @@ export function AdmissionModal({
               color={mainColor}
               variant="filled"
               fullWidth
-              onClick={closeAdmissionModal}
+              onClick={closeDoneModal}
             >
               Volver
             </Button>
@@ -126,4 +141,4 @@ export function AdmissionModal({
   );
 }
 
-export default AdmissionModal;
+export default DoneModal;

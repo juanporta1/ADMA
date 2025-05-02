@@ -111,6 +111,7 @@ export class AppointmentService {
       filterQueryBuilder.leftJoinAndSelect('a.specie', 'specie');
       filterQueryBuilder.leftJoinAndSelect('a.reason', 'reason');
       filterQueryBuilder.leftJoinAndSelect('a.incomeForm', 'incomeForm');
+      filterQueryBuilder.leftJoinAndSelect('a.castration', 'castration');
 
       return await filterQueryBuilder.getMany();
     } else {
@@ -232,13 +233,13 @@ export class AppointmentService {
     try {
       let updateResult: UpdateResult;
       const appointment = await this.getAll({ id });
-      console.log(updatedAppointment);
+      // console.log(updatedAppointment);
       if (
         ['Ausentado', 'Cancelado', 'No Realizado'].includes(
           updatedAppointment.status
         )
       ) {
-        console.log('Entra en el if de updateAppointment');
+        // console.log('Entra en el if de updateAppointment');
         updateResult = await this.appointmentRepository.update(id, {
           ...updatedAppointment,
           surgeryNumber: null,
@@ -265,7 +266,7 @@ export class AppointmentService {
 
   async generatePDF(doc: PDFDocumentWithTables, filters: FilterAppointmentDto) {
     const registers = await this.getAll(filters);
-    console.log(filters.values);
+    // console.log(filters.values);
 
     await this.pdfService.generateHeader(doc, filters);
     if (filters.values)

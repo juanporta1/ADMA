@@ -29,36 +29,18 @@ export interface Buttons {
   button3?: React.ReactNode;
 }
 
-export interface ButtonFunctions{
+export interface ButtonFunctions {
   absenceFunction?: (appointment: Appointment) => void;
   cancelFunction?: (appointment: Appointment) => void;
   admissionFunction?: (appointment: Appointment) => void;
+  notDoneFunction?: (appointment: Appointment) => void;
+  doneFunction?: (appointment: Appointment) => void;
 }
 
-export function IncomeRow({ appointment , buttonFunctions }: props) {
-  const extraColumns = (): ExtraColumns | void => {
-    if (['En Proceso', 'Realizado'].includes(appointment.status)) {
-      return {
-        surgeryNumber: <Table.Th>{appointment.surgeryNumber}</Table.Th>,
-        weight: <Table.Th>{appointment.incomeForm?.weight || '-'}</Table.Th>,
-        age: <Table.Th>{appointment.incomeForm?.age || '-'}</Table.Th>,
-        animalName: (
-          <Table.Th>{appointment.incomeForm?.animalName || '-'}</Table.Th>
-        ),
-      };
-    } else if (['Esperando Actualización'].includes(appointment.status)) {
-      return {
-        surgeryNumber: <Table.Th>{appointment.surgeryNumber}</Table.Th>,
-      };
-    }else if(['Cancelado', 'No Realizado', 'Ausentado'].includes(appointment.status)){
-      return {
-        status: <Table.Td>{appointment.status}</Table.Td>,
-        reason: <Table.Td>{appointment.reason?.reason || "-"}</Table.Td>,
-      };
-    }
-  };
-  const {buttons} = useIncomeData({appointment, buttonFunctions})
- 
+export function IncomeRow({ appointment, buttonFunctions }: props) {
+  
+  const { buttons, extraColumns } = useIncomeData({ appointment, buttonFunctions });
+
   return (
     <Table.Tr>
       {extraColumns()?.surgeryNumber}
