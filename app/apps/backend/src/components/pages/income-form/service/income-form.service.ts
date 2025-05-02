@@ -31,10 +31,10 @@ export class IncomeFormService {
     });
     if (!appointment) return;
     const incomeObject = {
-      age: body?.age ,
-      weight: Number(body?.weight) ,
-      animalName: body?.animalName ,
-      features: body?.features ,
+      age: body?.age || null,
+      weight: Number(body?.weight) || null ,
+      animalName: body?.animalName || null ,
+      features: body?.features || null ,
     };
 
     const newIncome = await this.incomeFormRepository.create(incomeObject);

@@ -13,7 +13,7 @@ export class AppointmentService {
     @InjectRepository(IncomeForm) 
     private readonly incomeFormRepository: Repository<IncomeForm>, // Agrega esta linea para poder usar el repositorio de IncomeForm
   ) {}
-  @Cron(CronExpression.EVERY_MINUTE)
+  @Cron(CronExpression.EVERY_10_MINUTES)
   async updateStatus() {
     console.log('Actualizando status de citas...');
     const today = new Date();

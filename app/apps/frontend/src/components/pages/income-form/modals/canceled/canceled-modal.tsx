@@ -20,6 +20,7 @@ interface props {
     reason?: string
   ) => void;
   actualAppointement: Appointment | null;
+  fetch: () => void;
 }
 
 export function CanceledModal({
@@ -27,8 +28,8 @@ export function CanceledModal({
   closeCancelModal,
   handleOnSetStatus,
   actualAppointement,
+  fetch
 }: props) {
-  console.log(actualAppointement, 'desde canceled modal');
   const mainColor = useContext(MainColorContext);
   const form = useForm({
     mode: 'controlled',
@@ -43,6 +44,7 @@ export function CanceledModal({
   const { getSelectData } = useSelectsData();
   const handleOnSubmit = (v: typeof form.values) => {
     handleOnSetStatus('Cancelado', closeCancelModal, v.observations, v.reason);
+    fetch();
   };
   useEffect(() => {
     const fetchSelectsData = async () => {
@@ -53,7 +55,7 @@ export function CanceledModal({
     fetchSelectsData();
     form.setValues({ observations: actualAppointement?.observations || '' });
   }, [actualAppointement]);
-  useEffect(() => console.log(reasons), [reasons]);
+  // useEffect(() => console.log(reasons), [reasons]);
 
   return (
     <Modal

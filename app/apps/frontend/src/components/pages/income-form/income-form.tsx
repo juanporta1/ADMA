@@ -115,7 +115,6 @@ export function IncomeForm() {
 
   useEffect(() => {
     fetchAppointments();
-    console.log(form.values);
   }, [form.values]);
 
   // useEffect(() => console.log(appointments), [appointments]);
@@ -126,17 +125,20 @@ export function IncomeForm() {
         absenceModal={absenceModal}
         closeAbsenceModal={closeAbsenceModal}
         handleOnSetStatus={handleOnSetStatus}
+        fetch={fetchAppointments}
       />
       <CanceledModal
         cancelModal={cancelModal}
         closeCancelModal={closeCancelModal}
         handleOnSetStatus={handleOnSetStatus}
         actualAppointement={actualAppointment}
+        fetch={fetchAppointments}
       />
       <AdmissionModal
         admissionModal={admissionModal}
         closeAdmissionModal={closeAdmissionModal}
         actualAppointment={actualAppointment}
+        fetch={fetchAppointments}
       />
       <Grid w={'30%'}>
         <FormColumn

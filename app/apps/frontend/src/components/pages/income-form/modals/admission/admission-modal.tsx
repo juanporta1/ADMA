@@ -11,12 +11,14 @@ interface props {
   admissionModal: boolean;
   closeAdmissionModal: () => void;
   actualAppointment: Appointment | null;
+  fetch: () => void;
 }
 
 export function AdmissionModal({
   admissionModal,
   closeAdmissionModal,
   actualAppointment,
+  fetch
 }: props) {
   const mainColor = useContext(MainColorContext);
   const form = useForm({
@@ -41,6 +43,7 @@ export function AdmissionModal({
   const { create } = useIncomeForm();
   const {editStatus} = useAppointment();
   const handleOnSubmit = async (v: typeof form.values) => {
+    console.log(v);
     if (!actualAppointment) return;
     await editStatus(actualAppointment.ID_appointment,"En Proceso")
     const newIncome = await create({
@@ -50,7 +53,8 @@ export function AdmissionModal({
       features: v.features,
       weight: v.weight
     });
-    console.log(newIncome)
+    closeAdmissionModal();
+    fetch();
   };
   return (
     <Modal
@@ -69,6 +73,7 @@ export function AdmissionModal({
             label="Nombre del Paciente:"
             placeholder="Ingrese nombre del animal"
             span={12}
+            notRequired
           />
           <FormColumn
             inputType="text"
@@ -77,6 +82,7 @@ export function AdmissionModal({
             label="Ingrese peso del animal(En KG): "
             placeholder="Peso del animal"
             span={12}
+            notRequired
           />
           <FormColumn
             inputType="text"
@@ -85,6 +91,7 @@ export function AdmissionModal({
             label="Ingrese Edad del animal y en que escala(Meses, Años, etc): "
             placeholder="Edad del animal(ej: 4años, 10 meses)"
             span={12}
+            notRequired
           />
           <FormColumn
             inputType="textarea"
@@ -100,7 +107,7 @@ export function AdmissionModal({
             </Button>
           </Grid.Col>
           <Grid.Col span={12}>
-            <Button color={mainColor} variant="filled" fullWidth>
+            <Button color={mainColor} variant="filled" fullWidth onClick={closeAdmissionModal}>
               Volver
             </Button>
           </Grid.Col>

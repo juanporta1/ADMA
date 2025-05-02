@@ -7,10 +7,11 @@ interface props{
   absenceModal: boolean,
   closeAbsenceModal: () => void,
   handleOnSetStatus: (status: string, closeModal: () => void) => void,
+  fetch: () => void
 }
 
 
-export function AbsenceModal({absenceModal,closeAbsenceModal,handleOnSetStatus}: props) {
+export function AbsenceModal({absenceModal,closeAbsenceModal,handleOnSetStatus, fetch}: props) {
   const mainColor = useContext(MainColorContext)
   return (
     <Modal
@@ -24,7 +25,7 @@ export function AbsenceModal({absenceModal,closeAbsenceModal,handleOnSetStatus}:
           <Button
             color={mainColor}
             variant="light"
-            onClick={() => handleOnSetStatus('Ausentado', closeAbsenceModal)}
+            onClick={() => {handleOnSetStatus('Ausentado', closeAbsenceModal); fetch()}}
           >
             Si, el paciente se ausentó
           </Button>

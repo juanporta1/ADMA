@@ -41,7 +41,7 @@ export function useIncomeForm(): UseIncomeForm {
   const host = useContext(ApiHostContext)
   const create = async (income: Income) => {
     try{
-      const newIncome = await axios.post(`${host}/income-form`)
+      const newIncome = await axios.post(`${host}/income-form`,income)
       return newIncome;
     }catch(err){
       throw err
