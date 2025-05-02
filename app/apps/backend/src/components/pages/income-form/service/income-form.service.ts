@@ -1,4 +1,4 @@
-import {  Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import type { FilterIncomeDTO } from '../DTOs/filter-income.DTO';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IncomeForm } from '../income-form.entity';
@@ -31,13 +31,16 @@ export class IncomeFormService {
     });
     if (!appointment) return;
     const incomeObject = {
-      appointment,
-      age: body?.age || null,
-      weight: Number(body?.weight) || null,
-      animalName: body?.animalName || null,
-      features: body?.features || null,
+      age: body?.age ,
+      weight: Number(body?.weight) ,
+      animalName: body?.animalName ,
+      features: body?.features ,
     };
+
     const newIncome = await this.incomeFormRepository.create(incomeObject);
-    return await this.incomeFormRepository.save(newIncome);
+    await this.incomeFormRepository.save(newIncome);
+    return this.appointmentRepository.update(appointment.ID_appointment, {
+      incomeForm: newIncome,
+    });
   }
 }

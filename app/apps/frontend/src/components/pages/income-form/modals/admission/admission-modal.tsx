@@ -5,6 +5,7 @@ import FormColumn from '../../../../utilities/form-column/form-column';
 import { useContext } from 'react';
 import { MainColorContext } from '../../../../../contexts/color-context';
 import useIncomeForm from '../../../../../hooks/income-form/use-income-form/use-income-form';
+import useAppointment from '../../../../../hooks/appointment/use-appointment/use-appointment';
 
 interface props {
   admissionModal: boolean;
@@ -38,9 +39,11 @@ export function AdmissionModal({
     },
   });
   const { create } = useIncomeForm();
+  const {editStatus} = useAppointment();
   const handleOnSubmit = async (v: typeof form.values) => {
     if (!actualAppointment) return;
-    const newIncome = create({
+    await editStatus(actualAppointment.ID_appointment,"En Proceso")
+    const newIncome = await create({
       ID_appointment: actualAppointment.ID_appointment,
       age: v.age,
       animalName: v.animalName,

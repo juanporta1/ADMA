@@ -247,7 +247,7 @@ export class AppointmentService {
       } else {
         updateResult = await this.appointmentRepository.update(
           id,
-          updatedAppointment
+          {...updatedAppointment}
         );
       }
       return updateResult;
