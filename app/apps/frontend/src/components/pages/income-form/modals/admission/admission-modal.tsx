@@ -59,7 +59,12 @@ export function AdmissionModal({
     closeAdmissionModal();
     fetch();
   };
-
+  useEffect(() => {
+    console.log(form.values)
+    if (admissionModal){
+      form.reset();
+    }
+  }, [admissionModal])
   return (
     <Modal
       opened={admissionModal}
