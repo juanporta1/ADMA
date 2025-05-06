@@ -5,6 +5,7 @@ import { ApiHostProvider } from './providers/api-host-provider';
 import { SelectsDataProvider } from './providers/data-entities-provider';
 import { NavLinksProvider } from './providers/nav-links.provider';
 import { UserProvider } from './providers/user-provider';
+import { SettingsProvider } from './providers/settings-provider';
 
 interface props {
   children: ReactNode;
@@ -12,16 +13,18 @@ interface props {
 
 export function ContextsProvider({ children }: props) {
   return (
-    <UserProvider>
-      <NavLinksProvider>
-        <ApiHostProvider>
-          <ColorProvider>
-            <SelectsDataProvider>
-              <AppointmentProvider>{children}</AppointmentProvider>
-            </SelectsDataProvider>
-          </ColorProvider>
-        </ApiHostProvider>
-      </NavLinksProvider>
-    </UserProvider>
+    <SettingsProvider>
+      <UserProvider>
+        <NavLinksProvider>
+          <ApiHostProvider>
+            <ColorProvider>
+              <SelectsDataProvider>
+                <AppointmentProvider>{children}</AppointmentProvider>
+              </SelectsDataProvider>
+            </ColorProvider>
+          </ApiHostProvider>
+        </NavLinksProvider>
+      </UserProvider>
+    </SettingsProvider>
   );
 }

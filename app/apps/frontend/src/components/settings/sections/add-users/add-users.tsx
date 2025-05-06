@@ -21,6 +21,7 @@ import FormColumn from '../../../utilities/form-column/form-column';
 import { useForm } from '@mantine/form';
 import { SelectData } from '../../../../hooks/appointment/use-selects-data/use-selects-data';
 import { User } from '../../../../hooks/general/login/use-login';
+import { SettingsContext } from '../../../../contexts/settings-context';
 
 
 export function AddUsers() {
@@ -50,19 +51,21 @@ export function AddUsers() {
     useDisclosure(false);
   const mainColor = useContext(MainColorContext);
   const { getUsers, createUser, editUser } = useLogin();
-  const [users, setUsers] = useState<User[]>([]);
+  const { userList } = useContext(SettingsContext);
+  const [users, setUsers] = userList;
   const { currentUser } = useContext(UserContext);
   const roleData: SelectData[] = [
     { value: '', text: 'Seleccione un Rol', disabled: true },
-    { value: 'admin', text: 'Administrador' },
+    { value: 'admin', text: 'Administrador', disabled: currentUser?.role !== 'main'  },
     { value: 'user', text: 'Usuario' },
   ];
   const [visible, { open, close }] = useDisclosure(false);
   const [deleteModal, { open: openDeleteModal, close: closeDeleteModal }] =
     useDisclosure(false);
   const [actualUser, setActualUser] = useState<User | null>(null);
-  const UsersItems = () =>
-    users.map((user) => {
+  const UsersItems = () => {
+    if(!users) return;
+    return users.map((user) => {
       if (!user.inUse) return;
       const disabled =
         currentUser?.role === 'user' ||
@@ -112,6 +115,7 @@ export function AddUsers() {
         </Table.Tr>
       );
     });
+  }
   const handleOnCreateUser = async (values: {
     email: string;
     role: string;
@@ -155,6 +159,7 @@ export function AddUsers() {
     setUsers(users);
   };
   useEffect(() => {
+    if (users) return;
     getUsersList();
   }, []);
   return (
@@ -245,7 +250,7 @@ export function AddUsers() {
               span={12}
             />
             <Grid.Col span={12}>
-              <Button bg={mainColor} type="submit">
+              <Button bg={mainColor} type="submit" disabled={currentUser?.role === "user"}>
                 Cargar Usuario
               </Button>
             </Grid.Col>
@@ -254,7 +259,7 @@ export function AddUsers() {
       </Modal>
 
       <Flex
-        
+
         direction={'column'}
         justify={'center'}
         align={'start'}

@@ -15,9 +15,10 @@ export class AppointmentService {
     private appointmentRepository: Repository<Appointment>,
     private pdfService: PdfService,
     private dataEntitiesService: DataEntitiesService
-  ) {}
+  ) { }
 
   async getAll(querys: FilterAppointmentDto) {
+    console.log(querys);
     if (Object.keys(querys).length != 0) {
       const filterQueryBuilder =
         this.appointmentRepository.createQueryBuilder('a');
@@ -28,7 +29,7 @@ export class AppointmentService {
         });
       if (querys.owner)
         filterQueryBuilder.andWhere(
-          '(a.lastName || " " || a.name) ILIKE :owner',
+          "(a.lastName || "' '" || a.name) ILIKE :owner",
           {
             owner: `%${querys.owner}%`,
           }
@@ -51,18 +52,16 @@ export class AppointmentService {
         if (querys.dateFilterWay === 'interval') {
           if (querys.startDate) {
             const date = new Date(querys.startDate);
-            const findDate = `${date.getFullYear()}-${
-              date.getMonth() + 1
-            }-${date.getDate()}`;
+            const findDate = `${date.getFullYear()}-${date.getMonth() + 1
+              }-${date.getDate()}`;
             filterQueryBuilder.andWhere('a.date >= :startDate', {
               startDate: findDate,
             });
           }
           if (querys.endDate) {
             const date = new Date(querys.endDate);
-            const findDate = `${date.getFullYear()}-${
-              date.getMonth() + 1
-            }-${date.getDate()}`;
+            const findDate = `${date.getFullYear()}-${date.getMonth() + 1
+              }-${date.getDate()}`;
             filterQueryBuilder.andWhere('a.date <= :endDate', {
               endDate: findDate,
             });
@@ -70,9 +69,8 @@ export class AppointmentService {
         } else if (querys.dateFilterWay === 'onlyOne') {
           if (querys.date) {
             const date = new Date(querys.date);
-            const findDate = `${date.getFullYear()}-${
-              date.getMonth() + 1
-            }-${date.getDate()}`;
+            const findDate = `${date.getFullYear()}-${date.getMonth() + 1
+              }-${date.getDate()}`;
             filterQueryBuilder.andWhere('a.date = :date', {
               date: findDate,
             });
@@ -170,10 +168,10 @@ export class AppointmentService {
       } else {
         surgeryNumber = residualNumbersRegisters[0].number;
       }
-      
+
       const today = new Date();
       let status: string = "Pendiente";
-      if(new Date(appointment.date).setHours(0,0,0,0) <= today.setHours(0,0,0,0))
+      if (new Date(appointment.date).setHours(0, 0, 0, 0) <= today.setHours(0, 0, 0, 0))
         status = "Esperando Actualización";
 
       const newAppointment = await this.appointmentRepository.create({

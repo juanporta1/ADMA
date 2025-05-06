@@ -252,7 +252,8 @@ export function FilterAppointments() {
       />
     ));
   };
-
+  
+  
   // useEffect para cargar los turnos al montar el componente
   useEffect(() => {
     const fetchData = async () => {
@@ -266,7 +267,6 @@ export function FilterAppointments() {
     fetchData();
     handleOnSubmit();
 
-    console.log(mainColor);
   }, []);
 
   // useEffect para limpiar el estado de carga después de un tiempo
