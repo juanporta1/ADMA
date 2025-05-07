@@ -9,5 +9,13 @@ export interface Settings {
       SetStateAction<{ ID_neighborhood: number; neighborhood: string }[] | null>
     >
   ];
+  reasonList: [
+    { ID_reason: number; reason: string }[] | null,
+    Dispatch<SetStateAction<{ ID_reason: number; reason: string }[] | null>>
+  ];
+  specieList: [
+    { ID_specie: number; specie: string }[] | null,
+    Dispatch<SetStateAction<{ ID_specie: number; specie: string }[] | null>>
+  ];
 }
 export const SettingsContext = createContext<Settings>({} as Settings);

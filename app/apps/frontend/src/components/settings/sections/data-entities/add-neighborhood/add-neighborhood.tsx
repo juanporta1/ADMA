@@ -2,13 +2,24 @@ import { useContext, useEffect } from 'react';
 import styles from './add-neighborhood.module.css';
 import { SettingsContext } from '../../../../../contexts/settings-context';
 import useDataEntities from '../../../../../hooks/general/use-data-entities/use-data-entities';
-import { ActionIcon, Box, Button, Flex, Table, Text, Title } from '@mantine/core';
+import {
+  ActionIcon,
+  Box,
+  Button,
+  Flex,
+  Modal,
+  Table,
+  Text,
+  Title,
+} from '@mantine/core';
 import { MainColorContext } from '../../../../../contexts/color-context';
 import { UserContext } from '../../../../../contexts/user-context';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { useDisclosure } from '@mantine/hooks';
 
 export function AddNeighborhood() {
+  const [visible, { open, close }] = useDisclosure(false);
   const { neighborhoodList } = useContext(SettingsContext);
   const [neighborhoods, setNeighborhoods] = neighborhoodList;
   const { getData } = useDataEntities();
@@ -63,6 +74,7 @@ export function AddNeighborhood() {
   }, []);
   return (
     <div>
+      <Modal opened={visible} onClose={close}></Modal>
       <Flex direction={'column'} justify={'center'} align={'start'} gap={'lg'}>
         <Title>Barrios</Title>
         <Text>Definir y administrar los barrios.</Text>
@@ -88,7 +100,7 @@ export function AddNeighborhood() {
           </Table>
         </Box>
         <Button bg={mainColor} disabled={currentUser?.role === 'user'}>
-          Cargar Usuario
+          Cargar Razón
         </Button>
       </Flex>
     </div>
