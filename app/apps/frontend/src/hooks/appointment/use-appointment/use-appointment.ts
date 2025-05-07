@@ -1,14 +1,12 @@
 import { useContext } from 'react';
-import {
-  Appointment,
-  FilterParams,
-} from '../../../components/pages/appointment/filter/filter-appointments';
+import { FilterParams } from '../../../components/pages/appointment/filter/filter-appointments';
 import { notifications } from '@mantine/notifications';
 import axios from 'axios';
 import { ApiHostContext } from '../../../contexts/api-host-context';
 import { EditFormValues } from '../../../components/pages/appointment/edit/edit-appointment';
 import { User } from '../../general/login/use-login';
 import { UserContext } from '../../../contexts/user-context';
+import { Appointment } from '../../../types/entities.types';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface UseAppointment {
@@ -17,7 +15,12 @@ export interface UseAppointment {
   remove: (id: number) => void;
   create: (values: FormValues) => void;
   generatePDF: (filters: FilterParams, values: string[]) => Promise<void>;
-  editStatus: (id: number, status: string, observations?: string, reason?: string) => Promise<void>;
+  editStatus: (
+    id: number,
+    status: string,
+    observations?: string,
+    reason?: string
+  ) => Promise<void>;
 }
 interface FormValues {
   lastName: string;
@@ -57,7 +60,6 @@ export function useAppointment(): UseAppointment {
   const user = useContext(UserContext);
 
   async function create(values: FormValues): Promise<void> {
-
     const newAppointment: NewAppointment = {
       lastName: values.lastName,
       name: values.name,
@@ -153,7 +155,6 @@ export function useAppointment(): UseAppointment {
         sex: appointment.sex,
         specie: Number(appointment.specie),
         size: appointment.size,
-
       };
       const res = await axios.put(
         `${host}/appointment/${id}`,
@@ -184,11 +185,16 @@ export function useAppointment(): UseAppointment {
       throw err;
     }
   }
-  async function editStatus(id: number, status: string, observations?: string, reason?: string): Promise<void> {
+  async function editStatus(
+    id: number,
+    status: string,
+    observations?: string,
+    reason?: string
+  ): Promise<void> {
     try {
       const otherParams: any = {};
-      if(observations) otherParams.observations = observations;
-      if(reason) otherParams.reason = Number(reason);
+      if (observations) otherParams.observations = observations;
+      if (reason) otherParams.reason = Number(reason);
       await axios.put(`${host}/appointment/${id}`, {
         status,
         ...otherParams,

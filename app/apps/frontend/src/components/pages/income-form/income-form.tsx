@@ -5,7 +5,6 @@ import FormColumn from '../../utilities/form-column/form-column';
 import { SelectData } from '../../../hooks/appointment/use-selects-data/use-selects-data';
 import useAppointment from '../../../hooks/appointment/use-appointment/use-appointment';
 import { useEffect, useState } from 'react';
-import { Appointment } from '../appointment/filter/filter-appointments';
 import StatusTable from './status-table/status-table';
 import { useDisclosure } from '@mantine/hooks';
 import CanceledModal from './modals/canceled/canceled-modal';
@@ -13,6 +12,7 @@ import AdmissionModal from './modals/admission/admission-modal';
 import AbsenceModal from './modals/absence/absence-modal';
 import NotDoneModal from './modals/not-done/not-done-modal';
 import DoneModal from './modals/done/done-modal';
+import { Appointment } from '../../../types/entities.types';
 
 export function IncomeForm() {
   const { form } = useIncomeForm();

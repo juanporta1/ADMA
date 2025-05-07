@@ -1,7 +1,9 @@
 import { useContext, useEffect } from 'react';
 import styles from './add-neighborhood.module.css';
 import { SettingsContext } from '../../../../../contexts/settings-context';
-import useDataEntities from '../../../../../hooks/general/use-data-entities/use-data-entities';
+import useDataEntities, {
+  editedNeighborhood,
+} from '../../../../../hooks/general/use-data-entities/use-data-entities';
 import {
   ActionIcon,
   Box,
@@ -22,7 +24,7 @@ export function AddNeighborhood() {
   const [visible, { open, close }] = useDisclosure(false);
   const { neighborhoodList } = useContext(SettingsContext);
   const [neighborhoods, setNeighborhoods] = neighborhoodList;
-  const { getData } = useDataEntities();
+  const { getData, stopUsingData } = useDataEntities();
   const { currentUser } = useContext(UserContext);
   const mainColor = useContext(MainColorContext);
   const getNeighborhoods = async () => {
@@ -32,9 +34,16 @@ export function AddNeighborhood() {
     }
   };
 
+  const handleOnEdit = async (id: number, editedData: editedNeighborhood) => {
+    await stopUsingData('neighborhood', id, editedData);
+  };
+
   const NeighborhoodItems = () => {
     if (!neighborhoods) return;
-    return neighborhoods.map((neighborhood) => (
+    
+    return neighborhoods.map((neighborhood) => {
+      if(!neighborhood.inUse) return;
+      return (
       <Table.Tr
         key={neighborhood.ID_neighborhood}
         style={{
@@ -59,14 +68,14 @@ export function AddNeighborhood() {
             bg={mainColor}
             disabled={currentUser?.role === 'user'}
             onClick={() => {
-              console.log(neighborhood);
+              handleOnEdit(neighborhood.ID_neighborhood, { inUse: false });
             }}
           >
             <FontAwesomeIcon icon={faTrash} />
           </ActionIcon>
         </Table.Td>
       </Table.Tr>
-    ));
+    )});
   };
   useEffect(() => {
     if (neighborhoods !== null) return;
@@ -100,7 +109,7 @@ export function AddNeighborhood() {
           </Table>
         </Box>
         <Button bg={mainColor} disabled={currentUser?.role === 'user'}>
-          Cargar Razón
+          Cargar Barrio
         </Button>
       </Flex>
     </div>

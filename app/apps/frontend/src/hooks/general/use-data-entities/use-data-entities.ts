@@ -1,16 +1,47 @@
 import axios from 'axios';
 import { useState, useCallback, useContext } from 'react';
 import { ApiHostContext } from '../../../contexts/api-host-context';
+import {
+  Neighborhood,
+  newNeighborhood,
+  newReason,
+  newSpecie,
+  Reason,
+  Specie,
+} from '../../../types/data-entities.types';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface DataEntities {
-  reasons: { ID_reason: number; reason: string, reasonSex: string }[];
-  species: { ID_specie: number; specie: string }[];
-  neighborhoods: { ID_neighborhood: number; neighborhood: string }[];
+  reasons: Reason[];
+  species: Specie[];
+  neighborhoods: Neighborhood[];
+}
+
+export interface editedNeighborhood {
+  neighborhood?: string;
+  inUse?: boolean;
+}
+export interface editedSpecie {
+  specie?: string;
+  inUse?: boolean;
+}
+export interface editedReason {
+  reason?: string;
+  reasonSex?: 'a' | 'm' | 'h';
+  inUse?: boolean;
 }
 
 export interface UseDataEntities {
   getData: () => Promise<DataEntities>;
+  createNewData: (
+    data: newNeighborhood | newReason | newSpecie,
+    type: 'neighborhood' | 'specie' | 'reason'
+  ) => Promise<void>;
+  stopUsingData: (
+    type: 'neighborhood' | 'specie' | 'reason',
+    id: number,
+    data: editedNeighborhood | editedReason | editedSpecie
+  ) => void;
 }
 
 export function useDataEntities(): UseDataEntities {
@@ -52,7 +83,22 @@ export function useDataEntities(): UseDataEntities {
     };
   };
 
-  return { getData };
+  const createNewData = async (
+    data: newNeighborhood | newReason | newSpecie,
+    type: 'neighborhood' | 'specie' | 'reason'
+  ) => {
+    const res = await axios.post(`${host}/data-entities/${type}`, data);
+    console.log(res);
+  };
+
+  const stopUsingData = async (
+    type: 'neighborhood' | 'specie' | 'reason',
+    id: number,
+    data: editedNeighborhood | editedReason | editedSpecie
+  ) => {
+    const res = await axios.patch(`${host}/data-entities/${type}/${id}`, data);
+  };
+  return { getData, createNewData, stopUsingData };
 }
 
 export default useDataEntities;

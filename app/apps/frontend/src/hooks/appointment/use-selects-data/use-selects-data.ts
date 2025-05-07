@@ -1,35 +1,15 @@
 import { useState, useCallback, useContext } from 'react';
 import useDataEntities from '../../general/use-data-entities/use-data-entities';
 import { text } from 'stream/consumers';
-import { Appointment } from '../../../components/pages/appointment/filter/filter-appointments';
+import { Appointment } from '../../../types/entities.types';
+import { AppoinmentSelects, SelectData } from '../../../types/utilities.types';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface UseSelectsData {
   getSelectData: (appointment?: Appointment) => Promise<AppoinmentSelects>;
 }
 
-export interface AppoinmentSelects {
-  findBy: SelectData[];
-  sex: SelectData[];
-  specie: SelectData[];
-  size: SelectData[];
-  filterStatus: SelectData[];
-  status: SelectData[];
-  neighborhood: SelectData[];
-  orderBy: SelectData[];
-  hour: SelectData[];
-  reason: SelectData[];
-  dateFilterWay: SelectData[];
-  restrictedNeighborhood: SelectData[];
-  restrictedSize: SelectData[];
-  restrictedSpecie: SelectData[];
-  restrictedSex: SelectData[];
-}
-export interface SelectData {
-  value: string | number;
-  text: string;
-  disabled?: boolean;
-}
+
 
 export function useSelectsData(): UseSelectsData {
   const { getData } = useDataEntities();

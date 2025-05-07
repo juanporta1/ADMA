@@ -40,6 +40,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilePdf, faPlus } from '@fortawesome/free-solid-svg-icons';
 import ColumnsMenu from '../utilities/columns-menu/columns-menu';
 import DateFilter from './date-filter/date-filter';
+import { Appointment } from '../../../../types/entities.types';
 
 // Interfaz para los parámetros de filtrado de turnos
 export interface FilterParams {
@@ -58,49 +59,7 @@ export interface FilterParams {
   dateFilterWay?: 'all' | 'onlyOne' | 'interval';
   date?: Date;
 }
-interface IncomeForm {
-  ID_income: number;
-  age: string;
-  weight: number;
-  features: string;
-  animalName: string;
-}
 
-export interface Castration {
-  ID_castration: number;
-  age: string;
-  weight: number;
-  features?: string | null;
-  animalName: string;
-}
-// Interfaz para la estructura de un turno
-export interface Appointment {
-  ID_appointment: number; // ID único del turno
-  lastName: string;
-  name: string; // Nombre del dueño
-  home: string; // Domicilio
-  neighborhood: { ID_neighborhood: number; neighborhood: string }; // Barrio
-  phone: string | null; // Teléfono
-  dni: string; // DNI del dueño
-  date: Date; // Fecha del turno
-  hour: string; // Hora del turno
-  size: 'Grande' | 'Pequeño' | 'Mediano'; // Tamaño de la mascota
-  sex: 'Macho' | 'Hembra'; // Sexo de la mascota
-  specie: { ID_specie: number; specie: string }; // Especie de la mascota
-  status:
-    | 'Pendiente'
-    | 'Cancelado'
-    | 'Ausentado'
-    | 'Esperando Actualización'
-    | 'En Proceso'
-    | 'Realizado'
-    | 'No Realizado'; // Estado del turno
-  observations: string | null; // Observaciones adicionales
-  reason: { ID_reason: number; reason: string } | null; // Razón de cancelación u otra
-  incomeForm: IncomeForm | null;
-  castration: Castration | null;
-  surgeryNumber: number | null;
-}
 
 // Componente principal para filtrar y mostrar turnos
 export function FilterAppointments() {

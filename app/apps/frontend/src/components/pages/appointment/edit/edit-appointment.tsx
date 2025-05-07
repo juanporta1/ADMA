@@ -11,12 +11,12 @@ import { FormColumn } from '../../../utilities/form-column/form-column';
 import HourSelect from '../utilities/hour-select/hour-select';
 import useEditForm from '../../../../hooks/appointment/edit/use-edit-form/use-edit-form';
 import { useDisclosure } from '@mantine/hooks';
-import { Appointment } from '../filter/filter-appointments';
 import { useAppointment } from '../../../../hooks/appointment/use-appointment/use-appointment';
 import useSelectsData, {
   AppoinmentSelects,
 } from '../../../../hooks/appointment/use-selects-data/use-selects-data';
 import { SelectsDataContext } from '../../../../contexts/selects-data-context';
+import { Appointment } from '../../../../types/entities.types';
 
 // Definición de la estructura del formulario
 export interface EditFormValues {

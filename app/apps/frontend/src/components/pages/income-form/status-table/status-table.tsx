@@ -1,6 +1,5 @@
 import { Accordion, Table } from '@mantine/core';
 import styles from './status-table.module.css';
-import { Appointment } from '../../appointment/filter/filter-appointments';
 import IncomeRow, {
   ButtonFunctions,
   ExtraColumns,
@@ -16,6 +15,7 @@ import {
   faSquareCheck,
 } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Appointment } from '../../../../types/entities.types';
 
 interface props {
   appointments: Appointment[];
