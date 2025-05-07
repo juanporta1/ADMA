@@ -29,7 +29,7 @@ export class AppointmentService {
         });
       if (querys.owner)
         filterQueryBuilder.andWhere(
-          "(a.lastName || "' '" || a.name) ILIKE :owner",
+          "(a.lastName || ' ' || a.name) ILIKE :owner",
           {
             owner: `%${querys.owner}%`,
           }

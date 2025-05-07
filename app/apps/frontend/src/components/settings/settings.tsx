@@ -4,6 +4,7 @@ import AddUsers from './sections/add-users/add-users';
 import { useContext } from 'react';
 import { MainColorContext } from '../../contexts/color-context';
 import Sesion from './sections/sesion/sesion';
+import AddNeighborhood from './sections/data-entities/add-neighborhood/add-neighborhood';
 
 export function Settings() {
   const mainColor = useContext(MainColorContext);
@@ -41,6 +42,7 @@ export function Settings() {
         gap={"xl"}
       >
         <AddUsers />
+        <AddNeighborhood />
         <Sesion />
       </Flex>
     </Flex>
