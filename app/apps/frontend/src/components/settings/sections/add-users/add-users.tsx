@@ -21,6 +21,7 @@ import FormColumn from '../../../utilities/form-column/form-column';
 import { useForm } from '@mantine/form';
 import { User } from '../../../../hooks/general/login/use-login';
 import { SettingsContext } from '../../../../contexts/settings-context';
+import { SelectData } from '../../../../types/utilities.types';
 
 
 export function AddUsers() {
@@ -186,10 +187,10 @@ export function AddUsers() {
               closeDeleteModal();
               setUsers(await getUsers());
             }}
-          >
+          fullWidth>
             Sí, estoy seguro
           </Button>
-          <Button color={mainColor} onClick={closeDeleteModal}>
+          <Button color={mainColor} onClick={closeDeleteModal} fullWidth>
             Cancelar
           </Button>
         </Flex>
@@ -220,9 +221,14 @@ export function AddUsers() {
               data={roleData}
               span={12}
             />
-            <Grid.Col span={12}>
-              <Button bg={mainColor} type="submit">
+            <Grid.Col span={6}>
+              <Button color={mainColor} variant='light' type="submit" fullWidth>
                 Editar Usuario
+              </Button>
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <Button bg={mainColor} onClick={closeEditModal} fullWidth>
+                Volver
               </Button>
             </Grid.Col>
           </Grid>

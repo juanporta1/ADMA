@@ -37,7 +37,7 @@ export interface UseDataEntities {
     data: newNeighborhood | newReason | newSpecie,
     type: 'neighborhood' | 'specie' | 'reason'
   ) => Promise<void>;
-  stopUsingData: (
+  editData: (
     type: 'neighborhood' | 'specie' | 'reason',
     id: number,
     data: editedNeighborhood | editedReason | editedSpecie
@@ -100,7 +100,7 @@ export function useDataEntities(): UseDataEntities {
   ) => {
     const res = await axios.patch(`${host}/data-entities/${type}/${id}`, data);
   };
-  return { getData, createNewData, stopUsingData };
+  return { getData, createNewData, editData: stopUsingData };
 }
 
 export default useDataEntities;
