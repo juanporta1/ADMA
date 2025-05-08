@@ -1,4 +1,4 @@
-import { useContext, useEffect } from 'react';
+import { act, useContext, useEffect, useState } from 'react';
 import styles from './add-neighborhood.module.css';
 import { SettingsContext } from '../../../../../contexts/settings-context';
 import useDataEntities, {
@@ -8,7 +8,9 @@ import {
   ActionIcon,
   Box,
   Button,
+  Center,
   Flex,
+  Grid,
   Modal,
   Table,
   Text,
@@ -19,9 +21,28 @@ import { UserContext } from '../../../../../contexts/user-context';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useDisclosure } from '@mantine/hooks';
+import { Neighborhood } from '../../../../../types/data-entities.types';
+import { useForm } from '@mantine/form';
+import FormColumn from '../../../../utilities/form-column/form-column';
 
 export function AddNeighborhood() {
-  const [visible, { open, close }] = useDisclosure(false);
+  const [deleteModal, { open: openDelete, close: closeDelete }] = useDisclosure(false);
+  const [editModal, { open: openEdit, close: closeEdit }] = useDisclosure(false);
+  const [createModal, { open: openCreate, close: closeCreate }] = useDisclosure(false);
+  const form = useForm({
+    initialValues: {
+      neighborhood: "",
+    },
+    validate: {
+      neighborhood: (value: string) => {
+        if (!value.match(/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ\s]*$/)) {
+          return 'Only letters, spaces and accents are allowed';
+        }
+        return null;
+      }
+    }
+  })
+  const [actualNeig, setActualNeig] = useState<Neighborhood | null>(null);
   const { neighborhoodList } = useContext(SettingsContext);
   const [neighborhoods, setNeighborhoods] = neighborhoodList;
   const { getData, stopUsingData } = useDataEntities();
@@ -34,56 +55,116 @@ export function AddNeighborhood() {
     }
   };
 
-  const handleOnEdit = async (id: number, editedData: editedNeighborhood) => {
+  const handleOnSubmitEdit = async (values: { neighborhood: string }) => {
+    if (!actualNeig) return;
+    await editNeighborhood(actualNeig.ID_neighborhood, values);
+    closeEdit();
+    await getNeighborhoods();
+  }
+
+  const editNeighborhood = async (id: number, editedData: editedNeighborhood) => {
     await stopUsingData('neighborhood', id, editedData);
+    await getNeighborhoods();
   };
 
   const NeighborhoodItems = () => {
     if (!neighborhoods) return;
-    
+
     return neighborhoods.map((neighborhood) => {
-      if(!neighborhood.inUse) return;
+      if (!neighborhood.inUse) return;
       return (
-      <Table.Tr
-        key={neighborhood.ID_neighborhood}
-        style={{
-          backgroundColor: '#f5f5f5',
-        }}
-      >
-        <Table.Td>{neighborhood.neighborhood}</Table.Td>
-        <Table.Td> </Table.Td>
-        <Table.Td>
-          <ActionIcon
-            bg={mainColor}
-            disabled={currentUser?.role === 'user'}
-            onClick={() => {
-              console.log(neighborhood);
-            }}
-          >
-            <FontAwesomeIcon icon={faEdit} />
-          </ActionIcon>
-        </Table.Td>
-        <Table.Td>
-          <ActionIcon
-            bg={mainColor}
-            disabled={currentUser?.role === 'user'}
-            onClick={() => {
-              handleOnEdit(neighborhood.ID_neighborhood, { inUse: false });
-            }}
-          >
-            <FontAwesomeIcon icon={faTrash} />
-          </ActionIcon>
-        </Table.Td>
-      </Table.Tr>
-    )});
+        <Table.Tr
+          key={neighborhood.ID_neighborhood}
+          style={{
+            backgroundColor: '#f5f5f5',
+          }}
+        >
+          <Table.Td>{neighborhood.neighborhood}</Table.Td>
+          <Table.Td> </Table.Td>
+          <Table.Td>
+            <ActionIcon
+              bg={mainColor}
+              disabled={currentUser?.role === 'user'}
+              onClick={() => {
+                setActualNeig(neighborhood);
+                openEdit();
+                form.setValues({
+                  neighborhood: neighborhood.neighborhood,
+                })
+              }}
+            >
+              <FontAwesomeIcon icon={faEdit} />
+            </ActionIcon>
+          </Table.Td>
+          <Table.Td>
+            <ActionIcon
+              bg={mainColor}
+              disabled={currentUser?.role === 'user'}
+              onClick={() => {
+                setActualNeig(neighborhood);
+                openDelete();
+              }}
+            >
+              <FontAwesomeIcon icon={faTrash} />
+            </ActionIcon>
+          </Table.Td>
+        </Table.Tr>
+      )
+    });
   };
   useEffect(() => {
     if (neighborhoods !== null) return;
     getNeighborhoods();
   }, []);
+
+  useEffect(() => {
+    if (editModal) return;
+    form.reset();
+  }, [editModal])
   return (
     <div>
-      <Modal opened={visible} onClose={close}></Modal>
+      {/* deleteModal */}
+      <Modal opened={deleteModal} onClose={closeDelete} title="¿Seguro quieres dar de baja este barrio?" centered>
+        <Flex direction={"row"} gap={"xl"} justify={"center"} align={"center"}>
+          <Button color={mainColor} variant='light' onClick={() => {
+            if (!actualNeig) return closeDelete();
+            editNeighborhood(actualNeig.ID_neighborhood, { inUse: false })
+            closeDelete();
+          }}>
+            Si, estoy seguro
+          </Button>
+          <Button color={mainColor} onClick={closeDelete} >
+            Volver
+          </Button>
+        </Flex>
+      </Modal>
+
+      {/* editModal */}
+      <Modal opened={editModal} onClose={closeEdit} title="¿Seguro quieres editar este barrio?" centered>
+        <form onSubmit={form.onSubmit(handleOnSubmitEdit)}>
+          <Grid>
+            <FormColumn
+              inputType='text'
+              name='neighborhood'
+              form={form}
+              label='Nombre del Barrio'
+              placeholder='Barrio'
+            />
+            <Grid.Col span={6}>
+              <Button color={mainColor} variant='light' type='submit' fullWidth>
+                Si, estoy seguro
+              </Button>
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <Button color={mainColor} onClick={closeEdit} fullWidth>
+                Volver
+              </Button>
+            </Grid.Col>
+          </Grid>
+        </form>
+      </Modal>
+
+
       <Flex direction={'column'} justify={'center'} align={'start'} gap={'lg'}>
         <Title>Barrios</Title>
         <Text>Definir y administrar los barrios.</Text>

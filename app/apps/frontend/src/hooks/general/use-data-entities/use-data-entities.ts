@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import { useState, useCallback, useContext } from 'react';
 import { ApiHostContext } from '../../../contexts/api-host-context';
 import {
@@ -67,8 +67,10 @@ export function useDataEntities(): UseDataEntities {
   };
   const getReasons = async () => {
     try {
-      const res = await axios.get(`${host}/data-entities/reason`);
-      return res.data;
+      const res: AxiosResponse<Reason[]> = await axios.get(`${host}/data-entities/reason`);
+      const updatedReasons: Reason[] = res.data.filter(r => r.reason !== "Otro")
+        .concat(res.data.filter(r => r.reason === "Otro"))
+      return updatedReasons;
     } catch (err) {
       console.log(err);
       return [];

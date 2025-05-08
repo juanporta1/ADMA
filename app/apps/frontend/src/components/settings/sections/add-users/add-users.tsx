@@ -19,7 +19,6 @@ import { UserContext } from '../../../../contexts/user-context';
 import { useDisclosure } from '@mantine/hooks';
 import FormColumn from '../../../utilities/form-column/form-column';
 import { useForm } from '@mantine/form';
-import { SelectData } from '../../../../hooks/appointment/use-selects-data/use-selects-data';
 import { User } from '../../../../hooks/general/login/use-login';
 import { SettingsContext } from '../../../../contexts/settings-context';
 

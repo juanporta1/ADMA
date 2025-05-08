@@ -19,45 +19,48 @@ export function AddReason() {
   const getReasons = async () => {
     const { reasons } = await getData();
     if (reasons) {
+      
       setReasons(reasons);
     }
   };
 
-  const NeighborhoodItems = () => {
+  const ReasonItems = () => {
     if (!reasons) return;
-    return reasons.map((reason) => (
-      <Table.Tr
-        key={reason.ID_reason}
-        style={{
-          backgroundColor: '#f5f5f5',
-        }}
-      >
-        <Table.Td>{reason.reason}</Table.Td>
-        <Table.Td> </Table.Td>
-        <Table.Td>
-          <ActionIcon
-            bg={mainColor}
-            disabled={currentUser?.role === 'user'}
-            onClick={() => {
-              console.log(reason);
-            }}
-          >
-            <FontAwesomeIcon icon={faEdit} />
-          </ActionIcon>
-        </Table.Td>
-        <Table.Td>
-          <ActionIcon
-            bg={mainColor}
-            disabled={currentUser?.role === 'user'}
-            onClick={() => {
-              console.log(reason);
-            }}
-          >
-            <FontAwesomeIcon icon={faTrash} />
-          </ActionIcon>
-        </Table.Td>
-      </Table.Tr>
-    ));
+
+    return reasons.map((reason, i) => {
+      return (
+        <Table.Tr
+          key={reason.ID_reason}
+          style={{
+            backgroundColor: '#f5f5f5',
+          }}
+        >
+          <Table.Td>{reason.reason}</Table.Td>
+          <Table.Td> </Table.Td>
+          <Table.Td>
+            <ActionIcon
+              bg={mainColor}
+              disabled={currentUser?.role === 'user'}
+              onClick={() => {
+                console.log(reason);
+              }}
+            >
+              <FontAwesomeIcon icon={faEdit} />
+            </ActionIcon>
+          </Table.Td>
+          <Table.Td>
+            <ActionIcon
+              bg={mainColor}
+              disabled={currentUser?.role === 'user'}
+              onClick={() => {
+                console.log(reason);
+              }}
+            >
+              <FontAwesomeIcon icon={faTrash} />
+            </ActionIcon>
+          </Table.Td>
+        </Table.Tr>)
+    });
   };
   useEffect(() => {
     if (reasons !== null) return;
@@ -86,7 +89,7 @@ export function AddReason() {
             </Table.Thead>
 
             <Table.Tbody>
-              <NeighborhoodItems />
+              <ReasonItems />
             </Table.Tbody>
           </Table>
         </Box>
