@@ -22,7 +22,8 @@ import { useForm } from '@mantine/form';
 import { User } from '../../../../hooks/general/login/use-login';
 import { SettingsContext } from '../../../../contexts/settings-context';
 import { SelectData } from '../../../../types/utilities.types';
-
+import SimpleBar from 'simplebar-react';
+import 'simplebar-react/dist/simplebar.min.css';
 
 export function AddUsers() {
   const form = useForm({
@@ -56,7 +57,11 @@ export function AddUsers() {
   const { currentUser } = useContext(UserContext);
   const roleData: SelectData[] = [
     { value: '', text: 'Seleccione un Rol', disabled: true },
-    { value: 'admin', text: 'Administrador', disabled: currentUser?.role !== 'main'  },
+    {
+      value: 'admin',
+      text: 'Administrador',
+      disabled: currentUser?.role !== 'main',
+    },
     { value: 'user', text: 'Usuario' },
   ];
   const [visible, { open, close }] = useDisclosure(false);
@@ -64,7 +69,7 @@ export function AddUsers() {
     useDisclosure(false);
   const [actualUser, setActualUser] = useState<User | null>(null);
   const UsersItems = () => {
-    if(!users) return;
+    if (!users) return;
     return users.map((user) => {
       if (!user.inUse) return;
       const disabled =
@@ -79,11 +84,12 @@ export function AddUsers() {
           key={user.ID_user}
           style={{
             backgroundColor: '#f5f5f5',
+            
           }}
         >
           <Table.Td>{user.email}</Table.Td>
           <Table.Td>{user.role}</Table.Td>
-          <Table.Td>
+          <Table.Td style={{width: "50px"}}>
             <Tooltip label={disabledLabel || 'Editar'}>
               <ActionIcon
                 color={mainColor}
@@ -98,7 +104,7 @@ export function AddUsers() {
               </ActionIcon>
             </Tooltip>
           </Table.Td>
-          <Table.Td>
+          <Table.Td style={{width: "50px"}}> 
             <Tooltip label={disabledLabel || 'Eliminar'}>
               <ActionIcon
                 color={mainColor}
@@ -115,7 +121,7 @@ export function AddUsers() {
         </Table.Tr>
       );
     });
-  }
+  };
   const handleOnCreateUser = async (values: {
     email: string;
     role: string;
@@ -187,7 +193,8 @@ export function AddUsers() {
               closeDeleteModal();
               setUsers(await getUsers());
             }}
-          fullWidth>
+            fullWidth
+          >
             Sí, estoy seguro
           </Button>
           <Button color={mainColor} onClick={closeDeleteModal} fullWidth>
@@ -222,7 +229,7 @@ export function AddUsers() {
               span={12}
             />
             <Grid.Col span={6}>
-              <Button color={mainColor} variant='light' type="submit" fullWidth>
+              <Button color={mainColor} variant="light" type="submit" fullWidth>
                 Editar Usuario
               </Button>
             </Grid.Col>
@@ -255,7 +262,11 @@ export function AddUsers() {
               span={12}
             />
             <Grid.Col span={12}>
-              <Button bg={mainColor} type="submit" disabled={currentUser?.role === "user"}>
+              <Button
+                bg={mainColor}
+                type="submit"
+                disabled={currentUser?.role === 'user'}
+              >
                 Cargar Usuario
               </Button>
             </Grid.Col>
@@ -263,19 +274,13 @@ export function AddUsers() {
         </form>
       </Modal>
 
-      <Flex
-
-        direction={'column'}
-        justify={'center'}
-        align={'start'}
-        gap={'lg'}
-      >
+      <Flex direction={'column'} justify={'center'} align={'start'} gap={'lg'}>
         <Title>Usuarios</Title>
         <Text>Definir y administrar los usuarios y sus roles.</Text>
+
         <Box
           style={{
-            maxHeight: '200px',
-            overflow: 'auto',
+            maxHeight: '300px',
             border: '1px solid #e8e8e8',
             width: '500px',
           }}
@@ -287,11 +292,23 @@ export function AddUsers() {
                 <Table.Td>Rol</Table.Td>
               </Table.Tr>
             </Table.Thead>
-
-            <Table.Tbody>
-              <UsersItems />
-            </Table.Tbody>
           </Table>
+          <SimpleBar
+            style={{ maxHeight: 200 }}
+
+          >
+            <Table style={{maxHeight: "300px"}}>
+              <Table.Thead style={{ display: 'none' }}>
+                <Table.Tr>
+                  <Table.Td></Table.Td>
+                  <Table.Td></Table.Td>
+                </Table.Tr>
+              </Table.Thead>
+              <Table.Tbody>
+                <UsersItems />
+              </Table.Tbody>
+            </Table>
+          </SimpleBar>
         </Box>
         <Button
           bg={mainColor}

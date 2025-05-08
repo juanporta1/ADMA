@@ -1,5 +1,4 @@
-import { act, useContext, useEffect, useState } from 'react';
-import styles from './add-neighborhood.module.css';
+import { useContext, useEffect, useState } from 'react';
 import { SettingsContext } from '../../../../../contexts/settings-context';
 import useDataEntities, {
   editedNeighborhood,
@@ -8,7 +7,6 @@ import {
   ActionIcon,
   Box,
   Button,
-  Center,
   Flex,
   Grid,
   Modal,
@@ -21,18 +19,25 @@ import { UserContext } from '../../../../../contexts/user-context';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useDisclosure } from '@mantine/hooks';
-import { Neighborhood, newNeighborhood } from '../../../../../types/data-entities.types';
+import {
+  Neighborhood,
+  newNeighborhood,
+} from '../../../../../types/data-entities.types';
 import { useForm } from '@mantine/form';
 import FormColumn from '../../../../utilities/form-column/form-column';
-import { create } from 'domain';
+import SimpleBar from 'simplebar-react';
+import 'simplebar-react/dist/simplebar.min.css';
 
 export function AddNeighborhood() {
-  const [deleteModal, { open: openDelete, close: closeDelete }] = useDisclosure(false);
-  const [editModal, { open: openEdit, close: closeEdit }] = useDisclosure(false);
-  const [createModal, { open: openCreate, close: closeCreate }] = useDisclosure(false);
+  const [deleteModal, { open: openDelete, close: closeDelete }] =
+    useDisclosure(false);
+  const [editModal, { open: openEdit, close: closeEdit }] =
+    useDisclosure(false);
+  const [createModal, { open: openCreate, close: closeCreate }] =
+    useDisclosure(false);
   const form = useForm({
     initialValues: {
-      neighborhood: "",
+      neighborhood: '',
     },
     validate: {
       neighborhood: (value: string) => {
@@ -40,9 +45,9 @@ export function AddNeighborhood() {
           return 'Ingreso un caracter no valido';
         }
         return null;
-      }
-    }
-  })
+      },
+    },
+  });
   const [actualNeig, setActualNeig] = useState<Neighborhood | null>(null);
   const { neighborhoodList } = useContext(SettingsContext);
   const [neighborhoods, setNeighborhoods] = neighborhoodList;
@@ -57,18 +62,21 @@ export function AddNeighborhood() {
   };
 
   const handleOnSubmitCreate = async (values: newNeighborhood) => {
-    await createNewData(values, "neighborhood");
+    await createNewData(values, 'neighborhood');
     closeCreate();
     await getNeighborhoods();
-  }
+  };
   const handleOnSubmitEdit = async (values: { neighborhood: string }) => {
     if (!actualNeig) return;
     await editNeighborhood(actualNeig.ID_neighborhood, values);
     closeEdit();
     await getNeighborhoods();
-  }
+  };
 
-  const editNeighborhood = async (id: number, editedData: editedNeighborhood) => {
+  const editNeighborhood = async (
+    id: number,
+    editedData: editedNeighborhood
+  ) => {
     await editData('neighborhood', id, editedData);
   };
 
@@ -86,7 +94,7 @@ export function AddNeighborhood() {
         >
           <Table.Td>{neighborhood.neighborhood}</Table.Td>
           <Table.Td> </Table.Td>
-          <Table.Td>
+          <Table.Td w={'50px'}>
             <ActionIcon
               bg={mainColor}
               disabled={currentUser?.role === 'user'}
@@ -95,13 +103,13 @@ export function AddNeighborhood() {
                 openEdit();
                 form.setValues({
                   neighborhood: neighborhood.neighborhood,
-                })
+                });
               }}
             >
               <FontAwesomeIcon icon={faEdit} />
             </ActionIcon>
           </Table.Td>
-          <Table.Td>
+          <Table.Td w={'50px'}>
             <ActionIcon
               bg={mainColor}
               disabled={currentUser?.role === 'user'}
@@ -114,7 +122,7 @@ export function AddNeighborhood() {
             </ActionIcon>
           </Table.Td>
         </Table.Tr>
-      )
+      );
     });
   };
   useEffect(() => {
@@ -125,17 +133,27 @@ export function AddNeighborhood() {
   useEffect(() => {
     if (createModal || editModal) return;
     form.reset();
-  }, [createModal, editModal])
+  }, [createModal, editModal]);
   return (
     <div>
       {/* deleteModal */}
-      <Modal opened={deleteModal} onClose={closeDelete} title="¿Seguro quieres dar de baja este barrio?" centered>
-        <Flex direction={"row"} gap={"xl"} justify={"center"} align={"center"}>
-          <Button color={mainColor} variant='light' onClick={() => {
-            if (!actualNeig) return closeDelete();
-            editNeighborhood(actualNeig.ID_neighborhood, { inUse: false })
-            closeDelete();
-          }} fullWidth>
+      <Modal
+        opened={deleteModal}
+        onClose={closeDelete}
+        title="¿Seguro quieres dar de baja este barrio?"
+        centered
+      >
+        <Flex direction={'row'} gap={'xl'} justify={'center'} align={'center'}>
+          <Button
+            color={mainColor}
+            variant="light"
+            onClick={() => {
+              if (!actualNeig) return closeDelete();
+              editNeighborhood(actualNeig.ID_neighborhood, { inUse: false });
+              closeDelete();
+            }}
+            fullWidth
+          >
             Si, estoy seguro
           </Button>
           <Button color={mainColor} onClick={closeDelete} fullWidth>
@@ -145,18 +163,23 @@ export function AddNeighborhood() {
       </Modal>
 
       {/* editModal */}
-      <Modal opened={editModal} onClose={closeEdit} title="¿Seguro quieres editar este barrio?" centered>
+      <Modal
+        opened={editModal}
+        onClose={closeEdit}
+        title="¿Seguro quieres editar este barrio?"
+        centered
+      >
         <form onSubmit={form.onSubmit(handleOnSubmitEdit)}>
           <Grid>
             <FormColumn
-              inputType='text'
-              name='neighborhood'
+              inputType="text"
+              name="neighborhood"
               form={form}
-              label='Nombre del Barrio'
-              placeholder='Barrio'
+              label="Nombre del Barrio"
+              placeholder="Barrio"
             />
             <Grid.Col span={6}>
-              <Button color={mainColor} variant='light' type='submit' fullWidth>
+              <Button color={mainColor} variant="light" type="submit" fullWidth>
                 Si, estoy seguro
               </Button>
             </Grid.Col>
@@ -170,23 +193,34 @@ export function AddNeighborhood() {
       </Modal>
 
       {/* createModal */}
-      <Modal opened={createModal} onClose={closeCreate} title="Nuevo Barrio" centered>
+      <Modal
+        opened={createModal}
+        onClose={closeCreate}
+        title="Nuevo Barrio"
+        centered
+      >
         <form onSubmit={form.onSubmit(handleOnSubmitCreate)}>
           <Grid>
             <FormColumn
-              inputType='text'
-              name='neighborhood'
+              inputType="text"
+              name="neighborhood"
               form={form}
-              label='Ingrese nombre del Barrio: '
-              placeholder='Nombre del Barrio'
+              label="Ingrese nombre del Barrio: "
+              placeholder="Nombre del Barrio"
             />
             <Grid.Col span={6}>
-              <Button color={mainColor} variant='light' type='submit' fullWidth>
+              <Button color={mainColor} variant="light" type="submit" fullWidth>
                 Cargar
               </Button>
             </Grid.Col>
             <Grid.Col span={6}>
-              <Button color={mainColor} onClick={() => { closeCreate() }} fullWidth>
+              <Button
+                color={mainColor}
+                onClick={() => {
+                  closeCreate();
+                }}
+                fullWidth
+              >
                 Volver
               </Button>
             </Grid.Col>
@@ -197,10 +231,11 @@ export function AddNeighborhood() {
       <Flex direction={'column'} justify={'center'} align={'start'} gap={'lg'}>
         <Title>Barrios</Title>
         <Text>Definir y administrar los barrios.</Text>
+
         <Box
           style={{
             maxHeight: '300px',
-            overflow: 'auto',
+
             border: '1px solid #e8e8e8',
             width: '500px',
           }}
@@ -212,13 +247,26 @@ export function AddNeighborhood() {
                 <Table.Td> </Table.Td>
               </Table.Tr>
             </Table.Thead>
-
-            <Table.Tbody>
-              <NeighborhoodItems />
-            </Table.Tbody>
           </Table>
+          <SimpleBar style={{ maxHeight: 200 }}>
+            <Table>
+              <Table.Thead display={"none"}>
+                <Table.Tr>
+                  <Table.Td>Barrio</Table.Td>
+                  <Table.Td> </Table.Td>
+                </Table.Tr>
+              </Table.Thead>
+              <Table.Tbody>
+                <NeighborhoodItems />
+              </Table.Tbody>
+            </Table>
+          </SimpleBar>
         </Box>
-        <Button bg={mainColor} disabled={currentUser?.role === 'user'} onClick={openCreate}>
+        <Button
+          bg={mainColor}
+          disabled={currentUser?.role === 'user'}
+          onClick={openCreate}
+        >
           Cargar Barrio
         </Button>
       </Flex>

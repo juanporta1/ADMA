@@ -1,4 +1,4 @@
-import { Box, Flex, NavLink, TableOfContents } from '@mantine/core';
+import { Box, Flex,  TableOfContents } from '@mantine/core';
 import styles from './settings.module.css';
 import AddUsers from './sections/add-users/add-users';
 import { useContext } from 'react';
@@ -7,6 +7,8 @@ import Sesion from './sections/sesion/sesion';
 import AddNeighborhood from './sections/data-entities/add-neighborhood/add-neighborhood';
 import AddReason from './sections/data-entities/add-reason/add-reason';
 import AddSpecie from './sections/data-entities/add-specie/add-specie';
+
+
 
 export function Settings() {
   const mainColor = useContext(MainColorContext);
