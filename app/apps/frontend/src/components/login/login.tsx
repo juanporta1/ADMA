@@ -26,7 +26,7 @@ export function Login() {
         await localStorage.setItem("currentUser", JSON.stringify(user));
         const userString = localStorage.getItem("currentUser");
         if (userString)setCurrentUser(JSON.parse(userString));
-        if (user) {
+        if (user?.inUse) {
           navigate('/');
         } else {
           notifications.show({
