@@ -29,3 +29,11 @@ export interface newSpecie {
 export interface newNeighborhood {
   neighborhood: string;
 }
+
+
+export interface Setting {
+  settingName: string;
+  settingIntValue?: number | null;
+  settingStringValue?: string | null;
+  settingBooleanValue?: boolean | null
+}

@@ -10,5 +10,9 @@ export interface Settings {
   ];
   reasonList: [Reason[] | null, Dispatch<SetStateAction<Reason[] | null>>];
   specieList: [Specie[] | null, Dispatch<SetStateAction<Specie[] | null>>];
+  maxAppointmentsPerDayList: [
+    number | null,
+    Dispatch<SetStateAction<number | null>>
+  ];
 }
 export const SettingsContext = createContext<Settings>({} as Settings);

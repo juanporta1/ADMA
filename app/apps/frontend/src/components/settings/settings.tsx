@@ -7,6 +7,7 @@ import Sesion from './sections/sesion/sesion';
 import AddNeighborhood from './sections/data-entities/add-neighborhood/add-neighborhood';
 import AddReason from './sections/data-entities/add-reason/add-reason';
 import AddSpecie from './sections/data-entities/add-specie/add-specie';
+import GlobalVariables from './sections/global-variables/global-variables';
 
 
 
@@ -56,6 +57,7 @@ export function Settings() {
         <AddNeighborhood />
         <AddReason/>
         <AddSpecie />
+        <GlobalVariables />
         <Sesion />
       </Flex>
     </Flex>

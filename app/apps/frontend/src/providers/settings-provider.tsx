@@ -17,12 +17,15 @@ export function SettingsProvider({ children }: props) {
   );
   const [reasons, setReasons] = useState<Reason[] | null>(null);
   const [species, setSpecies] = useState<Specie[] | null>(null);
-
+  const [maxAppointmentsPerDay, setMaxAppointmentsPerDay] = useState<
+    number | null
+  >(null);
   const settings: Settings = {
     userList: [users, setUsers],
     neighborhoodList: [neighborhoods, setNeighborhoods],
     reasonList: [reasons, setReasons],
     specieList: [species, setSpecies],
+    maxAppointmentsPerDayList: [maxAppointmentsPerDay, setMaxAppointmentsPerDay],
   };
 
   return (

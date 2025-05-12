@@ -7,6 +7,9 @@ import { Reason } from '../entities/reason.entity';
 import { privateDecrypt } from 'crypto';
 import { ResidualNumber } from '../entities/residual-number.entity';
 import { User } from '../entities/user.entity';
+import { Setting } from '../entities/setting.entity';
+import { CreateSettingDTO } from '../dto/create-setting.DTO';
+import { UpdateSettingDTO } from '../dto/update-setting.DTO';
 
 @Injectable()
 export class DataEntitiesService {
@@ -20,9 +23,41 @@ export class DataEntitiesService {
     @InjectRepository(ResidualNumber)
     private residualNumberRepository: Repository<ResidualNumber>,
     @InjectRepository(User)
-    private userRepository: Repository<User>
+    private userRepository: Repository<User>,
+    @InjectRepository(Setting)
+    private settingRepository: Repository<Setting>,
   ) {}
 
+  // ==================== MÉTODOS GET ====================
+  async getSpecies() {
+    return await this.specieRepository.find();
+  }
+
+  async getNeighborhoods() {
+    return await this.neighborhoodRepository.find();
+  }
+
+  async getReasons() {
+    return await this.reasonRepository.find();
+  }
+
+  async getResidualNumbers() {
+    return await this.residualNumberRepository.find();
+  }
+
+  async getUsers() {
+    return await this.userRepository.find();
+  }
+
+  async getUserByEmail(email: string) {
+    return await this.userRepository.findOne({ where: { email } });
+  }
+
+  async getSetting(querys: { settingName?: string}){
+    return await this.settingRepository.find({where : querys});
+  }
+
+  // ==================== MÉTODOS CREATE ====================
   async createSpecie(body: { specie: string }) {
     const existingSpecie = await this.specieRepository.findOne({
       where: { specie: body.specie },
@@ -77,6 +112,21 @@ export class DataEntitiesService {
     return await this.neighborhoodRepository.save(newNeighborhoods);
   }
 
+  async createResidualNumber(number: number) {
+    const newResidualNumber = this.residualNumberRepository.create({ number });
+    return await this.residualNumberRepository.save(newResidualNumber);
+  }
+
+  async createUser(user: { email: string; role: string }) {
+    const newUser = this.userRepository.create(user);
+    return await this.userRepository.save(newUser);
+  }
+
+  async createSetting(body: CreateSettingDTO){
+    const newSetting = this.settingRepository.create(body);
+    return await this.settingRepository.save(newSetting);
+  }
+  // ==================== MÉTODOS UPDATE ====================
   async updateNeighborhood(
     body: { neighborhood?: string; inUse?: boolean },
     id: number
@@ -95,46 +145,17 @@ export class DataEntitiesService {
     return await this.specieRepository.update(id, body);
   }
 
-  async getSpecies() {
-    return await this.specieRepository.find();
+  async updateSetting(body: UpdateSettingDTO){
+    return await this.settingRepository.update({settingName: body.settingName}, body);
   }
-
-  async getNeighborhoods() {
-    return await this.neighborhoodRepository.find();
-  }
-
-  async getReasons() {
-    return await this.reasonRepository.find();
-  }
-
-  async getResidualNumbers() {
-    return await this.residualNumberRepository.find();
-  }
-
-  async createResidualNumber(number: number) {
-    const newResidualNumber = this.residualNumberRepository.create({ number });
-    return await this.residualNumberRepository.save(newResidualNumber);
-  }
-
-  async deleteResidualNumber(id: number) {
-    return await this.residualNumberRepository.delete(id);
-  }
-
-  async createUser(user: { email: string; role: string }) {
-    const newUser = this.userRepository.create(user);
-    return await this.userRepository.save(newUser);
-  }
-
-  async getUsers() {
-    return await this.userRepository.find();
-  }
-
-  async getUserByEmail(email: string) {
-    return await this.userRepository.findOne({ where: { email } });
-  }
-
+  
   async editUser(body: { email: string; role: string }, id: number) {
     return await this.userRepository.update(id, body);
+  }
+
+  // ==================== MÉTODOS DELETE ====================
+  async deleteResidualNumber(id: number) {
+    return await this.residualNumberRepository.delete(id);
   }
 
   async deleteUser(id: number) {

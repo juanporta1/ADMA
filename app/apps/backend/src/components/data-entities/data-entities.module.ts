@@ -7,11 +7,21 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { DataEntitiesService } from './services/data-entities.service';
 import { ResidualNumber } from './entities/residual-number.entity';
 import { User } from './entities/user.entity';
+import { Setting } from './entities/setting.entity';
 
 @Module({
-    imports:[TypeOrmModule.forFeature([Neighborhood, Specie, Reason, ResidualNumber, User])],
-    controllers: [DataEntitiesController],
-    providers: [DataEntitiesService],
-    exports: [TypeOrmModule]
+  imports: [
+    TypeOrmModule.forFeature([
+      Neighborhood,
+      Specie,
+      Reason,
+      ResidualNumber,
+      User,
+      Setting,
+    ]),
+  ],
+  controllers: [DataEntitiesController],
+  providers: [DataEntitiesService],
+  exports: [TypeOrmModule],
 })
 export class DataEntitiesModule {}

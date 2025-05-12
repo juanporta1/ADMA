@@ -2,16 +2,19 @@ import { UseFormReturnType } from '@mantine/form';
 import { NativeSelect } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { DateValue } from '@mantine/dates';
-import { Appointment } from '../../filter/filter-appointments';
+import { Appointment } from '../../../../../types/entities.types';
+import { SettingsContext } from '../../../../../contexts/settings-context';
 interface props {
-  dateValue: DateValue;
+  dateValue: DateValue ;
   form: UseFormReturnType<any>;
   registerId?: number;
 }
 export function HourSelect(props: props) {
-  const maxAppointmentsPerHour = 10;
+  const { maxAppointmentsPerDayList } = useContext(SettingsContext);
+  const [maxAppointmentsPerDay, setMaxAppointmentsPerDay] =
+    maxAppointmentsPerDayList;
   const [disabledSelects, setDisabledSelects] = useState<boolean[]>([
     false,
     false,
@@ -19,6 +22,7 @@ export function HourSelect(props: props) {
   ]);
   const fetchDisabledHours = async () => {
     if (!props.dateValue) return;
+    if (!maxAppointmentsPerDay) return;
     const hours = [8, 10, 12];
     const results: boolean[] = [];
 
@@ -28,7 +32,11 @@ export function HourSelect(props: props) {
           props.dateValue.getMonth() + 1
         }-${props.dateValue.getDate()} ${hour}:00`;
         const res = await axios.get('http://localhost:3000/api/appointment', {
-          params: { byHour: `${hour}:00`, date: date, dateFilterWay: "onlyOne"},
+          params: {
+            byHour: `${hour}:00`,
+            date: date,
+            dateFilterWay: 'onlyOne',
+          },
         });
         if (props.registerId) {
           const itsOneOf = res.data.some(
@@ -37,11 +45,11 @@ export function HourSelect(props: props) {
           );
           if (itsOneOf) {
             results.push(false);
-          }else{
-            results.push(res.data.length >= maxAppointmentsPerHour);
+          } else {
+            results.push(res.data.length >= maxAppointmentsPerDay);
           }
-        }else{
-          results.push(res.data.length >= maxAppointmentsPerHour);
+        } else {
+          results.push(res.data.length >= maxAppointmentsPerDay);
         }
       } catch (err) {
         console.error(err);
@@ -65,9 +73,10 @@ export function HourSelect(props: props) {
         color: 'yellow',
       });
   };
-  useEffect(()=>{
+  useEffect(() => {
     fetchDisabledHours();
-  }, [])
+    console.log(props.dateValue)
+  }, []);
   useEffect(() => {
     props.form.setValues({ hour: '' });
     fetchDisabledHours();

@@ -21,7 +21,7 @@ export function useCreateForm(): UseCreateForm {
       sex: '',
       specie: '',  // Added missing specie field
       home: '',
-      date: new Date(),
+      date: null,
       observations: '',
       hour: '',
     },

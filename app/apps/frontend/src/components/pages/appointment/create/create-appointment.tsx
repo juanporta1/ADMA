@@ -1,16 +1,9 @@
 // Importaciones de componentes de Mantine UI
-import {
-  Box,
-  Button,
-  Flex,
-  Grid,
-  LoadingOverlay,
-  Stack,
-} from '@mantine/core';
+import { Box, Button, Flex, Grid, LoadingOverlay, Stack } from '@mantine/core';
 import 'dayjs/locale/es';
 // Importaciones de componentes personalizados
 import Title from '../../../utilities/title/title';
-import { useContext, useEffect, useState} from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { MainColorContext } from '../../../../contexts/color-context';
 import { DatesProvider, DateValue } from '@mantine/dates';
 import { useNavigate } from 'react-router-dom';
@@ -19,51 +12,54 @@ import { useDisclosure } from '@mantine/hooks';
 import useCreateForm from '../../../../hooks/appointment/create/use-create-form/use-create-form';
 import { FormColumn } from '../../../utilities/form-column/form-column';
 import HourSelect from '../utilities/hour-select/hour-select';
-import useSelectsData, { AppoinmentSelects } from '../../../../hooks/appointment/use-selects-data/use-selects-data';
+import useSelectsData from '../../../../hooks/appointment/use-selects-data/use-selects-data';
 import useAppointment from '../../../../hooks/appointment/use-appointment/use-appointment';
+import { AppoinmentSelects } from '../../../../types/utilities.types';
 
 // Definición de la estructura del formulario
 class FormValues {
-  lastName!: string;  // Apellido del dueño
-  name!: string;      // Nombre del dueño
-  dni!: string;       // DNI del dueño
-  phone!: string;     // Teléfono de contacto
-  home!: string;      // Dirección del domicilio
+  lastName!: string; // Apellido del dueño
+  name!: string; // Nombre del dueño
+  dni!: string; // DNI del dueño
+  phone!: string; // Teléfono de contacto
+  home!: string; // Dirección del domicilio
   neighborhood!: string; // Barrio
-  size!: string;      // Tamaño de la mascota
-  sex!: string;       // Sexo de la mascota
-  specie!: string;    // Especie de la mascota
-  date!: Date;        // Fecha del turno
+  size!: string; // Tamaño de la mascota
+  sex!: string; // Sexo de la mascota
+  specie!: string; // Especie de la mascota
+  date!: Date; // Fecha del turno
   observations!: string; // Observaciones adicionales
-  hour!: string;      // Hora del turno
+  hour!: string; // Hora del turno
 }
 
 // Componente principal para la creación de turnos
 export function CreateAppointment() {
   // Inicialización de hooks y estados
-  const { form } = useCreateForm();  // Formulario personalizado
-  const mainColor = useContext(MainColorContext);  // Color principal de la app
-  const navigate = useNavigate();  // Navegación entre rutas
-  const [visible, { open: openLoading, close: closeLoading }] = useDisclosure(false);  
-  const {getSelectData} = useSelectsData();  // Control del overlay de carga
+  const { form } = useCreateForm(); // Formulario personalizado
+  
+  const mainColor = useContext(MainColorContext); // Color principal de la app
+  const navigate = useNavigate(); // Navegación entre rutas
+  const [visible, { open: openLoading, close: closeLoading }] =
+    useDisclosure(false);
+  const { getSelectData } = useSelectsData(); // Control del overlay de carga
   const [selectsData, setSelectsData] = useState<AppoinmentSelects>({
-    sex: [{value: "", text: ""}],
-    specie: [{value: "", text: ""}],
-    size: [{value: "", text: ""}],
-    neighborhood: [{value: "", text: ""}],
-    hour: [{value: "", text: ""}],
-    findBy: [{value: "", text: ""}],
-    status: [{value: "", text: ""}],
-    orderBy: [{value: "", text: ""}],
-    reason: [{value: "", text: ""}],
-    filterStatus: [{value: "", text: ""}],
-    dateFilterWay: [{value: "", text: ""}],
-    restrictedNeighborhood: [{value: "", text: ""}],
-     restrictedSex: [{value: "", text: ""}],
-     restrictedSize: [{value: "", text: ""}],
-     restrictedSpecie: [{value: "", text: ""}]
-  });  // Datos para los selectores
-  const {create} = useAppointment();  // Hook para crear turnos
+    sex: [{ value: '', text: '' }],
+    specie: [{ value: '', text: '' }],
+    size: [{ value: '', text: '' }],
+    neighborhood: [{ value: '', text: '' }],
+    hour: [{ value: '', text: '' }],
+    findBy: [{ value: '', text: '' }],
+    status: [{ value: '', text: '' }],
+    orderBy: [{ value: '', text: '' }],
+    reason: [{ value: '', text: '' }],
+    filterStatus: [{ value: '', text: '' }],
+    dateFilterWay: [{ value: '', text: '' }],
+    restrictedNeighborhood: [{ value: '', text: '' }],
+    restrictedSex: [{ value: '', text: '' }],
+    restrictedSize: [{ value: '', text: '' }],
+    restrictedSpecie: [{ value: '', text: '' }],
+  }); // Datos para los selectores
+  const { create } = useAppointment(); // Hook para crear turnos
   const [actualDate, setActualDate] = useState<DateValue>(new Date());
   // Función para cancelar y volver al listado
   const handleOnCancel = () => {
@@ -80,7 +76,8 @@ export function CreateAppointment() {
     } catch (err) {
       notifications.show({
         title: 'Ha ocurrido un error',
-        message: 'Ha ocurrido un error mientras se agendaba el turno, reintentelo de nuevo mas tarde.',
+        message:
+          'Ha ocurrido un error mientras se agendaba el turno, reintentelo de nuevo mas tarde.',
         color: 'red',
       });
       closeLoading();
@@ -91,7 +88,7 @@ export function CreateAppointment() {
   // Inicialización de valores del formulario
   useEffect(() => {
     form.setValues({ hour: '', date: undefined });
-    const fetchData =async () => {
+    const fetchData = async () => {
       try {
         const data = await getSelectData();
         setSelectsData(data);
@@ -101,6 +98,7 @@ export function CreateAppointment() {
     };
     fetchData();
   }, []);
+
   
   // Renderizado del componente
   return (
@@ -175,12 +173,14 @@ export function CreateAppointment() {
                   placeholder="Ingrese Fecha"
                   minDate={new Date()}
                   onChangeDateFunc={(date: DateValue) => {
-                    setActualDate(date)
-                    form.setValues({date: date})
+                    setActualDate(date);
+                    form.setValues({ date: date });
                   }}
                 />
-                <Grid.Col span={4}>{<HourSelect form={form} dateValue={actualDate}/>}</Grid.Col>
-                
+                <Grid.Col span={4}>
+                  {<HourSelect form={form} dateValue={actualDate} />}
+                </Grid.Col>
+
                 <FormColumn
                   inputType="select"
                   form={form}
