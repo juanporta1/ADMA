@@ -18,7 +18,8 @@ interface props {
   registerId?: number;
 }
 export function HourSelect(props: props) {
-  const { countPerDay } = useAppointment();
+  const { countPerDay, filter } = useAppointment();
+  const [appointment, setAppointment] = useState<Appointment | null>(null);
   const [counts, setCounts] = useState<Record<string, number>>({});
   const { getSetting } = useSettings()
   const [maxAppointments, setMaxAppointments] = useState(0);
@@ -29,6 +30,10 @@ export function HourSelect(props: props) {
     setCounts(counts);
   }
   const getMaxAppointments = async () => {
+    if (props.registerId) {
+      const appointment = await filter({ id: props.registerId })
+      setAppointment(appointment ? appointment[0] : null)
+    }
     const maxAppointments = await getSetting("maxAppointmentsPerDay");
     if (maxAppointments.length == 0) return;
     if (!maxAppointments[0].settingIntValue) return;
@@ -46,19 +51,21 @@ export function HourSelect(props: props) {
     getMaxAppointments();
   }, [])
   useEffect(() => {
+    if (!props.dateValue) return;
     const selects: SelectData[] = [{ value: "8:00", text: "8:00", disabled: false }, { value: "10:00", text: "10:00", disabled: false }, { value: "12:00", text: "12:00", disabled: false }]
+
     if (counts) {
-      if (counts["8:00"] >= maxAppointments) selects[0].disabled = true;
-      if (counts["10:00"] >= maxAppointments) selects[1].disabled = true;
-      if (counts["12:00"] >= maxAppointments) selects[2].disabled = true;
+      if (counts["8:00"] >= maxAppointments || appointment?.hour == "8:00" ) selects[0].disabled = true;
+      if (counts["10:00"] >= maxAppointments || appointment?.hour == "10:00") selects[1].disabled = true;
+      if (counts["12:00"] >= maxAppointments || appointment?.hour == "12:00") selects[2].disabled = true;
     }
-    if(selects.every(s => s.disabled)){
+    if (selects.every(s => s.disabled)) {
       notifications.show({
         title: "No hay horarios disponibles",
         message: "No hay horarios disponibles para la fecha seleccionada",
         color: "red",
       })
-    }else if(selects.some(s => s.disabled)){
+    } else if (selects.some(s => s.disabled)) {
       notifications.show({
         title: "Algunos horarios no están disponibles",
         message: "Hay horarios no disponibles para la fecha seleccionada",
@@ -75,7 +82,7 @@ export function HourSelect(props: props) {
       name="hour"
       label="Hora: "
       span={4}
-      data={[{value: "", text: "Seleccionar un horario", disabled: true}, ...selectData]}
+      data={[{ value: "", text: "Seleccionar un horario", disabled: true }, ...selectData]}
     />
   )
 }

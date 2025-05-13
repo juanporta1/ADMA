@@ -33,17 +33,17 @@ import AppointmentRow from '../utilities/appointment-row/appointment-row';
 import DeleteModal from './delete-modal/delete-modal';
 import EditAppointment from '../edit/edit-appointment';
 import { useAppointment } from '../../../../hooks/appointment/use-appointment/use-appointment';
-import useSelectsData, {
-  AppoinmentSelects,
-} from '../../../../hooks/appointment/use-selects-data/use-selects-data';
+import useSelectsData from '../../../../hooks/appointment/use-selects-data/use-selects-data';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilePdf, faPlus } from '@fortawesome/free-solid-svg-icons';
 import ColumnsMenu from '../utilities/columns-menu/columns-menu';
 import DateFilter from './date-filter/date-filter';
 import { Appointment } from '../../../../types/entities.types';
+import { AppoinmentSelects } from '../../../../types/utilities.types';
 
 // Interfaz para los parámetros de filtrado de turnos
 export interface FilterParams {
+  id?: number; // ID del turno
   sex?: string; // Sexo de la mascota
   specie?: number; // Especie de la mascota
   size?: string; // Tamaño de la mascota

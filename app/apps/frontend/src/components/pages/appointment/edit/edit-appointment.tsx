@@ -12,11 +12,9 @@ import HourSelect from '../utilities/hour-select/hour-select';
 import useEditForm from '../../../../hooks/appointment/edit/use-edit-form/use-edit-form';
 import { useDisclosure } from '@mantine/hooks';
 import { useAppointment } from '../../../../hooks/appointment/use-appointment/use-appointment';
-import useSelectsData, {
-  AppoinmentSelects,
-} from '../../../../hooks/appointment/use-selects-data/use-selects-data';
-import { SelectsDataContext } from '../../../../contexts/selects-data-context';
+import useSelectsData from '../../../../hooks/appointment/use-selects-data/use-selects-data';
 import { Appointment } from '../../../../types/entities.types';
+import { AppoinmentSelects } from '../../../../types/utilities.types';
 
 // Definición de la estructura del formulario
 export interface EditFormValues {
@@ -33,13 +31,13 @@ export interface EditFormValues {
   observations: string | null; // Observaciones adicionales
   hour: string;
   status:
-    | 'Pendiente'
-    | 'Cancelado'
-    | 'Ausentado'
-    | 'Esperando Actualización'
-    | 'En Proceso'
-    | 'Realizado'
-    | 'No Realizado'; // Hora del turno
+  | 'Pendiente'
+  | 'Cancelado'
+  | 'Ausentado'
+  | 'Esperando Actualización'
+  | 'En Proceso'
+  | 'Realizado'
+  | 'No Realizado'; // Hora del turno
   reason: string;
 }
 
@@ -194,15 +192,15 @@ export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
                     form.setValues({ date: date });
                   }}
                 />
-                <Grid.Col span={4}>
-                  {
-                    <HourSelect
-                      form={form}
-                      dateValue={actualDate}
-                      registerId={appointment.ID_appointment}
-                    />
-                  }
-                </Grid.Col>
+
+                {
+                  <HourSelect
+                    form={form}
+                    dateValue={actualDate}
+                    registerId={appointment.ID_appointment}
+                  />
+                }
+
                 {/* Campos para datos de la mascota */}
                 <FormColumn
                   inputType="select"
