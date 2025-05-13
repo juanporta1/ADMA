@@ -24,6 +24,11 @@ export class AppointmentController {
     // console.log('Query Params:', querys);
     return await this.appointmentService.getAll(querys);
   }
+   
+  @Get('countPerHour')
+  async getCountPerHour(@Query() querys: {date: string}) {
+    return await this.appointmentService.getCountPerHour(querys);
+  }
 
   @Post('bulk')
   async createAppointments(@Body() body: CreateAppointmentDTO[]) {

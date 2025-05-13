@@ -36,7 +36,7 @@ class FormValues {
 export function CreateAppointment() {
   // Inicialización de hooks y estados
   const { form } = useCreateForm(); // Formulario personalizado
-  
+
   const mainColor = useContext(MainColorContext); // Color principal de la app
   const navigate = useNavigate(); // Navegación entre rutas
   const [visible, { open: openLoading, close: closeLoading }] =
@@ -87,7 +87,9 @@ export function CreateAppointment() {
 
   // Inicialización de valores del formulario
   useEffect(() => {
-    form.setValues({ hour: '', date: undefined });
+    form.setValues({
+      date: new Date(),
+    })
     const fetchData = async () => {
       try {
         const data = await getSelectData();
@@ -99,7 +101,12 @@ export function CreateAppointment() {
     fetchData();
   }, []);
 
-  
+
+
+  useEffect(() => {
+    console.log(actualDate)
+  }, [actualDate])
+
   // Renderizado del componente
   return (
     <div>
@@ -177,9 +184,9 @@ export function CreateAppointment() {
                     form.setValues({ date: date });
                   }}
                 />
-                <Grid.Col span={4}>
-                  {<HourSelect form={form} dateValue={actualDate} />}
-                </Grid.Col>
+
+                {<HourSelect form={form} dateValue={actualDate} />}
+
 
                 <FormColumn
                   inputType="select"

@@ -55,7 +55,7 @@ export function Layout() {
                 src={
                   'https://altagracia.gob.ar//wp-content/uploads/2022/11/SALUD_ANIMAL_LOGO-removebg-preview.png'
                 }
-                
+
                 style={{
                   height: '100%',
 
@@ -157,9 +157,9 @@ export function Layout() {
           </Stack>
         </AppShell.Navbar>
         <AppShell.Main h={"100%"} w={"100%"}>
-          
-            <Outlet />
-          
+
+          <Outlet />
+
         </AppShell.Main>
       </AppShell>
     </MantineProvider>

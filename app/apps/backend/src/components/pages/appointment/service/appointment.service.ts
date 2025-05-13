@@ -17,6 +17,25 @@ export class AppointmentService {
     private dataEntitiesService: DataEntitiesService
   ) { }
 
+  async getCountPerHour(querys: { date: string }) {
+    const result = await this.appointmentRepository
+      .createQueryBuilder('appointment')
+      .select('appointment.hour', 'hour')
+      .addSelect('COUNT(*)', 'count')
+      .where('appointment.date = :date', { date: querys.date })
+      .groupBy('appointment.hour')
+      .getRawMany();
+
+    
+
+    const counts: Record<string, number> = {};
+    for (const row of result) {
+      counts[row.hour] = Number(row.count);
+    }
+
+    return counts;
+  }
+
   async getAll(querys: FilterAppointmentDto) {
     console.log(querys);
     if (Object.keys(querys).length != 0) {

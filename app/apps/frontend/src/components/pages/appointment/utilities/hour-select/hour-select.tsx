@@ -6,111 +6,80 @@ import { useContext, useEffect, useState } from 'react';
 import { DateValue } from '@mantine/dates';
 import { Appointment } from '../../../../../types/entities.types';
 import { SettingsContext } from '../../../../../contexts/settings-context';
+import useAppointment from '../../../../../hooks/appointment/use-appointment/use-appointment';
+import { count } from 'console';
+import FormColumn from '../../../../utilities/form-column/form-column';
+import useSettings from '../../../../../hooks/settings/use-settings/use-settings';
+import { SelectData } from '../../../../../types/utilities.types';
+import { text } from 'stream/consumers';
 interface props {
-  dateValue: DateValue ;
+  dateValue: DateValue;
   form: UseFormReturnType<any>;
   registerId?: number;
 }
 export function HourSelect(props: props) {
-  const { maxAppointmentsPerDayList } = useContext(SettingsContext);
-  const [maxAppointmentsPerDay, setMaxAppointmentsPerDay] =
-    maxAppointmentsPerDayList;
-  const [disabledSelects, setDisabledSelects] = useState<boolean[]>([
-    false,
-    false,
-    false,
-  ]);
-  const fetchDisabledHours = async () => {
-    if (!props.dateValue) return;
-    if (!maxAppointmentsPerDay) return;
-    const hours = [8, 10, 12];
-    const results: boolean[] = [];
-
-    for (let hour of hours) {
-      try {
-        const date = `${props.dateValue.getFullYear()}-${
-          props.dateValue.getMonth() + 1
-        }-${props.dateValue.getDate()} ${hour}:00`;
-        const res = await axios.get('http://localhost:3000/api/appointment', {
-          params: {
-            byHour: `${hour}:00`,
-            date: date,
-            dateFilterWay: 'onlyOne',
-          },
-        });
-        if (props.registerId) {
-          const itsOneOf = res.data.some(
-            (appointment: Appointment) =>
-              appointment.ID_appointment === props.registerId
-          );
-          if (itsOneOf) {
-            results.push(false);
-          } else {
-            results.push(res.data.length >= maxAppointmentsPerDay);
-          }
-        } else {
-          results.push(res.data.length >= maxAppointmentsPerDay);
-        }
-      } catch (err) {
-        console.error(err);
-        results.push(true);
-      }
-    }
-
-    setDisabledSelects(results);
-    if (results.includes(true) && !results.includes(false))
-      notifications.show({
-        title: 'Sin horarios disponibles',
-        message:
-          'La fecha seleccionada tiene todos los horarios en su maxima capacidad.',
-        color: 'red',
-      });
-    else if (results.includes(true))
-      notifications.show({
-        title: 'Algunos horarios no estan disponibles',
-        message:
-          'En la fecha seleccionada, algunos horarios estan en su maxima capacidad.',
-        color: 'yellow',
-      });
-  };
-  useEffect(() => {
-    fetchDisabledHours();
-    console.log(props.dateValue)
-  }, []);
-  useEffect(() => {
-    props.form.setValues({ hour: '' });
-    fetchDisabledHours();
-  }, [props.dateValue]);
-
-  if (props.dateValue) {
-    return (
-      <NativeSelect
-        label="Hora: "
-        key={props.form.key('hour')}
-        {...props.form.getInputProps('hour')}
-        required
-      >
-        <option value="" disabled>
-          Seleccione Horario
-        </option>
-        <option value="8:00" disabled={disabledSelects[0]}>
-          8:00
-        </option>
-        <option value="10:00" disabled={disabledSelects[1]}>
-          10:00
-        </option>
-        <option value="12:00" disabled={disabledSelects[2]}>
-          12:00
-        </option>
-      </NativeSelect>
-    );
-  } else {
-    return (
-      <NativeSelect label="Hora: " defaultValue="">
-        <option value="">Primero debe seleccionar una fecha</option>
-      </NativeSelect>
-    );
+  const { countPerDay } = useAppointment();
+  const [counts, setCounts] = useState<Record<string, number>>({});
+  const { getSetting } = useSettings()
+  const [maxAppointments, setMaxAppointments] = useState(0);
+  const hours = ["8:00", "10:00", "12:00"]
+  const [selectData, setSelectsData] = useState<SelectData[]>([{ value: "8:00", text: "8:00", disabled: true }, { value: "10:00", text: "10:00", disabled: true }, { value: "12:00", text: "12:00", disabled: true }])
+  const getCounts = async (date: string) => {
+    const counts = await countPerDay(date);
+    setCounts(counts);
   }
+  const getMaxAppointments = async () => {
+    const maxAppointments = await getSetting("maxAppointmentsPerDay");
+    if (maxAppointments.length == 0) return;
+    if (!maxAppointments[0].settingIntValue) return;
+    setMaxAppointments(maxAppointments[0].settingIntValue);
+  }
+
+  useEffect(() => {
+    if (!props.dateValue) return;
+    const stringDate = `${props.dateValue.getFullYear()}-${props.dateValue.getMonth() + 1}-${props.dateValue.getDate()}`;
+    getCounts(stringDate);
+    console.log(stringDate);
+  }, [props.dateValue])
+
+  useEffect(() => {
+    getMaxAppointments();
+  }, [])
+  useEffect(() => {
+    const selects: SelectData[] = [{ value: "8:00", text: "8:00", disabled: false }, { value: "10:00", text: "10:00", disabled: false }, { value: "12:00", text: "12:00", disabled: false }]
+    if (counts) {
+      if (counts["8:00"] >= maxAppointments) selects[0].disabled = true;
+      if (counts["10:00"] >= maxAppointments) selects[1].disabled = true;
+      if (counts["12:00"] >= maxAppointments) selects[2].disabled = true;
+    }
+    if(selects.every(s => s.disabled)){
+      notifications.show({
+        title: "No hay horarios disponibles",
+        message: "No hay horarios disponibles para la fecha seleccionada",
+        color: "red",
+      })
+    }else if(selects.some(s => s.disabled)){
+      notifications.show({
+        title: "Algunos horarios no están disponibles",
+        message: "Hay horarios no disponibles para la fecha seleccionada",
+        color: "yellow",
+      })
+    }
+    setSelectsData(selects);
+  }, [counts])
+
+  return (
+    <FormColumn
+      form={props.form}
+      inputType="select"
+      name="hour"
+      label="Hora: "
+      span={4}
+      data={[{value: "", text: "Seleccionar un horario", disabled: true}, ...selectData]}
+    />
+  )
 }
+
+
 
 export default HourSelect;

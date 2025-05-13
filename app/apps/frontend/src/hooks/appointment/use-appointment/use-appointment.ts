@@ -21,6 +21,7 @@ export interface UseAppointment {
     observations?: string,
     reason?: string
   ) => Promise<void>;
+  countPerDay: (date:string) => Promise<Record<string, number>>;
 }
 interface FormValues {
   lastName: string;
@@ -203,7 +204,16 @@ export function useAppointment(): UseAppointment {
       throw err;
     }
   }
-  return { filter, create, edit, remove, generatePDF, editStatus };
+
+  const countPerDay = async (date: string): Promise<Record<string, number>> => {
+    const res = await axios.get(`${host}/appointment/countPerHour`,{
+      params: {
+        date,
+      },
+    });
+    return res.data;
+  }
+  return { filter, create, edit, remove, generatePDF, editStatus, countPerDay };
 }
 
 export default useAppointment;
