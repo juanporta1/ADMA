@@ -111,7 +111,6 @@ export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
           observations: appointment.observations || '',
           status: appointment.status,
         };
-        console.log(settings);
         form.setValues(settings);
       } catch (err) {
         console.log(err);
@@ -120,6 +119,7 @@ export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
     fetchData();
   }, []);
 
+  
   // Renderizado del componente
   return (
     <div>

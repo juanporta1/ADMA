@@ -18,7 +18,7 @@ export function useEditForm(): UseEditForm {
       sex: '',
       specie: '',
       home: '',
-      date: new Date(),
+      date: null,
       observations: '',
       hour: '',
       status: '',

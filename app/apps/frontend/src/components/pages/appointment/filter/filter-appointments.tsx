@@ -11,7 +11,7 @@ import {
   Text,
   Tooltip,
 } from '@mantine/core';
-
+ 
 // Importación de proveedor de fechas y configuración de idioma
 import { DatesProvider } from '@mantine/dates';
 import 'dayjs/locale/es';
@@ -160,7 +160,6 @@ export function FilterAppointments() {
           ([key, value]) => value != null && value != ''
         )
       );
-      console.log(params);
 
       // Llama al hook para filtrar los turnos
       const data = await filter(params);

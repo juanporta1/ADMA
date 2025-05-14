@@ -1,6 +1,6 @@
 import { UseFormReturnType } from '@mantine/form';
 import { notifications } from '@mantine/notifications';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { DateValue } from '@mantine/dates';
 import { Appointment } from '../../../../../types/entities.types';
 import useAppointment from '../../../../../hooks/appointment/use-appointment/use-appointment';
@@ -14,6 +14,7 @@ interface props {
 }
 export function HourSelect(props: props) {
   const { countPerDay, filter } = useAppointment();
+  const lastNotification = useRef<string | null>(null);
   const [appointment, setAppointment] = useState<Appointment | null>(null);
   const [counts, setCounts] = useState<Record<string, number>>({});
   const { getSetting } = useSettings();
@@ -51,8 +52,17 @@ export function HourSelect(props: props) {
     getMaxAppointments();
   }, []);
   useEffect(() => {
-    if(!appointment && !props.registerId) return;
-    if (!props.dateValue) return;
+    if (
+      !props.dateValue ||
+      maxAppointments === 0 ||
+      Object.keys(counts).length === 0
+    )
+      return;
+    const monthNumber =
+      props.dateValue.getMonth() + 1 < 10
+        ? '0' + (props.dateValue.getMonth() + 1)
+        : props.dateValue.getMonth() + 1;
+    const date = `${props.dateValue.getFullYear()}-${monthNumber}-${props.dateValue.getDate()}`;
     const selects: SelectData[] = [
       { value: '8:00', text: '8:00', disabled: true },
       { value: '10:00', text: '10:00', disabled: true },
@@ -67,11 +77,6 @@ export function HourSelect(props: props) {
     } else {
       if (counts) {
         if (!appointment) return;
-        const monthNumber =
-          props.dateValue.getMonth() + 1 < 10
-            ? '0' + (props.dateValue.getMonth() + 1)
-            : props.dateValue.getMonth() + 1;
-        const date = `${props.dateValue.getFullYear()}-${monthNumber}-${props.dateValue.getDate()}`;
 
         hours.forEach((hour, i) => {
           if (
@@ -82,23 +87,36 @@ export function HourSelect(props: props) {
         });
       }
     }
+    setSelectsData(selects);
+
+    if (lastNotification.current === date) return;
 
     if (selects.every((s) => s.disabled)) {
       notifications.show({
-        title: 'No hay horarios disponibles',
+        title:  `No hay horarios disponilbles el ${date}`,
         message: 'No hay horarios disponibles para la fecha seleccionada',
         color: 'red',
       });
+      lastNotification.current = date;
     } else if (selects.some((s) => s.disabled)) {
       notifications.show({
-        title: 'Algunos horarios no están disponibles',
+        title: `Algunos horarios del ${date} no están disponibles`,
         message: 'Hay horarios no disponibles para la fecha seleccionada',
         color: 'yellow',
       });
+      lastNotification.current = date;
     }
-    setSelectsData(selects);
-  }, [counts, appointment]);
+  }, [counts, appointment, maxAppointments, props.dateValue]);
 
+  useEffect(() => {
+    if (selectData.length === 0) return;
+    if (
+      !props.dateValue ||
+      maxAppointments === 0 ||
+      Object.keys(counts).length === 0
+    )
+      return;
+  }, [selectData]);
   return (
     <FormColumn
       form={props.form}

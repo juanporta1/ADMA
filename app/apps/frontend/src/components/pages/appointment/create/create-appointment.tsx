@@ -84,12 +84,11 @@ export function CreateAppointment() {
       throw err;
     }
   };
+  
 
   // Inicialización de valores del formulario
   useEffect(() => {
-    form.setValues({
-      date: new Date(),
-    })
+    
     const fetchData = async () => {
       try {
         const data = await getSelectData();
@@ -103,11 +102,7 @@ export function CreateAppointment() {
 
 
 
-  // useEffect(() => {
-  //   console.log(actualDate)
-  // }, [actualDate])
-
-  // Renderizado del componente
+  
   return (
     <div>
       <LoadingOverlay visible={visible} />
