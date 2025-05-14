@@ -61,6 +61,7 @@
     "@nestjs/platform-express": "^10.0.2",
     "@nestjs/schedule": "^6.0.0",
     "@nestjs/typeorm": "^11.0.0",
+    "@nx/nx-win32-x64-msvc": "^21.0.3",
     "@types/pdfkit": "^0.13.9",
     "axios": "^1.8.4",
     "fs": "^0.0.1-security",

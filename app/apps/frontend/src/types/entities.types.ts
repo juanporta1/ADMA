@@ -24,7 +24,7 @@ export interface Appointment {
   neighborhood: Neighborhood; // Barrio
   phone: string | null; // Teléfono
   dni: string; // DNI del dueño
-  date: Date; // Fecha del turno
+  date: string; // Fecha del turno
   hour: string; // Hora del turno
   size: 'Grande' | 'Pequeño' | 'Mediano'; // Tamaño de la mascota
   sex: 'Macho' | 'Hembra'; // Sexo de la mascota

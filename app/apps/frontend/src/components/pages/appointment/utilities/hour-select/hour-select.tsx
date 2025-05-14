@@ -1,17 +1,12 @@
 import { UseFormReturnType } from '@mantine/form';
-import { NativeSelect } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
-import axios from 'axios';
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { DateValue } from '@mantine/dates';
 import { Appointment } from '../../../../../types/entities.types';
-import { SettingsContext } from '../../../../../contexts/settings-context';
 import useAppointment from '../../../../../hooks/appointment/use-appointment/use-appointment';
-import { count } from 'console';
 import FormColumn from '../../../../utilities/form-column/form-column';
 import useSettings from '../../../../../hooks/settings/use-settings/use-settings';
 import { SelectData } from '../../../../../types/utilities.types';
-import { text } from 'stream/consumers';
 interface props {
   dateValue: DateValue;
   form: UseFormReturnType<any>;
@@ -21,59 +16,88 @@ export function HourSelect(props: props) {
   const { countPerDay, filter } = useAppointment();
   const [appointment, setAppointment] = useState<Appointment | null>(null);
   const [counts, setCounts] = useState<Record<string, number>>({});
-  const { getSetting } = useSettings()
+  const { getSetting } = useSettings();
   const [maxAppointments, setMaxAppointments] = useState(0);
-  const hours = ["8:00", "10:00", "12:00"]
-  const [selectData, setSelectsData] = useState<SelectData[]>([{ value: "8:00", text: "8:00", disabled: true }, { value: "10:00", text: "10:00", disabled: true }, { value: "12:00", text: "12:00", disabled: true }])
+  const hours = ['8:00', '10:00', '12:00'];
+  const [selectData, setSelectsData] = useState<SelectData[]>([
+    { value: '8:00', text: '8:00', disabled: true },
+    { value: '10:00', text: '10:00', disabled: true },
+    { value: '12:00', text: '12:00', disabled: true },
+  ]);
   const getCounts = async (date: string) => {
     const counts = await countPerDay(date);
     setCounts(counts);
-  }
+  };
   const getMaxAppointments = async () => {
     if (props.registerId) {
-      const appointment = await filter({ id: props.registerId })
-      setAppointment(appointment ? appointment[0] : null)
+      const appointment = await filter({ id: props.registerId });
+      setAppointment(appointment ? appointment[0] : null);
     }
-    const maxAppointments = await getSetting("maxAppointmentsPerDay");
+    const maxAppointments = await getSetting('maxAppointmentsPerDay');
     if (maxAppointments.length == 0) return;
     if (!maxAppointments[0].settingIntValue) return;
     setMaxAppointments(maxAppointments[0].settingIntValue);
-  }
+  };
 
   useEffect(() => {
     if (!props.dateValue) return;
-    const stringDate = `${props.dateValue.getFullYear()}-${props.dateValue.getMonth() + 1}-${props.dateValue.getDate()}`;
+    const stringDate = `${props.dateValue.getFullYear()}-${
+      props.dateValue.getMonth() + 1
+    }-${props.dateValue.getDate()}`;
     getCounts(stringDate);
-    console.log(stringDate);
-  }, [props.dateValue])
+  }, [props.dateValue]);
 
   useEffect(() => {
     getMaxAppointments();
-  }, [])
+  }, []);
   useEffect(() => {
+    if(!appointment && !props.registerId) return;
     if (!props.dateValue) return;
-    const selects: SelectData[] = [{ value: "8:00", text: "8:00", disabled: false }, { value: "10:00", text: "10:00", disabled: false }, { value: "12:00", text: "12:00", disabled: false }]
+    const selects: SelectData[] = [
+      { value: '8:00', text: '8:00', disabled: true },
+      { value: '10:00', text: '10:00', disabled: true },
+      { value: '12:00', text: '12:00', disabled: true },
+    ];
+    if (!props.registerId) {
+      if (counts) {
+        hours.forEach((hour, i) => {
+          if (counts[hour] < maxAppointments) selects[i].disabled = false;
+        });
+      }
+    } else {
+      if (counts) {
+        if (!appointment) return;
+        const monthNumber =
+          props.dateValue.getMonth() + 1 < 10
+            ? '0' + (props.dateValue.getMonth() + 1)
+            : props.dateValue.getMonth() + 1;
+        const date = `${props.dateValue.getFullYear()}-${monthNumber}-${props.dateValue.getDate()}`;
 
-    if (counts) {
-      if (counts["8:00"] >= maxAppointments || appointment?.hour == "8:00" ) selects[0].disabled = true;
-      if (counts["10:00"] >= maxAppointments || appointment?.hour == "10:00") selects[1].disabled = true;
-      if (counts["12:00"] >= maxAppointments || appointment?.hour == "12:00") selects[2].disabled = true;
+        hours.forEach((hour, i) => {
+          if (
+            counts[hour] < maxAppointments ||
+            (appointment.date === date && appointment.hour === hour)
+          )
+            selects[i].disabled = false;
+        });
+      }
     }
-    if (selects.every(s => s.disabled)) {
+
+    if (selects.every((s) => s.disabled)) {
       notifications.show({
-        title: "No hay horarios disponibles",
-        message: "No hay horarios disponibles para la fecha seleccionada",
-        color: "red",
-      })
-    } else if (selects.some(s => s.disabled)) {
+        title: 'No hay horarios disponibles',
+        message: 'No hay horarios disponibles para la fecha seleccionada',
+        color: 'red',
+      });
+    } else if (selects.some((s) => s.disabled)) {
       notifications.show({
-        title: "Algunos horarios no están disponibles",
-        message: "Hay horarios no disponibles para la fecha seleccionada",
-        color: "yellow",
-      })
+        title: 'Algunos horarios no están disponibles',
+        message: 'Hay horarios no disponibles para la fecha seleccionada',
+        color: 'yellow',
+      });
     }
     setSelectsData(selects);
-  }, [counts])
+  }, [counts, appointment]);
 
   return (
     <FormColumn
@@ -82,11 +106,12 @@ export function HourSelect(props: props) {
       name="hour"
       label="Hora: "
       span={4}
-      data={[{ value: "", text: "Seleccionar un horario", disabled: true }, ...selectData]}
+      data={[
+        { value: '', text: 'Seleccionar un horario', disabled: true },
+        ...selectData,
+      ]}
     />
-  )
+  );
 }
-
-
 
 export default HourSelect;

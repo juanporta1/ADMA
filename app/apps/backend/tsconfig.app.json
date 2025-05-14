@@ -7,7 +7,8 @@
     "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo",
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
-    "target": "es2021"
+    "target": "es2021",
+    "baseUrl": "."
   },
   "include": ["src/**/*.ts", "src/components/pages/appoinment/appoinment-service/pdf-service/pdf-service.service.js", "src/components/pages/appoinment/appoinment-service/pdf-service/pdf-service.service.js"],
   "exclude": []

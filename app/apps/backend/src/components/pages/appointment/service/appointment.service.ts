@@ -25,14 +25,15 @@ export class AppointmentService {
       .where('appointment.date = :date', { date: querys.date })
       .groupBy('appointment.hour')
       .getRawMany();
-
+    
+      const hours = ["8:00", "10:00", "12:00"]
     
 
     const counts: Record<string, number> = {};
-    for (const row of result) {
-      counts[row.hour] = Number(row.count);
-    }
-
+    hours.forEach((h) => {
+      counts[h] = result.find((r) => r.hour === h)?.count || 0;
+    })
+    console.log(counts);
     return counts;
   }
 

@@ -103,9 +103,9 @@ export function CreateAppointment() {
 
 
 
-  useEffect(() => {
-    console.log(actualDate)
-  }, [actualDate])
+  // useEffect(() => {
+  //   console.log(actualDate)
+  // }, [actualDate])
 
   // Renderizado del componente
   return (
