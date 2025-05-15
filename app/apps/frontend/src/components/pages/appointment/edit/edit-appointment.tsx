@@ -113,6 +113,7 @@ export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
         };
         form.setValues(settings);
         setActualDate(dateWithoutTimezone);
+
       } catch (err) {
         console.log(err);
       }

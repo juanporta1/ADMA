@@ -9,7 +9,7 @@ import {
 import { UseFormReturnType } from '@mantine/form';
 import { DatePickerInput, DateValue } from '@mantine/dates';
 import { ChangeEventHandler } from 'react';
-import { SelectData } from '../../../hooks/appointment/use-selects-data/use-selects-data';
+import { SelectData } from '../../../types/utilities.types';
 
 interface props {
   inputType: 'date' | 'text' | 'select' | 'textarea' | 'checkbox';

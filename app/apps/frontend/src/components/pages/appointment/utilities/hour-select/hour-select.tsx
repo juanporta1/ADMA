@@ -92,6 +92,7 @@ export function HourSelect(props: props) {
       }
     }
     setSelectsData(selects);
+    if (lastNotification.current === date) return;
 
     if (selects.every((s) => s.disabled)) {
       notifications.show({
