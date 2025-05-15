@@ -31,13 +31,13 @@ export interface EditFormValues {
   observations: string | null; // Observaciones adicionales
   hour: string;
   status:
-  | 'Pendiente'
-  | 'Cancelado'
-  | 'Ausentado'
-  | 'Esperando Actualización'
-  | 'En Proceso'
-  | 'Realizado'
-  | 'No Realizado'; // Hora del turno
+    | 'Pendiente'
+    | 'Cancelado'
+    | 'Ausentado'
+    | 'Esperando Actualización'
+    | 'En Proceso'
+    | 'Realizado'
+    | 'No Realizado'; // Hora del turno
   reason: string;
 }
 
@@ -95,7 +95,7 @@ export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
         const data = await getSelectData(appointment);
         setSelectsData(data);
         const dateWithoutTimezone = new Date(appointment.date + 'T00:00:00');
-
+        
         const settings: typeof form.values = {
           lastName: appointment.lastName,
           name: appointment.name,
@@ -112,7 +112,7 @@ export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
           status: appointment.status,
         };
         form.setValues(settings);
-        setFormReady(true);
+        setActualDate(dateWithoutTimezone);
       } catch (err) {
         console.log(err);
       }
@@ -120,7 +120,6 @@ export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
     fetchData();
   }, []);
 
-  
   // Renderizado del componente
   return (
     <div>
@@ -199,7 +198,6 @@ export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
                     form={form}
                     dateValue={actualDate}
                     registerId={appointment.ID_appointment}
-                    formReady={formReady}
                   />
                 }
 

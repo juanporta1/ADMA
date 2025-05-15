@@ -11,7 +11,6 @@ import { register } from 'module';
 interface props {
   dateValue: DateValue;
   form: UseFormReturnType<any>;
-  formReady: boolean;
   registerId?: number;
 }
 export function HourSelect(props: props) {
@@ -58,7 +57,6 @@ export function HourSelect(props: props) {
       !props.dateValue ||
       maxAppointments === 0 ||
       Object.keys(counts).length === 0 ||
-      !props.formReady || 
       (props.registerId !== undefined && !appointment)
     )
       return;
@@ -83,7 +81,7 @@ export function HourSelect(props: props) {
     } else {
       if (counts) {
         if (!appointment) return;
-        
+
         hours.forEach((hour, i) => {
           if (
             counts[hour] < maxAppointments ||
@@ -94,11 +92,10 @@ export function HourSelect(props: props) {
       }
     }
     setSelectsData(selects);
-    
-    
+
     if (selects.every((s) => s.disabled)) {
       notifications.show({
-        title:  `No hay horarios disponilbles el ${date}`,
+        title: `No hay horarios disponilbles el ${date}`,
         message: 'No hay horarios disponibles para la fecha seleccionada',
         color: 'red',
       });
@@ -111,9 +108,8 @@ export function HourSelect(props: props) {
       });
       lastNotification.current = date;
     }
-  }, [counts, appointment, maxAppointments, props.formReady]);
+  }, [counts, appointment, maxAppointments]);
 
-  
   return (
     <FormColumn
       form={props.form}
