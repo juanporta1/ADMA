@@ -12,6 +12,8 @@ import {
 import { DataEntitiesService } from '../services/data-entities.service';
 import type { CreateSettingDTO } from '../dto/create-setting.DTO';
 import type { UpdateSettingDTO } from '../dto/update-setting.DTO';
+import type { CreateVeterinarianDTO } from '../dto/create-veterinarian.DTO';
+import type { UpdateVeterinarianDTO } from '../dto/update-veterinarian.DTO';
 
 @Controller('data-entities')
 export class DataEntitiesController {
@@ -45,7 +47,10 @@ export class DataEntitiesController {
     return await this.dataService.getSetting(querys);
   }
 
-  
+  @Get('veterinarian')
+  async getVeterinarians(){
+    return await this.dataService.getVeterinarians();
+  }
 
   // ==================== MÉTODOS POST ====================
   @Post('specie')
@@ -92,6 +97,11 @@ export class DataEntitiesController {
     return await this.dataService.createSetting(body);
   }
 
+  @Post('veterinarian')
+  async createVeterinarian(@Body() body: CreateVeterinarianDTO){
+    return await this.dataService.createVeterinarian(body);
+  }
+
   // ==================== MÉTODOS PUT/PATCH ====================
   @Patch('neighborhood/:id')
   async editNeighborhood(
@@ -124,6 +134,11 @@ export class DataEntitiesController {
     body: UpdateSettingDTO,
   ){
     return await this.dataService.updateSetting(body);
+  }
+
+  @Patch('veterinarian')
+  async editVeterinarian(@Body() body: UpdateVeterinarianDTO){
+    return await this.dataService.updateVeterinarian(body);
   }
 
   @Put('user/:id')

@@ -10,6 +10,9 @@ import { User } from '../entities/user.entity';
 import { Setting } from '../entities/setting.entity';
 import { CreateSettingDTO } from '../dto/create-setting.DTO';
 import { UpdateSettingDTO } from '../dto/update-setting.DTO';
+import { Veterinarian } from '../entities/veterinarian.entity';
+import { CreateVeterinarianDTO } from '../dto/create-veterinarian.DTO';
+import { UpdateVeterinarianDTO } from '../dto/update-veterinarian.DTO';
 
 @Injectable()
 export class DataEntitiesService {
@@ -26,6 +29,8 @@ export class DataEntitiesService {
     private userRepository: Repository<User>,
     @InjectRepository(Setting)
     private settingRepository: Repository<Setting>,
+    @InjectRepository(Veterinarian)
+    private veterinarianRepository: Repository<Veterinarian>,
   ) {}
 
   // ==================== MÉTODOS GET ====================
@@ -55,6 +60,10 @@ export class DataEntitiesService {
 
   async getSetting(querys: { settingName?: string}){
     return await this.settingRepository.find({where : querys});
+  }
+
+  async getVeterinarians(){
+    return await this.veterinarianRepository.find();
   }
 
   // ==================== MÉTODOS CREATE ====================
@@ -126,6 +135,11 @@ export class DataEntitiesService {
     const newSetting = this.settingRepository.create(body);
     return await this.settingRepository.save(newSetting);
   }
+
+  async createVeterinarian(body: CreateVeterinarianDTO){
+    const newVeterinarian = this.veterinarianRepository.create(body);
+    return await this.veterinarianRepository.save(newVeterinarian);
+  }
   // ==================== MÉTODOS UPDATE ====================
   async updateNeighborhood(
     body: { neighborhood?: string; inUse?: boolean },
@@ -147,6 +161,10 @@ export class DataEntitiesService {
 
   async updateSetting(body: UpdateSettingDTO){
     return await this.settingRepository.update({settingName: body.settingName}, body);
+  }
+
+  async updateVeterinarian(body:UpdateVeterinarianDTO){
+    return await this.veterinarianRepository.update(body.ID_veterinarian, body);
   }
   
   async editUser(body: { email: string; role: string }, id: number) {
