@@ -10,6 +10,7 @@ import { IncomeForm } from '../pages/income-form/income-form.entity';
 import { ResidualNumber } from '../data-entities/entities/residual-number.entity';
 import { User } from '../data-entities/entities/user.entity';
 import { Setting } from '../data-entities/entities/setting.entity';
+import { Veterinarian } from '../data-entities/entities/veterinarian.entity';
 
 dotenv.config();
 
@@ -34,7 +35,8 @@ dotenv.config();
               IncomeForm,
               ResidualNumber,
               User,
-              Setting
+              Setting,
+              Veterinarian
             ],
             synchronize: true,
           });

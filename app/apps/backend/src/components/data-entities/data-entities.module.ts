@@ -8,6 +8,7 @@ import { DataEntitiesService } from './services/data-entities.service';
 import { ResidualNumber } from './entities/residual-number.entity';
 import { User } from './entities/user.entity';
 import { Setting } from './entities/setting.entity';
+import { Veterinarian } from './entities/veterinarian.entity';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { Setting } from './entities/setting.entity';
       ResidualNumber,
       User,
       Setting,
+      Veterinarian
     ]),
   ],
   controllers: [DataEntitiesController],

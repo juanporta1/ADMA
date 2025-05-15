@@ -289,7 +289,7 @@ export function FilterAppointments() {
             timezone: 'America/Argentina/Buenos_Aires',
           }}
         >
-          <Box>
+          <Box >
             <Flex direction="column" gap="md">
               {/* Encabezado con título y botón para crear nuevo turno */}
               <Flex direction="row" justify="space-between">
@@ -331,7 +331,7 @@ export function FilterAppointments() {
               </Flex>
 
               {/* Formulario de filtros */}
-              <Box bd="1px #aaa solid" p="sm">
+              <Box bd="1px #aaa solid" p="sm" >
                 <form onSubmit={form.onSubmit(handleOnSubmit)}>
                   <Grid gutter="10px" columns={20}>
                     {/* Campo para fecha de inicio */}
@@ -541,6 +541,7 @@ export function FilterAppointments() {
                         value={actualPage}
                         onChange={setPage}
                         color={mainColor}
+                        style={{marginBottom: "30px"}}
                       />
                     </div>
                   </div>

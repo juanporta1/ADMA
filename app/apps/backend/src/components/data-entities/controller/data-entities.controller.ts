@@ -45,6 +45,8 @@ export class DataEntitiesController {
     return await this.dataService.getSetting(querys);
   }
 
+  
+
   // ==================== MÉTODOS POST ====================
   @Post('specie')
   async createSpecie(@Body() body: { specie: string }) {
@@ -133,9 +135,5 @@ export class DataEntitiesController {
     return await this.dataService.editUser(body, id);
   }
 
-  // ==================== MÉTODOS DELETE ====================
-  @Delete('user/:id')
-  async deleteUser(@Param('id') id: number) {
-    return await this.dataService.deleteUser(id);
-  }
+  
 }
