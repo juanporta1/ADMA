@@ -7,9 +7,11 @@ import useAppointment from '../../../../../hooks/appointment/use-appointment/use
 import FormColumn from '../../../../utilities/form-column/form-column';
 import useSettings from '../../../../../hooks/settings/use-settings/use-settings';
 import { SelectData } from '../../../../../types/utilities.types';
+import { register } from 'module';
 interface props {
   dateValue: DateValue;
   form: UseFormReturnType<any>;
+  formReady: boolean;
   registerId?: number;
 }
 export function HourSelect(props: props) {
@@ -55,9 +57,12 @@ export function HourSelect(props: props) {
     if (
       !props.dateValue ||
       maxAppointments === 0 ||
-      Object.keys(counts).length === 0
+      Object.keys(counts).length === 0 ||
+      !props.formReady || 
+      (props.registerId !== undefined && !appointment)
     )
       return;
+
     const monthNumber =
       props.dateValue.getMonth() + 1 < 10
         ? '0' + (props.dateValue.getMonth() + 1)
@@ -68,6 +73,7 @@ export function HourSelect(props: props) {
       { value: '10:00', text: '10:00', disabled: true },
       { value: '12:00', text: '12:00', disabled: true },
     ];
+
     if (!props.registerId) {
       if (counts) {
         hours.forEach((hour, i) => {
@@ -77,7 +83,7 @@ export function HourSelect(props: props) {
     } else {
       if (counts) {
         if (!appointment) return;
-
+        
         hours.forEach((hour, i) => {
           if (
             counts[hour] < maxAppointments ||
@@ -88,9 +94,8 @@ export function HourSelect(props: props) {
       }
     }
     setSelectsData(selects);
-
-    if (lastNotification.current === date) return;
-
+    
+    
     if (selects.every((s) => s.disabled)) {
       notifications.show({
         title:  `No hay horarios disponilbles el ${date}`,
@@ -106,17 +111,9 @@ export function HourSelect(props: props) {
       });
       lastNotification.current = date;
     }
-  }, [counts, appointment, maxAppointments, props.dateValue]);
+  }, [counts, appointment, maxAppointments, props.formReady]);
 
-  useEffect(() => {
-    if (selectData.length === 0) return;
-    if (
-      !props.dateValue ||
-      maxAppointments === 0 ||
-      Object.keys(counts).length === 0
-    )
-      return;
-  }, [selectData]);
+  
   return (
     <FormColumn
       form={props.form}

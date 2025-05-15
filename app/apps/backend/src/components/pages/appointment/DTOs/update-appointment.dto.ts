@@ -8,13 +8,13 @@ export class UpdateAppointmentDto {
   lastName!: string;
   home!: string;
   phone!: string;
-  neighborhood!: Neighborhood;
+  neighborhood!: number;
   dni!: string;
   date!: Date;
   size!: 'Pequeño' | 'Mediano' | 'Grande';
   sex!: 'Macho' | 'Hembra';
-  specie!: Specie;
+  specie!: number;
   status!: 'Pendiente' | 'Cancelado' | "Ausentado" | "Esperando Actualización" | "En Proceso" | "No Realizado" | 'Realizado';
   observations!: string;
-  reasons!: Reason;
+  reason!: number;
 }

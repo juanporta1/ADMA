@@ -9,25 +9,27 @@ export interface UseSelectsData {
   getSelectData: (appointment?: Appointment) => Promise<AppoinmentSelects>;
 }
 
-
-
 export function useSelectsData(): UseSelectsData {
   const { getData } = useDataEntities();
   const getSelectData = async (appointment?: Appointment) => {
     const { neighborhoods, reasons, species } = await getData();
-    const neighborhoodsData: SelectData[] = neighborhoods.map((neig) => ({
-      value: neig.ID_neighborhood,
-      text: neig.neighborhood,
-    }));
+    const neighborhoodsData: SelectData[] = neighborhoods
+      .filter((n) => n.inUse)
+      .map((neig) => ({
+        value: neig.ID_neighborhood,
+        text: neig.neighborhood,
+      }));
 
-    const speciesData: SelectData[] = species.map((spec) => ({
-      value: spec.ID_specie,
-      text: spec.specie,
-    }));
+    const speciesData: SelectData[] = species
+      .filter((s) => s.inUse)
+      .map((spec) => ({
+        value: spec.ID_specie,
+        text: spec.specie,
+      }));
 
-    const sex = appointment?.sex === "Macho" ? "m" : "h";
+    const sex = appointment?.sex === 'Macho' ? 'm' : 'h';
     const reasonsData: SelectData[] = reasons
-      .filter((r) => r.reasonSex === 'a' || r.reasonSex === sex)
+      .filter((r) => (r.reasonSex === 'a' || r.reasonSex === sex) && r.inUse)
       .map((reason) => {
         return {
           value: reason.ID_reason,

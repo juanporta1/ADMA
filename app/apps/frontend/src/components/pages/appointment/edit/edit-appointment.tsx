@@ -50,10 +50,10 @@ interface props {
 export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
   // Inicialización de hooks y estados
   const { form } = useEditForm(); // Formulario personalizado
-
+  const [formReady, setFormReady] = useState<boolean>(false);
   const mainColor = useContext(MainColorContext); // Color principal de la app
   const [actualStatus, setActualStatus] = useState<string>(appointment.status);
-  const [actualDate, setActualDate] = useState<DateValue>(new Date());
+  const [actualDate, setActualDate] = useState<DateValue | null>(null);
   const { getSelectData } = useSelectsData();
   const [selectsData, setSelectsData] = useState<AppoinmentSelects>({
     sex: [{ value: '', text: '' }],
@@ -112,6 +112,7 @@ export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
           status: appointment.status,
         };
         form.setValues(settings);
+        setFormReady(true);
       } catch (err) {
         console.log(err);
       }
@@ -198,6 +199,7 @@ export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
                     form={form}
                     dateValue={actualDate}
                     registerId={appointment.ID_appointment}
+                    formReady={formReady}
                   />
                 }
 

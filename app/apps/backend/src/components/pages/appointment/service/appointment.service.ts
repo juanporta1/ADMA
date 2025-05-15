@@ -15,7 +15,7 @@ export class AppointmentService {
     private appointmentRepository: Repository<Appointment>,
     private pdfService: PdfService,
     private dataEntitiesService: DataEntitiesService
-  ) { }
+  ) {}
 
   async getCountPerHour(querys: { date: string }) {
     const result = await this.appointmentRepository
@@ -25,20 +25,20 @@ export class AppointmentService {
       .where('appointment.date = :date', { date: querys.date })
       .groupBy('appointment.hour')
       .getRawMany();
-    
-      const hours = ["8:00", "10:00", "12:00"]
-    
+
+    const hours = ['8:00', '10:00', '12:00'];
 
     const counts: Record<string, number> = {};
     hours.forEach((h) => {
-      counts[h] = result.find((r) => r.hour === h)?.count || 0;
-    })
+      counts[h] = Number(result.find((r) => r.hour === h)?.count) || 0;
+    });
     console.log(counts);
+    console.log(querys);
     return counts;
   }
 
   async getAll(querys: FilterAppointmentDto) {
-    console.log(querys);
+    // console.log(querys);
     if (Object.keys(querys).length != 0) {
       const filterQueryBuilder =
         this.appointmentRepository.createQueryBuilder('a');
@@ -72,16 +72,18 @@ export class AppointmentService {
         if (querys.dateFilterWay === 'interval') {
           if (querys.startDate) {
             const date = new Date(querys.startDate);
-            const findDate = `${date.getFullYear()}-${date.getMonth() + 1
-              }-${date.getDate()}`;
+            const findDate = `${date.getFullYear()}-${
+              date.getMonth() + 1
+            }-${date.getDate()}`;
             filterQueryBuilder.andWhere('a.date >= :startDate', {
               startDate: findDate,
             });
           }
           if (querys.endDate) {
             const date = new Date(querys.endDate);
-            const findDate = `${date.getFullYear()}-${date.getMonth() + 1
-              }-${date.getDate()}`;
+            const findDate = `${date.getFullYear()}-${
+              date.getMonth() + 1
+            }-${date.getDate()}`;
             filterQueryBuilder.andWhere('a.date <= :endDate', {
               endDate: findDate,
             });
@@ -89,8 +91,9 @@ export class AppointmentService {
         } else if (querys.dateFilterWay === 'onlyOne') {
           if (querys.date) {
             const date = new Date(querys.date);
-            const findDate = `${date.getFullYear()}-${date.getMonth() + 1
-              }-${date.getDate()}`;
+            const findDate = `${date.getFullYear()}-${
+              date.getMonth() + 1
+            }-${date.getDate()}`;
             filterQueryBuilder.andWhere('a.date = :date', {
               date: findDate,
             });
@@ -190,9 +193,12 @@ export class AppointmentService {
       }
 
       const today = new Date();
-      let status: string = "Pendiente";
-      if (new Date(appointment.date).setHours(0, 0, 0, 0) <= today.setHours(0, 0, 0, 0))
-        status = "Esperando Actualización";
+      let status: string = 'Pendiente';
+      if (
+        new Date(appointment.date).setHours(0, 0, 0, 0) <=
+        today.setHours(0, 0, 0, 0)
+      )
+        status = 'Esperando Actualización';
 
       const newAppointment = await this.appointmentRepository.create({
         surgeryNumber: surgeryNumber,
@@ -249,6 +255,21 @@ export class AppointmentService {
     updatedAppointment: UpdateAppointmentDto
   ) {
     try {
+      const {specie, reason, neighborhood, ...rest}= updatedAppointment
+      console.log(updatedAppointment);
+      const dataEntitiesUpdates: Record<string,Record<string, number>> = {};
+      if(specie) dataEntitiesUpdates['specie'] = {
+        ID_specie: updatedAppointment.specie
+      };
+      if(neighborhood) dataEntitiesUpdates['neighborhood'] = {
+        ID_neighborhood: updatedAppointment.neighborhood
+      };
+      if(reason) dataEntitiesUpdates['reason'] = {
+        ID_reason: updatedAppointment.reason
+      };
+
+      
+
       let updateResult: UpdateResult;
       const appointment = await this.getAll({ id });
       // console.log(updatedAppointment);
@@ -259,7 +280,8 @@ export class AppointmentService {
       ) {
         // console.log('Entra en el if de updateAppointment');
         updateResult = await this.appointmentRepository.update(id, {
-          ...updatedAppointment,
+          ...rest,
+          ...dataEntitiesUpdates,
           surgeryNumber: null,
         });
         if (
@@ -273,7 +295,8 @@ export class AppointmentService {
         }
       } else {
         updateResult = await this.appointmentRepository.update(id, {
-          ...updatedAppointment,
+          ...rest,
+          ...dataEntitiesUpdates,
         });
       }
       return updateResult;

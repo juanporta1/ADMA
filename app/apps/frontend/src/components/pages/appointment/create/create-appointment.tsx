@@ -60,7 +60,7 @@ export function CreateAppointment() {
     restrictedSpecie: [{ value: '', text: '' }],
   }); // Datos para los selectores
   const { create } = useAppointment(); // Hook para crear turnos
-  const [actualDate, setActualDate] = useState<DateValue>(new Date());
+  const [actualDate, setActualDate] = useState<DateValue>(null);
   // Función para cancelar y volver al listado
   const handleOnCancel = () => {
     navigate('/turnos/listar');
@@ -93,6 +93,7 @@ export function CreateAppointment() {
       try {
         const data = await getSelectData();
         setSelectsData(data);
+        form.setValues({date: new Date()})
       } catch (err) {
         console.log(err);
       }
@@ -180,7 +181,7 @@ export function CreateAppointment() {
                   }}
                 />
 
-                {<HourSelect form={form} dateValue={actualDate} />}
+                {<HourSelect form={form} dateValue={actualDate} formReady/>}
 
 
                 <FormColumn
