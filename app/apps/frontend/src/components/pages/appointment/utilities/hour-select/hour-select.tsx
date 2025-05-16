@@ -52,6 +52,7 @@ export function HourSelect(props: props) {
   useEffect(() => {
     getMaxAppointments();
   }, []);
+
   useEffect(() => {
     if (
       !props.dateValue ||
@@ -96,7 +97,7 @@ export function HourSelect(props: props) {
 
     if (selects.every((s) => s.disabled)) {
       notifications.show({
-        title: `No hay horarios disponilbles el ${date}`,
+        title: `No hay horarios disponibles el ${date}`,
         message: 'No hay horarios disponibles para la fecha seleccionada',
         color: 'red',
       });
