@@ -1,5 +1,5 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { In, LessThanOrEqual, Not, Repository, UpdateResult } from 'typeorm';
+import { Brackets, In, LessThanOrEqual, Not, Repository, UpdateResult } from 'typeorm';
 import { CreateAppointmentDTO } from '../DTOs/create-appointment.dto';
 import { Appointment } from '../appointment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -22,7 +22,18 @@ export class AppointmentService {
       .createQueryBuilder('appointment')
       .select('appointment.hour', 'hour')
       .addSelect('COUNT(*)', 'count')
-      .where('appointment.date = :date', { date: querys.date })
+      .where(
+        new Brackets(qb => {
+          qb.where('appointment.status = :status', { status: 'Pendiente' })
+            .orWhere('appointment.status = :status2', {
+              status2: 'Esperando Actualización',
+            })
+            .orWhere('appointment.status = :status3', {
+              status3: 'No Realizado',
+            });
+        })
+      )
+      .andWhere('appointment.date = :date', { date: querys.date })
       .groupBy('appointment.hour')
       .getRawMany();
 
