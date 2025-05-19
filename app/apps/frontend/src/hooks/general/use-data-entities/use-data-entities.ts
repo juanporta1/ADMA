@@ -1,47 +1,33 @@
 import axios, { AxiosResponse } from 'axios';
-import { useState, useCallback, useContext } from 'react';
+import { useContext } from 'react';
 import { ApiHostContext } from '../../../contexts/api-host-context';
 import {
-  Neighborhood,
+  DataEntities,
+  editedNeighborhood,
+  editedReason,
+  editedSpecie,
+  editedVeterinarian,
   newNeighborhood,
   newReason,
   newSpecie,
+  newVeterinarian,
   Reason,
-  Specie,
+  Veterinarian,
 } from '../../../types/data-entities.types';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface DataEntities {
-  reasons: Reason[];
-  species: Specie[];
-  neighborhoods: Neighborhood[];
-}
-
-export interface editedNeighborhood {
-  neighborhood?: string;
-  inUse?: boolean;
-}
-export interface editedSpecie {
-  specie?: string;
-  inUse?: boolean;
-}
-export interface editedReason {
-  reason?: string;
-  reasonSex?: 'a' | 'm' | 'h';
-  inUse?: boolean;
-}
 
 export interface UseDataEntities {
   getData: () => Promise<DataEntities>;
   createNewData: (
-    data: newNeighborhood | newReason | newSpecie,
-    type: 'neighborhood' | 'specie' | 'reason'
+    data: newNeighborhood | newReason | newSpecie | newVeterinarian,
+    type: 'neighborhood' | 'specie' | 'reason' | 'veterinarian'
   ) => Promise<void>;
   editData: (
-    type: 'neighborhood' | 'specie' | 'reason',
+    type: 'neighborhood' | 'specie' | 'reason' | 'veterinarian',
     id: number,
-    data: editedNeighborhood | editedReason | editedSpecie
-  ) => void;
+    data: editedNeighborhood | editedReason | editedSpecie | editedVeterinarian
+  ) => Promise<void>;
 }
 
 export function useDataEntities(): UseDataEntities {
@@ -67,10 +53,23 @@ export function useDataEntities(): UseDataEntities {
   };
   const getReasons = async () => {
     try {
-      const res: AxiosResponse<Reason[]> = await axios.get(`${host}/data-entities/reason`);
-      const updatedReasons: Reason[] = res.data.filter(r => r.reason !== "Otro")
-        .concat(res.data.filter(r => r.reason === "Otro"))
+      const res: AxiosResponse<Reason[]> = await axios.get(
+        `${host}/data-entities/reason`
+      );
+      const updatedReasons: Reason[] = res.data
+        .filter((r) => r.reason !== 'Otro')
+        .concat(res.data.filter((r) => r.reason === 'Otro'));
       return updatedReasons;
+    } catch (err) {
+      console.log(err);
+      return [];
+    }
+  };
+
+  const getVeterinarians = async () => {
+    try {
+      const res = await axios.get(`${host}/data-entities/veterinarian`);
+      return res.data;
     } catch (err) {
       console.log(err);
       return [];
@@ -82,21 +81,22 @@ export function useDataEntities(): UseDataEntities {
       neighborhoods: await getNeighborhoods(),
       species: await getSpecies(),
       reasons: await getReasons(),
+      veterinarians: await getVeterinarians(),
     };
   };
 
   const createNewData = async (
-    data: newNeighborhood | newReason | newSpecie,
-    type: 'neighborhood' | 'specie' | 'reason'
+    data: newNeighborhood | newReason | newSpecie | newVeterinarian,
+    type: 'neighborhood' | 'specie' | 'reason' | 'veterinarian'
   ) => {
     const res = await axios.post(`${host}/data-entities/${type}`, data);
     console.log(res);
   };
 
   const stopUsingData = async (
-    type: 'neighborhood' | 'specie' | 'reason',
+    type: 'neighborhood' | 'specie' | 'reason' | 'veterinarian',
     id: number,
-    data: editedNeighborhood | editedReason | editedSpecie
+    data: editedNeighborhood | editedReason | editedSpecie | editedVeterinarian
   ) => {
     const res = await axios.patch(`${host}/data-entities/${type}/${id}`, data);
   };

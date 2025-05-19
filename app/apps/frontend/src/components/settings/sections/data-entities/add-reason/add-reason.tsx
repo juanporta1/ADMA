@@ -69,7 +69,7 @@ export function AddReason() {
     reasonSex: string;
   }) => {
     await createNewData(
-      { reason: values.reason, reasonSex: values.reasonSex as "a" | "m" | "h"},
+      { reason: values.reason, reasonSex: values.reasonSex as 'a' | 'm' | 'h' },
       'reason'
     );
     closeCreate();
@@ -271,8 +271,8 @@ export function AddReason() {
           <Table>
             <Table.Thead>
               <Table.Tr>
-                <Table.Td>Razón</Table.Td>
-                <Table.Td>Sexo</Table.Td>
+                <Table.Th>Razón</Table.Th>
+                <Table.Th>Sexo</Table.Th>
               </Table.Tr>
             </Table.Thead>
           </Table>

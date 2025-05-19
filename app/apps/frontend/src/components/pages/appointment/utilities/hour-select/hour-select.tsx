@@ -30,6 +30,7 @@ export function HourSelect(props: props) {
     const counts = await countPerDay(date);
     setCounts(counts);
   };
+
   const getMaxAppointments = async () => {
     if (props.registerId) {
       const appointment = await filter({ id: props.registerId });

@@ -13,6 +13,7 @@ import { UpdateSettingDTO } from '../dto/update-setting.DTO';
 import { Veterinarian } from '../entities/veterinarian.entity';
 import { CreateVeterinarianDTO } from '../dto/create-veterinarian.DTO';
 import { UpdateVeterinarianDTO } from '../dto/update-veterinarian.DTO';
+import { FindVeterinarianDTO } from '../dto/find-veterinarian.DTO';
 
 @Injectable()
 export class DataEntitiesService {
@@ -62,8 +63,11 @@ export class DataEntitiesService {
     return await this.settingRepository.find({where : querys});
   }
 
-  async getVeterinarians(){
-    return await this.veterinarianRepository.find();
+  async getVeterinarians(querys: FindVeterinarianDTO) {
+    const qb = this.veterinarianRepository.createQueryBuilder("v");
+    if (querys.ID_veterinarian) 
+      qb.andWhere("v.ID_veterinarian = :id", {id: querys.ID_veterinarian});
+    return await qb.getMany();  
   }
 
   // ==================== MÉTODOS CREATE ====================

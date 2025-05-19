@@ -243,14 +243,14 @@ export function AddNeighborhood() {
           <Table>
             <Table.Thead>
               <Table.Tr>
-                <Table.Td>Barrio</Table.Td>
-                <Table.Td> </Table.Td>
+                <Table.Th>Barrio</Table.Th>
+                <Table.Th> </Table.Th>
               </Table.Tr>
             </Table.Thead>
           </Table>
           <SimpleBar style={{ maxHeight: 200 }}>
             <Table>
-              <Table.Thead display={"none"}>
+              <Table.Thead display={'none'}>
                 <Table.Tr>
                   <Table.Td>Barrio</Table.Td>
                   <Table.Td> </Table.Td>

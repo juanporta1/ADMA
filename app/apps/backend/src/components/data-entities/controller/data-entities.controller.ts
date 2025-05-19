@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   Param,
   Patch,
@@ -14,6 +13,7 @@ import type { CreateSettingDTO } from '../dto/create-setting.DTO';
 import type { UpdateSettingDTO } from '../dto/update-setting.DTO';
 import type { CreateVeterinarianDTO } from '../dto/create-veterinarian.DTO';
 import type { UpdateVeterinarianDTO } from '../dto/update-veterinarian.DTO';
+import type { FindVeterinarianDTO } from '../dto/find-veterinarian.DTO';
 
 @Controller('data-entities')
 export class DataEntitiesController {
@@ -48,8 +48,8 @@ export class DataEntitiesController {
   }
 
   @Get('veterinarian')
-  async getVeterinarians(){
-    return await this.dataService.getVeterinarians();
+  async getVeterinarians(@Query() querys: FindVeterinarianDTO) {
+    return await this.dataService.getVeterinarians(querys);
   }
 
   // ==================== MÉTODOS POST ====================

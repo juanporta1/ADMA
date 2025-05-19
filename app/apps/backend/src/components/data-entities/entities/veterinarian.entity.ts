@@ -9,7 +9,7 @@ export class Veterinarian{
     name!: string;
 
     @Column({type: "varchar"})
-    last_name!: string;
+    lastName!: string;
 
     @Column({type: "varchar", nullable: true})
     phone?: string;
@@ -17,6 +17,6 @@ export class Veterinarian{
     @Column({type: "varchar", nullable: true})
     email?: string;
 
-    @Column({type: "boolean"})
+    @Column({type: "boolean", default: true})
     inUse!: boolean;
 }

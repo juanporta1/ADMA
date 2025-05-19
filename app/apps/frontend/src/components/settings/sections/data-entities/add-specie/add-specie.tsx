@@ -227,7 +227,7 @@ export function AddSpecie() {
           <Table>
             <Table.Thead>
               <Table.Tr>
-                <Table.Td>Especie</Table.Td>
+                <Table.Th>Especie</Table.Th>
                 <Table.Td> </Table.Td>
               </Table.Tr>
             </Table.Thead>

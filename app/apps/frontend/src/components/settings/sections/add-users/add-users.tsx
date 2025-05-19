@@ -84,12 +84,11 @@ export function AddUsers() {
           key={user.ID_user}
           style={{
             backgroundColor: '#f5f5f5',
-            
           }}
         >
           <Table.Td>{user.email}</Table.Td>
           <Table.Td>{user.role}</Table.Td>
-          <Table.Td style={{width: "50px"}}>
+          <Table.Td style={{ width: '50px' }}>
             <Tooltip label={disabledLabel || 'Editar'}>
               <ActionIcon
                 color={mainColor}
@@ -104,7 +103,7 @@ export function AddUsers() {
               </ActionIcon>
             </Tooltip>
           </Table.Td>
-          <Table.Td style={{width: "50px"}}> 
+          <Table.Td style={{ width: '50px' }}>
             <Tooltip label={disabledLabel || 'Eliminar'}>
               <ActionIcon
                 color={mainColor}
@@ -288,16 +287,13 @@ export function AddUsers() {
           <Table>
             <Table.Thead>
               <Table.Tr>
-                <Table.Td>Email</Table.Td>
-                <Table.Td>Rol</Table.Td>
+                <Table.Th>Email</Table.Th>
+                <Table.Th>Rol</Table.Th>
               </Table.Tr>
             </Table.Thead>
           </Table>
-          <SimpleBar
-            style={{ maxHeight: 200 }}
-
-          >
-            <Table style={{maxHeight: "300px"}}>
+          <SimpleBar style={{ maxHeight: 200 }}>
+            <Table style={{ maxHeight: '300px' }}>
               <Table.Thead style={{ display: 'none' }}>
                 <Table.Tr>
                   <Table.Td></Table.Td>
