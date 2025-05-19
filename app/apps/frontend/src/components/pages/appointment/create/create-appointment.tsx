@@ -84,16 +84,14 @@ export function CreateAppointment() {
       throw err;
     }
   };
-  
 
   // Inicialización de valores del formulario
   useEffect(() => {
-    
     const fetchData = async () => {
       try {
         const data = await getSelectData();
         setSelectsData(data);
-        form.setValues({date: new Date()})
+        form.setValues({ date: new Date() });
       } catch (err) {
         console.log(err);
       }
@@ -101,9 +99,6 @@ export function CreateAppointment() {
     fetchData();
   }, []);
 
-
-
-  
   return (
     <div>
       <LoadingOverlay visible={visible} />
@@ -181,8 +176,7 @@ export function CreateAppointment() {
                   }}
                 />
 
-                {<HourSelect form={form} dateValue={actualDate} formReady/>}
-
+                {<HourSelect form={form} dateValue={actualDate} />}
 
                 <FormColumn
                   inputType="select"

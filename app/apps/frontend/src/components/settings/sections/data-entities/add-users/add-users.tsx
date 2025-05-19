@@ -10,20 +10,22 @@ import {
   Title,
   Tooltip,
 } from '@mantine/core';
-import useLogin from '../../../../hooks/general/login/use-login';
+import useLogin from '../../../../../hooks/general/login/use-login';
 import { useContext, useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { MainColorContext } from '../../../../contexts/color-context';
-import { UserContext } from '../../../../contexts/user-context';
+import { MainColorContext } from '../../../../../contexts/color-context';
+import { UserContext } from '../../../../../contexts/user-context';
 import { useDisclosure } from '@mantine/hooks';
-import FormColumn from '../../../utilities/form-column/form-column';
+import FormColumn from '../../../../utilities/form-column/form-column';
 import { useForm } from '@mantine/form';
-import { User } from '../../../../hooks/general/login/use-login';
-import { SettingsContext } from '../../../../contexts/settings-context';
-import { SelectData } from '../../../../types/utilities.types';
+import { User } from '../../../../../hooks/general/login/use-login';
+import { SettingsContext } from '../../../../../contexts/settings-context';
+import { SelectData } from '../../../../../types/utilities.types';
 import SimpleBar from 'simplebar-react';
 import 'simplebar-react/dist/simplebar.min.css';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
 
 export function AddUsers() {
   const form = useForm({
@@ -68,59 +70,36 @@ export function AddUsers() {
   const [deleteModal, { open: openDeleteModal, close: closeDeleteModal }] =
     useDisclosure(false);
   const [actualUser, setActualUser] = useState<User | null>(null);
-  const UsersItems = () => {
-    if (!users) return;
-    return users.map((user) => {
-      if (!user.inUse) return;
-      const disabled =
-        currentUser?.role === 'user' ||
-        user.role === 'main' ||
-        user.role === currentUser?.role;
-      const disabledLabel = disabled
-        ? 'No puedes realizar esta accion.'
-        : false;
-      return (
-        <Table.Tr
-          key={user.ID_user}
-          style={{
-            backgroundColor: '#f5f5f5',
-          }}
-        >
-          <Table.Td>{user.email}</Table.Td>
-          <Table.Td>{user.role}</Table.Td>
-          <Table.Td style={{ width: '50px' }}>
-            <Tooltip label={disabledLabel || 'Editar'}>
-              <ActionIcon
-                color={mainColor}
-                disabled={disabled}
-                onClick={() => {
-                  setActualUser(user);
-                  openEditModal();
-                  editForm.setValues({ email: user.email, role: user.role });
-                }}
-              >
-                <FontAwesomeIcon icon={faEdit} />
-              </ActionIcon>
-            </Tooltip>
-          </Table.Td>
-          <Table.Td style={{ width: '50px' }}>
-            <Tooltip label={disabledLabel || 'Eliminar'}>
-              <ActionIcon
-                color={mainColor}
-                disabled={disabled}
-                onClick={() => {
-                  openDeleteModal();
-                  setActualUser(user);
-                }}
-              >
-                <FontAwesomeIcon icon={faTrash} />
-              </ActionIcon>
-            </Tooltip>
-          </Table.Td>
-        </Table.Tr>
-      );
+  const usersItems = users
+    ?.filter((v) => v.inUse)
+    .map((u) => {
+      return {
+        email: u.email,
+        role: u.role,
+        edit: (
+          <ActionIcon
+            color={mainColor}
+            onClick={() => {
+              setActualUser(u);
+              openEditModal();
+            }}
+          >
+            <FontAwesomeIcon icon={faEdit} />
+          </ActionIcon>
+        ),
+        delete: (
+          <ActionIcon
+            color={mainColor}
+            onClick={() => {
+              setActualUser(u);
+              openDeleteModal();
+            }}
+          >
+            <FontAwesomeIcon icon={faTrash} />
+          </ActionIcon>
+        ),
+      };
     });
-  };
   const handleOnCreateUser = async (values: {
     email: string;
     role: string;
@@ -279,32 +258,19 @@ export function AddUsers() {
 
         <Box
           style={{
-            maxHeight: '300px',
-            border: '1px solid #e8e8e8',
-            width: '500px',
+            width: '600px',
           }}
         >
-          <Table>
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th>Email</Table.Th>
-                <Table.Th>Rol</Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-          </Table>
-          <SimpleBar style={{ maxHeight: 200 }}>
-            <Table style={{ maxHeight: '300px' }}>
-              <Table.Thead style={{ display: 'none' }}>
-                <Table.Tr>
-                  <Table.Td></Table.Td>
-                  <Table.Td></Table.Td>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>
-                <UsersItems />
-              </Table.Tbody>
-            </Table>
-          </SimpleBar>
+          <DataTable value={usersItems} paginator rows={5}>
+            <Column
+              field="email"
+              header="Email"
+              style={{ width: '45%' }}
+            ></Column>
+            <Column field="role" header="Rol" style={{ width: '45%' }}></Column>
+            <Column field="edit" style={{ width: '5%' }}></Column>
+            <Column field="delete" style={{ width: '5%' }}></Column>
+          </DataTable>
         </Box>
         <Button
           bg={mainColor}

@@ -19,10 +19,10 @@ import {
 } from '@mantine/core';
 import { MainColorContext } from '../../../../../contexts/color-context';
 import { UserContext } from '../../../../../contexts/user-context';
-import SimpleBar from 'simplebar-react';
-import 'simplebar-react/dist/simplebar.min.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
+import { DataTable, DataTableValue } from 'primereact/datatable';
+import { Column } from 'primereact/column';
 
 export function AddVeterinarian() {
   //Form
@@ -97,50 +97,14 @@ export function AddVeterinarian() {
     await getVeterinarians();
   };
 
-  const VeterinarianItems = () => {
-    if (!veterinarians) return;
-
-    return veterinarians.map((v) => {
-      if (!v.inUse) return;
-      return (
-        <Table.Tr
-          key={v.ID_veterinarian}
-          style={{ backgroundColor: '#f5f5f5' }}
-          onClick={() => {
-            setActualVeterinarian(v);
-            openEdit();
-          }}
-        >
-          <Table.Td>{v.lastName}</Table.Td>
-          <Table.Td>{v.name}</Table.Td>
-          <Table.Td>{v.phone || <Text c="#aaaa">Sin Teléfono</Text>}</Table.Td>
-          <Table.Td>{v.email || <Text c="#aaaa">Sin Mail</Text>}</Table.Td>
-          <Table.Td style={{ width: '50px' }}>
-            <ActionIcon
-              color={mainColor}
-              onClick={(e) => {
-                setActualVeterinarian(v);
-                openEdit();
-              }}
-            >
-              <FontAwesomeIcon icon={faEdit} />
-            </ActionIcon>
-          </Table.Td>
-          <Table.Td style={{ width: '50px' }}>
-            <ActionIcon
-              color={mainColor}
-              onClick={(e) => {
-                setActualVeterinarian(v);
-                openDelete();
-              }}
-            >
-              <FontAwesomeIcon icon={faTrash} />
-            </ActionIcon>
-          </Table.Td>
-        </Table.Tr>
-      );
-    });
-  };
+  const veterinarianItems = veterinarians
+    .filter((v) => v.inUse)
+    .map((v) => ({
+      name: v.name,
+      lastName: v.lastName,
+      phone: v.phone || 'Sin teléfono',
+      email: v.email || 'Sin email',
+    }));
 
   useEffect(() => {
     getVeterinarians();
@@ -160,42 +124,36 @@ export function AddVeterinarian() {
 
         <Box
           style={{
-            maxHeight: '300px',
-
-            border: '1px solid #e8e8e8',
-            width: '500px',
+            width: '600px',
           }}
         >
-          <Table>
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th>Apellido</Table.Th>
-                <Table.Th>Nombre</Table.Th>
-                <Table.Th>Teléfono</Table.Th>
-                <Table.Th>Mail</Table.Th>
-                <Table.Td> </Table.Td>
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody display={'none'}>
-              <VeterinarianItems />
-            </Table.Tbody>
-          </Table>
-          <SimpleBar style={{ maxHeight: 200 }}>
-            <Table>
-              <Table.Thead display={'none'}>
-                <Table.Tr>
-                  <Table.Th>Apellido</Table.Th>
-                  <Table.Th>Nombre</Table.Th>
-                  <Table.Th>Teléfono</Table.Th>
-                  <Table.Th>Mail</Table.Th>
-                  <Table.Td> </Table.Td>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>
-                <VeterinarianItems />
-              </Table.Tbody>
-            </Table>
-          </SimpleBar>
+          <DataTable
+            value={veterinarianItems}
+            paginator
+            rows={5}
+            currentPageReportTemplate="Del {first} al {last} de {totalRecords}"
+          >
+            <Column
+              field="name"
+              header="Nombre"
+              style={{ width: '25%' }}
+            ></Column>
+            <Column
+              field="lastName"
+              header="Apellido"
+              style={{ width: '25%' }}
+            ></Column>
+            <Column
+              field="phone"
+              header="Teléfono"
+              style={{ width: '25%' }}
+            ></Column>
+            <Column
+              field="email"
+              header="Email"
+              style={{ width: '25%' }}
+            ></Column>
+          </DataTable>
         </Box>
         <Button
           bg={mainColor}

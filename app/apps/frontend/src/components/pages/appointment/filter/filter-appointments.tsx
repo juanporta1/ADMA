@@ -11,7 +11,7 @@ import {
   Text,
   Tooltip,
 } from '@mantine/core';
- 
+
 // Importación de proveedor de fechas y configuración de idioma
 import { DatesProvider } from '@mantine/dates';
 import 'dayjs/locale/es';
@@ -59,7 +59,6 @@ export interface FilterParams {
   dateFilterWay?: 'all' | 'onlyOne' | 'interval';
   date?: Date;
 }
-
 
 // Componente principal para filtrar y mostrar turnos
 export function FilterAppointments() {
@@ -210,8 +209,7 @@ export function FilterAppointments() {
       />
     ));
   };
-  
-  
+
   // useEffect para cargar los turnos al montar el componente
   useEffect(() => {
     const fetchData = async () => {
@@ -224,7 +222,6 @@ export function FilterAppointments() {
     };
     fetchData();
     handleOnSubmit();
-
   }, []);
 
   // useEffect para limpiar el estado de carga después de un tiempo
@@ -289,7 +286,7 @@ export function FilterAppointments() {
             timezone: 'America/Argentina/Buenos_Aires',
           }}
         >
-          <Box >
+          <Box>
             <Flex direction="column" gap="md">
               {/* Encabezado con título y botón para crear nuevo turno */}
               <Flex direction="row" justify="space-between">
@@ -331,7 +328,7 @@ export function FilterAppointments() {
               </Flex>
 
               {/* Formulario de filtros */}
-              <Box bd="1px #aaa solid" p="sm" >
+              <Box bd="1px #aaa solid" p="sm">
                 <form onSubmit={form.onSubmit(handleOnSubmit)}>
                   <Grid gutter="10px" columns={20}>
                     {/* Campo para fecha de inicio */}
@@ -541,7 +538,7 @@ export function FilterAppointments() {
                         value={actualPage}
                         onChange={setPage}
                         color={mainColor}
-                        style={{marginBottom: "30px"}}
+                        style={{ marginBottom: '30px' }}
                       />
                     </div>
                   </div>

@@ -23,6 +23,8 @@ import 'simplebar-react/dist/simplebar.min.css';
 import { Specie } from '../../../../../types/data-entities.types';
 import FormColumn from '../../../../utilities/form-column/form-column';
 import { useForm } from '@mantine/form';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
 
 export function AddSpecie() {
   const [deleteModal, { open: openDelete, close: closeDelete }] =
@@ -80,48 +82,35 @@ export function AddSpecie() {
     await getSpecies();
   };
 
-  const SpecieItems = () => {
-    if (!species) return;
-    return species.map((specie) => {
-      if (!specie.inUse) return;
-      return (
-        <Table.Tr
-          key={specie.ID_specie}
-          style={{
-            backgroundColor: '#f5f5f5',
-          }}
-        >
-          <Table.Td>{specie.specie}</Table.Td>
-          <Table.Td> </Table.Td>
-          <Table.Td w={'50px'}>
-            <ActionIcon
-              bg={mainColor}
-              disabled={currentUser?.role === 'user'}
-              onClick={() => {
-                setActualSpecie(specie);
-                openEdit();
-                form.setValues({ specie: specie.specie });
-              }}
-            >
-              <FontAwesomeIcon icon={faEdit} />
-            </ActionIcon>
-          </Table.Td>
-          <Table.Td w={'50px'}>
-            <ActionIcon
-              bg={mainColor}
-              disabled={currentUser?.role === 'user'}
-              onClick={() => {
-                setActualSpecie(specie);
-                openDelete();
-              }}
-            >
-              <FontAwesomeIcon icon={faTrash} />
-            </ActionIcon>
-          </Table.Td>
-        </Table.Tr>
-      );
+  const specieItems = species
+    ?.filter((v) => v.inUse)
+    .map((s) => {
+      return {
+        name: s.specie,
+        edit: (
+          <ActionIcon
+            color={mainColor}
+            onClick={() => {
+              setActualSpecie(s);
+              openEdit();
+            }}
+          >
+            <FontAwesomeIcon icon={faEdit} />
+          </ActionIcon>
+        ),
+        delete: (
+          <ActionIcon
+            color={mainColor}
+            onClick={() => {
+              setActualSpecie(s);
+              openDelete();
+            }}
+          >
+            <FontAwesomeIcon icon={faTrash} />
+          </ActionIcon>
+        ),
+      };
     });
-  };
   useEffect(() => {
     if (species !== null) return;
     getSpecies();
@@ -219,32 +208,18 @@ export function AddSpecie() {
 
         <Box
           style={{
-            maxHeight: '300px',
-            border: '1px solid #e8e8e8',
-            width: '500px',
+            width: '600px',
           }}
         >
-          <Table>
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th>Especie</Table.Th>
-                <Table.Td> </Table.Td>
-              </Table.Tr>
-            </Table.Thead>
-          </Table>
-          <SimpleBar style={{ maxHeight: 200 }}>
-            <Table>
-              <Table.Thead display={'none'}>
-                <Table.Tr>
-                  <Table.Td>Especie</Table.Td>
-                  <Table.Td> </Table.Td>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>
-                <SpecieItems />
-              </Table.Tbody>
-            </Table>
-          </SimpleBar>
+          <DataTable value={specieItems} paginator rows={5}>
+            <Column
+              field="name"
+              header="Especie"
+              style={{ width: '90%' }}
+            ></Column>
+            <Column field="edit"></Column>
+            <Column field="delete"></Column>
+          </DataTable>
         </Box>
         <Button
           bg={mainColor}

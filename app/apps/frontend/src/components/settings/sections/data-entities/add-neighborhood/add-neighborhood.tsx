@@ -1,8 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { SettingsContext } from '../../../../../contexts/settings-context';
-import useDataEntities, {
-  editedNeighborhood,
-} from '../../../../../hooks/general/use-data-entities/use-data-entities';
+import useDataEntities from '../../../../../hooks/general/use-data-entities/use-data-entities';
 import {
   ActionIcon,
   Box,
@@ -20,13 +18,14 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { useDisclosure } from '@mantine/hooks';
 import {
+  editedNeighborhood,
   Neighborhood,
   newNeighborhood,
 } from '../../../../../types/data-entities.types';
 import { useForm } from '@mantine/form';
 import FormColumn from '../../../../utilities/form-column/form-column';
-import SimpleBar from 'simplebar-react';
-import 'simplebar-react/dist/simplebar.min.css';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
 
 export function AddNeighborhood() {
   const [deleteModal, { open: openDelete, close: closeDelete }] =
@@ -80,51 +79,36 @@ export function AddNeighborhood() {
     await editData('neighborhood', id, editedData);
   };
 
-  const NeighborhoodItems = () => {
-    if (!neighborhoods) return;
-
-    return neighborhoods.map((neighborhood) => {
-      if (!neighborhood.inUse) return;
-      return (
-        <Table.Tr
-          key={neighborhood.ID_neighborhood}
-          style={{
-            backgroundColor: '#f5f5f5',
-          }}
-        >
-          <Table.Td>{neighborhood.neighborhood}</Table.Td>
-          <Table.Td> </Table.Td>
-          <Table.Td w={'50px'}>
-            <ActionIcon
-              bg={mainColor}
-              disabled={currentUser?.role === 'user'}
-              onClick={() => {
-                setActualNeig(neighborhood);
-                openEdit();
-                form.setValues({
-                  neighborhood: neighborhood.neighborhood,
-                });
-              }}
-            >
-              <FontAwesomeIcon icon={faEdit} />
-            </ActionIcon>
-          </Table.Td>
-          <Table.Td w={'50px'}>
-            <ActionIcon
-              bg={mainColor}
-              disabled={currentUser?.role === 'user'}
-              onClick={() => {
-                setActualNeig(neighborhood);
-                openDelete();
-              }}
-            >
-              <FontAwesomeIcon icon={faTrash} />
-            </ActionIcon>
-          </Table.Td>
-        </Table.Tr>
-      );
+  const neighborhoodItems = neighborhoods
+    ?.filter((v) => v.inUse)
+    .map((neighborhood) => {
+      return {
+        name: neighborhood.neighborhood,
+        edit: (
+          <ActionIcon
+            color={mainColor}
+            onClick={() => {
+              openEdit();
+              setActualNeig(neighborhood);
+            }}
+          >
+            <FontAwesomeIcon icon={faEdit} />
+          </ActionIcon>
+        ),
+        delete: (
+          <ActionIcon
+            color={mainColor}
+            onClick={() => {
+              openDelete();
+              setActualNeig(neighborhood);
+            }}
+          >
+            <FontAwesomeIcon icon={faTrash} />
+          </ActionIcon>
+        ),
+      };
     });
-  };
+
   useEffect(() => {
     if (neighborhoods !== null) return;
     getNeighborhoods();
@@ -234,33 +218,18 @@ export function AddNeighborhood() {
 
         <Box
           style={{
-            maxHeight: '300px',
-
-            border: '1px solid #e8e8e8',
-            width: '500px',
+            width: '600px',
           }}
         >
-          <Table>
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th>Barrio</Table.Th>
-                <Table.Th> </Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-          </Table>
-          <SimpleBar style={{ maxHeight: 200 }}>
-            <Table>
-              <Table.Thead display={'none'}>
-                <Table.Tr>
-                  <Table.Td>Barrio</Table.Td>
-                  <Table.Td> </Table.Td>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>
-                <NeighborhoodItems />
-              </Table.Tbody>
-            </Table>
-          </SimpleBar>
+          <DataTable value={neighborhoodItems} paginator rows={5}>
+            <Column
+              field="name"
+              header="Barrio"
+              style={{ width: '90%' }}
+            ></Column>
+            <Column field="edit" header="" style={{ width: '5%' }}></Column>
+            <Column field="delete" header="" style={{ width: '5%' }}></Column>
+          </DataTable>
         </Box>
         <Button
           bg={mainColor}

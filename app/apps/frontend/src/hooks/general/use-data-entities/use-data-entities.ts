@@ -77,11 +77,17 @@ export function useDataEntities(): UseDataEntities {
   };
 
   const getData = async () => {
+    const [neighborhoods, species, reasons, veterinarians] = await Promise.all([
+      getNeighborhoods(),
+      getSpecies(),
+      getReasons(),
+      getVeterinarians(),
+    ]);
     return {
-      neighborhoods: await getNeighborhoods(),
-      species: await getSpecies(),
-      reasons: await getReasons(),
-      veterinarians: await getVeterinarians(),
+      neighborhoods,
+      species,
+      reasons,
+      veterinarians,
     };
   };
 

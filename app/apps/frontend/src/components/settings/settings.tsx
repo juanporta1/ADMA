@@ -1,6 +1,6 @@
 import { Box, Flex, TableOfContents } from '@mantine/core';
 import styles from './settings.module.css';
-import AddUsers from './sections/add-users/add-users';
+import AddUsers from './sections/data-entities/add-users/add-users';
 import { useContext } from 'react';
 import { MainColorContext } from '../../contexts/color-context';
 import Sesion from './sections/sesion/sesion';

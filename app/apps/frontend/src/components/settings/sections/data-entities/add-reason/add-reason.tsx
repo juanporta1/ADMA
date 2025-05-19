@@ -5,7 +5,6 @@ import {
   Flex,
   Grid,
   Modal,
-  Table,
   Text,
   Title,
 } from '@mantine/core';
@@ -21,8 +20,8 @@ import { Reason } from '../../../../../types/data-entities.types';
 import FormColumn from '../../../../utilities/form-column/form-column';
 import { useForm } from '@mantine/form';
 import { SelectData } from '../../../../../types/utilities.types';
-import SimpleBar from 'simplebar-react';
-import 'simplebar-react/dist/simplebar.min.css';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
 
 export function AddReason() {
   const [deleteModal, { open: openDelete, close: closeDelete }] =
@@ -96,57 +95,43 @@ export function AddReason() {
     await getReasons();
   };
 
-  const ReasonItems = () => {
-    if (!reasons) return;
-
-    return reasons.map((reason, i) => {
-      if (!reason.inUse) return;
+  const reasonItems = reasons
+    ?.filter((v) => v.inUse)
+    .map((reason, i) => {
       let disabled = false;
       if (reason.reason === 'Otro') disabled = true;
       let sexLabel = 'Ambos';
       if (reason.reasonSex === 'm') sexLabel = 'Macho';
       if (reason.reasonSex === 'h') sexLabel = 'Hembra';
-      return (
-        <Table.Tr
-          key={reason.ID_reason}
-          style={{
-            backgroundColor: '#f5f5f5',
-          }}
-        >
-          <Table.Td>{reason.reason}</Table.Td>
-          <Table.Td>{sexLabel}</Table.Td>
-          <Table.Td w={'50px'}>
-            <ActionIcon
-              bg={mainColor}
-              disabled={currentUser?.role === 'user' || disabled}
-              onClick={() => {
-                setActualReason(reason);
-                openEdit();
-                form.setValues({
-                  reason: reason.reason,
-                  reasonSex: reason.reasonSex,
-                });
-              }}
-            >
-              <FontAwesomeIcon icon={faEdit} />
-            </ActionIcon>
-          </Table.Td>
-          <Table.Td w={'50px'}>
-            <ActionIcon
-              bg={mainColor}
-              disabled={currentUser?.role === 'user' || disabled}
-              onClick={() => {
-                setActualReason(reason);
-                openDelete();
-              }}
-            >
-              <FontAwesomeIcon icon={faTrash} />
-            </ActionIcon>
-          </Table.Td>
-        </Table.Tr>
-      );
+      return {
+        name: reason.reason,
+        sex: sexLabel,
+        edit: (
+          <ActionIcon
+            color={mainColor}
+            onClick={() => {
+              openEdit();
+              setActualReason(reason);
+            }}
+            disabled={disabled}
+          >
+            <FontAwesomeIcon icon={faEdit} />
+          </ActionIcon>
+        ),
+        delete: (
+          <ActionIcon
+            color={mainColor}
+            onClick={() => {
+              openDelete();
+              setActualReason(reason);
+            }}
+            disabled={disabled}
+          >
+            <FontAwesomeIcon icon={faTrash} />
+          </ActionIcon>
+        ),
+      };
     });
-  };
   useEffect(() => {
     if (reasons !== null) return;
     getReasons();
@@ -263,32 +248,19 @@ export function AddReason() {
 
         <Box
           style={{
-            maxHeight: '300px',
-            border: '1px solid #e8e8e8',
-            width: '500px',
+            width: '600px',
           }}
         >
-          <Table>
-            <Table.Thead>
-              <Table.Tr>
-                <Table.Th>Razón</Table.Th>
-                <Table.Th>Sexo</Table.Th>
-              </Table.Tr>
-            </Table.Thead>
-          </Table>
-          <SimpleBar style={{ maxHeight: 200 }}>
-            <Table>
-              <Table.Thead display={'none'}>
-                <Table.Tr>
-                  <Table.Td>Razón</Table.Td>
-                  <Table.Td>Sexo</Table.Td>
-                </Table.Tr>
-              </Table.Thead>
-              <Table.Tbody>
-                <ReasonItems />
-              </Table.Tbody>
-            </Table>
-          </SimpleBar>
+          <DataTable value={reasonItems} paginator rows={5}>
+            <Column
+              field="name"
+              header="Razón"
+              style={{ width: '45%' }}
+            ></Column>
+            <Column field="sex" header="Sexo" style={{ width: '45%' }}></Column>
+            <Column field="edit" header="" style={{ width: '5%' }}></Column>
+            <Column field="delete" header="" style={{ width: '5%' }}></Column>
+          </DataTable>
         </Box>
 
         <Button

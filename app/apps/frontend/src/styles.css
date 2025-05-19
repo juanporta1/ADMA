@@ -4,3 +4,20 @@ html, body, #root {
     margin: 0;
     padding: 0;
   }
+
+    .scrolltbody {
+      display: block;
+      max-height: 200px;
+      overflow-y: auto;
+      width: 100%;
+    }
+  
+    .scrolltbody tr {
+      display: table;
+      width: 100%;
+      table-layout: fixed;
+    }
+  
+    .tablefixed {
+      table-layout: fixed;
+      width: 100%; }
