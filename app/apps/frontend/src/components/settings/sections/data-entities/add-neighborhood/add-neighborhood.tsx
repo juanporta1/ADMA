@@ -218,7 +218,8 @@ export function AddNeighborhood() {
 
         <Box
           style={{
-            width: '600px',
+            border: '1px solid #ccc',
+            width: '700px',
           }}
         >
           <DataTable value={neighborhoodItems} paginator rows={5}>
@@ -226,6 +227,7 @@ export function AddNeighborhood() {
               field="name"
               header="Barrio"
               style={{ width: '90%' }}
+              sortable
             ></Column>
             <Column field="edit" header="" style={{ width: '5%' }}></Column>
             <Column field="delete" header="" style={{ width: '5%' }}></Column>

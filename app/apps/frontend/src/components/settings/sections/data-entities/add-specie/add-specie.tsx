@@ -18,8 +18,6 @@ import {
 } from '@mantine/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
-import SimpleBar from 'simplebar-react';
-import 'simplebar-react/dist/simplebar.min.css';
 import { Specie } from '../../../../../types/data-entities.types';
 import FormColumn from '../../../../utilities/form-column/form-column';
 import { useForm } from '@mantine/form';
@@ -208,7 +206,8 @@ export function AddSpecie() {
 
         <Box
           style={{
-            width: '600px',
+            width: '700px',
+            border: '1px solid #ccc',
           }}
         >
           <DataTable value={specieItems} paginator rows={5}>

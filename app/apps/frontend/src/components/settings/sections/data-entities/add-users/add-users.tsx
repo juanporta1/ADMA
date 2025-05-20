@@ -22,8 +22,6 @@ import { useForm } from '@mantine/form';
 import { User } from '../../../../../hooks/general/login/use-login';
 import { SettingsContext } from '../../../../../contexts/settings-context';
 import { SelectData } from '../../../../../types/utilities.types';
-import SimpleBar from 'simplebar-react';
-import 'simplebar-react/dist/simplebar.min.css';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 
@@ -258,7 +256,8 @@ export function AddUsers() {
 
         <Box
           style={{
-            width: '600px',
+            width: '700px',
+            border: '1px solid #ccc',
           }}
         >
           <DataTable value={usersItems} paginator rows={5}>

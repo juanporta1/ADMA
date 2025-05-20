@@ -13,6 +13,8 @@ import {
   Box,
   Button,
   Flex,
+  Grid,
+  Modal,
   Table,
   Text,
   Title,
@@ -23,6 +25,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { DataTable, DataTableValue } from 'primereact/datatable';
 import { Column } from 'primereact/column';
+import FormColumn from '../../../../utilities/form-column/form-column';
 
 export function AddVeterinarian() {
   //Form
@@ -80,12 +83,14 @@ export function AddVeterinarian() {
   };
   const handleOnCreate = async (values: newVeterinarian) => {
     await createNewData(values, 'veterinarian');
+    closeCreate();
     await getVeterinarians();
   };
 
   const handleOnEdit = async (values: editedVeterinarian) => {
     if (!actualVeterinarian) return;
     await editData('veterinarian', actualVeterinarian.ID_veterinarian, values);
+
     await getVeterinarians();
   };
 
@@ -104,6 +109,28 @@ export function AddVeterinarian() {
       lastName: v.lastName,
       phone: v.phone || 'Sin teléfono',
       email: v.email || 'Sin email',
+      edit: (
+        <ActionIcon
+          color={mainColor}
+          onClick={() => {
+            openEdit();
+            setActualVeterinarian(v);
+          }}
+        >
+          <FontAwesomeIcon icon={faEdit} />
+        </ActionIcon>
+      ),
+      delete: (
+        <ActionIcon
+          color={mainColor}
+          onClick={() => {
+            openDelete();
+            setActualVeterinarian(v);
+          }}
+        >
+          <FontAwesomeIcon icon={faTrash} />
+        </ActionIcon>
+      ),
     }));
 
   useEffect(() => {
@@ -118,13 +145,69 @@ export function AddVeterinarian() {
 
   return (
     <div>
+      <Modal
+        opened={createModal}
+        onClose={closeCreate}
+        title="Cargar Veterinario"
+        centered
+      >
+        <form onSubmit={form.onSubmit(handleOnCreate)}>
+          <Grid>
+            <FormColumn
+              form={form}
+              name="lastName"
+              inputType="text"
+              label="Apellido"
+              placeholder="Ingrese el Apellido"
+              span={6}
+            />
+            <FormColumn
+              form={form}
+              name="name"
+              inputType="text"
+              label="Nombre"
+              placeholder="Ingrese el Nombre"
+              span={6}
+            />
+            <FormColumn
+              form={form}
+              name="phone"
+              inputType="text"
+              label="Teléfono"
+              placeholder="Ingrese el Teléfono"
+              span={6}
+              notRequired
+            />
+            <FormColumn
+              form={form}
+              name="email"
+              inputType="text"
+              label="Email"
+              placeholder="Ingrese el Email"
+              span={6}
+              notRequired
+            />
+            <Grid.Col span={6}>
+              <Button color={mainColor} variant="light" type="submit" fullWidth>
+                Cargar Veterinario
+              </Button>
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <Button color={mainColor} onClick={closeCreate} fullWidth>
+                Volver
+              </Button>
+            </Grid.Col>
+          </Grid>
+        </form>
+      </Modal>
       <Flex gap="md" direction="column" align={'start'} justify={'center'}>
         <Title>Veterinarios</Title>
         <Text>Definir y administrar a los veterinarios.</Text>
 
         <Box
           style={{
-            width: '600px',
+            width: '700px',
+            border: '1px solid #ccc',
           }}
         >
           <DataTable
@@ -134,25 +217,29 @@ export function AddVeterinarian() {
             currentPageReportTemplate="Del {first} al {last} de {totalRecords}"
           >
             <Column
-              field="name"
-              header="Nombre"
-              style={{ width: '25%' }}
-            ></Column>
-            <Column
               field="lastName"
               header="Apellido"
-              style={{ width: '25%' }}
+              style={{ width: '22.5%' }}
+              sortable
+            ></Column>
+            <Column
+              field="name"
+              header="Nombre"
+              style={{ width: '22.5%' }}
+              sortable
             ></Column>
             <Column
               field="phone"
               header="Teléfono"
-              style={{ width: '25%' }}
+              style={{ width: '22.5%' }}
             ></Column>
             <Column
               field="email"
               header="Email"
-              style={{ width: '25%' }}
+              style={{ width: '22.5%' }}
             ></Column>
+            <Column field="edit" style={{ width: '5%' }}></Column>
+            <Column field="delete" style={{ width: '5%' }}></Column>
           </DataTable>
         </Box>
         <Button

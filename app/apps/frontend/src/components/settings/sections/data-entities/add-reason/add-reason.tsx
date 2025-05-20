@@ -248,7 +248,8 @@ export function AddReason() {
 
         <Box
           style={{
-            width: '600px',
+            border: '1px solid #ccc',
+            width: '700px',
           }}
         >
           <DataTable value={reasonItems} paginator rows={5}>
@@ -257,7 +258,12 @@ export function AddReason() {
               header="Razón"
               style={{ width: '45%' }}
             ></Column>
-            <Column field="sex" header="Sexo" style={{ width: '45%' }}></Column>
+            <Column
+              field="sex"
+              header="Sexo"
+              sortable
+              style={{ width: '45%' }}
+            ></Column>
             <Column field="edit" header="" style={{ width: '5%' }}></Column>
             <Column field="delete" header="" style={{ width: '5%' }}></Column>
           </DataTable>
