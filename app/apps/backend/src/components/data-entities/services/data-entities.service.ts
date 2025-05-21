@@ -31,7 +31,7 @@ export class DataEntitiesService {
     @InjectRepository(Setting)
     private settingRepository: Repository<Setting>,
     @InjectRepository(Veterinarian)
-    private veterinarianRepository: Repository<Veterinarian>,
+    private veterinarianRepository: Repository<Veterinarian>
   ) {}
 
   // ==================== MÉTODOS GET ====================
@@ -59,15 +59,15 @@ export class DataEntitiesService {
     return await this.userRepository.findOne({ where: { email } });
   }
 
-  async getSetting(querys: { settingName?: string}){
-    return await this.settingRepository.find({where : querys});
+  async getSetting(querys: { settingName?: string }) {
+    return await this.settingRepository.find({ where: querys });
   }
 
   async getVeterinarians(querys: FindVeterinarianDTO) {
-    const qb = this.veterinarianRepository.createQueryBuilder("v");
-    if (querys.ID_veterinarian) 
-      qb.andWhere("v.ID_veterinarian = :id", {id: querys.ID_veterinarian});
-    return await qb.getMany();  
+    const qb = this.veterinarianRepository.createQueryBuilder('v');
+    if (querys.ID_veterinarian)
+      qb.andWhere('v.ID_veterinarian = :id', { id: querys.ID_veterinarian });
+    return await qb.getMany();
   }
 
   // ==================== MÉTODOS CREATE ====================
@@ -135,12 +135,12 @@ export class DataEntitiesService {
     return await this.userRepository.save(newUser);
   }
 
-  async createSetting(body: CreateSettingDTO){
+  async createSetting(body: CreateSettingDTO) {
     const newSetting = this.settingRepository.create(body);
     return await this.settingRepository.save(newSetting);
   }
 
-  async createVeterinarian(body: CreateVeterinarianDTO){
+  async createVeterinarian(body: CreateVeterinarianDTO) {
     const newVeterinarian = this.veterinarianRepository.create(body);
     return await this.veterinarianRepository.save(newVeterinarian);
   }
@@ -163,14 +163,17 @@ export class DataEntitiesService {
     return await this.specieRepository.update(id, body);
   }
 
-  async updateSetting(body: UpdateSettingDTO){
-    return await this.settingRepository.update({settingName: body.settingName}, body);
+  async updateSetting(body: UpdateSettingDTO) {
+    return await this.settingRepository.update(
+      { settingName: body.settingName },
+      body
+    );
   }
 
-  async updateVeterinarian(body:UpdateVeterinarianDTO){
-    return await this.veterinarianRepository.update(body.ID_veterinarian, body);
+  async updateVeterinarian(body: UpdateVeterinarianDTO, id: number) {
+    return await this.veterinarianRepository.update(id, body);
   }
-  
+
   async editUser(body: { email: string; role: string }, id: number) {
     return await this.userRepository.update(id, body);
   }

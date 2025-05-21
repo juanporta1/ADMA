@@ -90,15 +90,13 @@ export class DataEntitiesController {
   }
 
   @Post('setting')
-  async createSetting(
-    @Body() body: CreateSettingDTO
-  ) {
+  async createSetting(@Body() body: CreateSettingDTO) {
     console.log(body);
     return await this.dataService.createSetting(body);
   }
 
   @Post('veterinarian')
-  async createVeterinarian(@Body() body: CreateVeterinarianDTO){
+  async createVeterinarian(@Body() body: CreateVeterinarianDTO) {
     return await this.dataService.createVeterinarian(body);
   }
 
@@ -131,14 +129,17 @@ export class DataEntitiesController {
   @Patch('setting')
   async editSetting(
     @Body()
-    body: UpdateSettingDTO,
-  ){
+    body: UpdateSettingDTO
+  ) {
     return await this.dataService.updateSetting(body);
   }
 
-  @Patch('veterinarian')
-  async editVeterinarian(@Body() body: UpdateVeterinarianDTO){
-    return await this.dataService.updateVeterinarian(body);
+  @Patch('veterinarian/:id')
+  async editVeterinarian(
+    @Body() body: UpdateVeterinarianDTO,
+    @Param('id') id: number
+  ) {
+    return await this.dataService.updateVeterinarian(body, id);
   }
 
   @Put('user/:id')
@@ -149,6 +150,4 @@ export class DataEntitiesController {
     console.log(body);
     return await this.dataService.editUser(body, id);
   }
-
-  
 }

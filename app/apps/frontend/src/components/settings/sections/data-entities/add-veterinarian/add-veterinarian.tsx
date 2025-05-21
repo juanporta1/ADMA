@@ -89,17 +89,21 @@ export function AddVeterinarian() {
 
   const handleOnEdit = async (values: editedVeterinarian) => {
     if (!actualVeterinarian) return;
+    console.log('actualVeterinarian', actualVeterinarian);
     await editData('veterinarian', actualVeterinarian.ID_veterinarian, values);
 
     await getVeterinarians();
+    closeEdit();
   };
 
   const handleOnDelete = async () => {
     if (!actualVeterinarian) return;
+
     await editData('veterinarian', actualVeterinarian.ID_veterinarian, {
       inUse: false,
     });
     await getVeterinarians();
+    closeDelete();
   };
 
   const veterinarianItems = veterinarians
@@ -142,6 +146,18 @@ export function AddVeterinarian() {
   }, [editModal, createModal]);
 
   useEffect(() => console.log(veterinarians), [veterinarians]);
+
+  // Sincronizar el formulario de edición con el veterinario seleccionado
+  useEffect(() => {
+    if (editModal && actualVeterinarian) {
+      form.setValues({
+        name: actualVeterinarian.name || '',
+        lastName: actualVeterinarian.lastName || '',
+        phone: actualVeterinarian.phone || '',
+        email: actualVeterinarian.email || '',
+      });
+    }
+  }, [editModal, actualVeterinarian]);
 
   return (
     <div>
@@ -199,6 +215,85 @@ export function AddVeterinarian() {
             </Grid.Col>
           </Grid>
         </form>
+      </Modal>
+      <Modal
+        opened={editModal}
+        onClose={closeEdit}
+        title="Editar Veterinario"
+        centered
+      >
+        <form
+          onSubmit={form.onSubmit((values) =>
+            handleOnEdit(values as editedVeterinarian)
+          )}
+        >
+          <Grid>
+            <FormColumn
+              form={form}
+              name="lastName"
+              inputType="text"
+              label="Apellido"
+              placeholder="Ingrese el Apellido"
+              span={6}
+            />
+            <FormColumn
+              form={form}
+              name="name"
+              inputType="text"
+              label="Nombre"
+              placeholder="Ingrese el Nombre"
+              span={6}
+            />
+            <FormColumn
+              form={form}
+              name="phone"
+              inputType="text"
+              label="Teléfono"
+              placeholder="Ingrese el Teléfono"
+              span={6}
+              notRequired
+            />
+            <FormColumn
+              form={form}
+              name="email"
+              inputType="text"
+              label="Email"
+              placeholder="Ingrese el Email"
+              span={6}
+              notRequired
+            />
+            <Grid.Col span={6}>
+              <Button color={mainColor} variant="light" type="submit" fullWidth>
+                Guardar Cambios
+              </Button>
+            </Grid.Col>
+            <Grid.Col span={6}>
+              <Button color={mainColor} onClick={closeEdit} fullWidth>
+                Cancelar
+              </Button>
+            </Grid.Col>
+          </Grid>
+        </form>
+      </Modal>
+      <Modal
+        opened={deleteModal}
+        onClose={closeDelete}
+        title="¿Seguro que desea eliminar este veterinario?"
+        centered
+      >
+        <Flex direction="row" align="center" justify="center" gap="xl">
+          <Button
+            color={mainColor}
+            variant="light"
+            onClick={handleOnDelete}
+            fullWidth
+          >
+            Sí, eliminar
+          </Button>
+          <Button color={mainColor} onClick={closeDelete} fullWidth>
+            Cancelar
+          </Button>
+        </Flex>
       </Modal>
       <Flex gap="md" direction="column" align={'start'} justify={'center'}>
         <Title>Veterinarios</Title>
