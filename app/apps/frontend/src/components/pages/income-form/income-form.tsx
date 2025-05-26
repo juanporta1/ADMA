@@ -41,11 +41,12 @@ export function IncomeForm() {
   const [notDoneModal, { open: openNotDoneModal, close: closeNotDoneModal }] =
     useDisclosure(false);
   const fetchAppointments = async () => {
-    const filteredAppointments = await filter({
+    const json = await filter({
       date: new Date(form.getValues().date),
       byHour: form.getValues().hour,
       dateFilterWay: 'onlyOne',
     });
+    const filteredAppointments = json?.data;
     if (!filteredAppointments) return;
     const redAppointments = filteredAppointments.filter((a) =>
       ['Ausentado', 'Cancelado', 'No Realizado'].includes(a.status)
@@ -102,7 +103,7 @@ export function IncomeForm() {
           admissionFunction,
           cancelFunction,
           notDoneFunction,
-          doneFunction
+          doneFunction,
         }}
       />
     ));
@@ -151,7 +152,7 @@ export function IncomeForm() {
         actualAppointment={actualAppointment}
         fetch={fetchAppointments}
       />
-      <NotDoneModal 
+      <NotDoneModal
         actualAppointement={actualAppointment}
         notDoneModal={notDoneModal}
         closeNotDoneModal={closeNotDoneModal}

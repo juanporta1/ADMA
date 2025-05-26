@@ -58,6 +58,8 @@ export interface FilterParams {
   findBy?: 'dni' | 'owner'; // Buscar por DNI o dueño
   dateFilterWay?: 'all' | 'onlyOne' | 'interval';
   date?: Date;
+  page?: number;
+  limit?: number;
 }
 
 // Componente principal para filtrar y mostrar turnos
@@ -66,6 +68,7 @@ export function FilterAppointments() {
   const [appointmentData, setAppointmentData] = useState<Appointment[]>([]);
   // Estado para controlar el texto de carga
   const [isLoading, setIsLoading] = useState<string | null>(null);
+  const [totalRegisters, setTotalRegisters] = useState<number>(0);
   // Estado para la página actual de la paginación
   const [actualPage, setPage] = useState(1);
   const [dateFilterWay, setDateFilterWay] = useState<
@@ -161,15 +164,15 @@ export function FilterAppointments() {
       );
 
       // Llama al hook para filtrar los turnos
-      const data = await filter(params);
+      const data = await filter({ ...params, limit: 7, page: actualPage });
       if (!data) {
         setIsLoading('error');
         finishLoadingRows();
         return params;
       }
-      setAppointmentData(data);
+      setAppointmentData(data.data);
+      setTotalRegisters(data.total);
       finishLoadingRows();
-      setPage(1);
       setIsLoading('loaded');
       return params;
     } catch (err) {
@@ -236,6 +239,9 @@ export function FilterAppointments() {
     }
   }, [isLoading]);
 
+  useEffect(() => {
+    handleOnSubmit();
+  }, [actualPage]);
   // Renderizado principal del componente
   if (form) {
     return (
@@ -532,9 +538,7 @@ export function FilterAppointments() {
                       }}
                     >
                       <Pagination
-                        total={Math.ceil(
-                          appointmentData.length / registersPerPage
-                        )}
+                        total={totalRegisters / registersPerPage}
                         value={actualPage}
                         onChange={setPage}
                         color={mainColor}

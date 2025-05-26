@@ -14,7 +14,7 @@ import { AppointmentService } from '../service/appointment.service';
 import { UpdateAppointmentDto } from '../DTOs/update-appointment.dto';
 import { FilterAppointmentDto } from '../DTOs/filter-appointment.dto';
 import PDFDocumentWithTables from 'pdfkit-table';
-import type {  Response } from 'express';
+
 @Controller('appointment')
 export class AppointmentController {
   constructor(private appointmentService: AppointmentService) {}
@@ -22,11 +22,22 @@ export class AppointmentController {
   @Get('')
   async getAppointments(@Query() querys: FilterAppointmentDto) {
     // console.log('Query Params:', querys);
-    return await this.appointmentService.getAll(querys);
+
+    const [appointments, count] = await this.appointmentService.getAll(querys);
+    console.log(
+      'Total Appointments:',
+      appointments,
+      'Longitud',
+      appointments.lenght
+    );
+    return {
+      data: appointments,
+      total: count,
+    };
   }
-   
+
   @Get('countPerHour')
-  async getCountPerHour(@Query() querys: {date: string}) {
+  async getCountPerHour(@Query() querys: { date: string }) {
     return await this.appointmentService.getCountPerHour(querys);
   }
 

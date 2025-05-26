@@ -4,13 +4,14 @@ import { notifications } from '@mantine/notifications';
 import axios from 'axios';
 import { ApiHostContext } from '../../../contexts/api-host-context';
 import { EditFormValues } from '../../../components/pages/appointment/edit/edit-appointment';
-import { User } from '../../general/login/use-login';
 import { UserContext } from '../../../contexts/user-context';
 import { Appointment } from '../../../types/entities.types';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface UseAppointment {
-  filter: (params: FilterParams) => Promise<Appointment[] | null>;
+  filter: (
+    params: FilterParams
+  ) => Promise<{ data: Appointment[]; total: number } | null>;
   edit: (appointment: EditFormValues, id: number) => Promise<void>;
   remove: (id: number) => void;
   create: (values: FormValues) => void;
@@ -21,7 +22,7 @@ export interface UseAppointment {
     observations?: string,
     reason?: string
   ) => Promise<void>;
-  countPerDay: (date:string) => Promise<Record<string, number>>;
+  countPerDay: (date: string) => Promise<Record<string, number>>;
 }
 interface FormValues {
   lastName: string;
@@ -86,7 +87,9 @@ export function useAppointment(): UseAppointment {
     });
   }
 
-  async function filter(params: FilterParams): Promise<Appointment[] | null> {
+  async function filter(
+    params: FilterParams
+  ): Promise<{ data: Appointment[]; total: number } | null> {
     let res;
     try {
       if (params.input) {
@@ -112,7 +115,7 @@ export function useAppointment(): UseAppointment {
       return res.data;
     } catch (err) {
       console.log(err);
-      return [];
+      return { data: [], total: 0 };
     }
   }
   async function remove(id: number) {
@@ -206,13 +209,13 @@ export function useAppointment(): UseAppointment {
   }
 
   const countPerDay = async (date: string): Promise<Record<string, number>> => {
-    const res = await axios.get(`${host}/appointment/countPerHour`,{
+    const res = await axios.get(`${host}/appointment/countPerHour`, {
       params: {
         date,
       },
     });
     return res.data;
-  }
+  };
   return { filter, create, edit, remove, generatePDF, editStatus, countPerDay };
 }
 

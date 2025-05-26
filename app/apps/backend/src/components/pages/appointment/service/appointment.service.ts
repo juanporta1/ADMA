@@ -1,5 +1,12 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { Brackets, In, LessThanOrEqual, Not, Repository, UpdateResult } from 'typeorm';
+import {
+  Brackets,
+  In,
+  LessThanOrEqual,
+  Not,
+  Repository,
+  UpdateResult,
+} from 'typeorm';
 import { CreateAppointmentDTO } from '../DTOs/create-appointment.dto';
 import { Appointment } from '../appointment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -23,7 +30,7 @@ export class AppointmentService {
       .select('appointment.hour', 'hour')
       .addSelect('COUNT(*)', 'count')
       .where(
-        new Brackets(qb => {
+        new Brackets((qb) => {
           qb.where('appointment.status = :status', { status: 'Pendiente' })
             .orWhere('appointment.status = :status2', {
               status2: 'Esperando Actualización',
@@ -48,7 +55,7 @@ export class AppointmentService {
     return counts;
   }
 
-  async getAll(querys: FilterAppointmentDto) {
+  async getAll(querys: FilterAppointmentDto): Promise<[Appointment[], number]> {
     // console.log(querys);
     if (Object.keys(querys).length != 0) {
       const filterQueryBuilder =
@@ -139,19 +146,26 @@ export class AppointmentService {
 
       if (querys.byHour)
         filterQueryBuilder.andWhere(`a.hour = :hour`, { hour: querys.byHour });
+
       filterQueryBuilder.leftJoinAndSelect('a.neighborhood', 'neighborhood');
       filterQueryBuilder.leftJoinAndSelect('a.specie', 'specie');
       filterQueryBuilder.leftJoinAndSelect('a.reason', 'reason');
       filterQueryBuilder.leftJoinAndSelect('a.incomeForm', 'incomeForm');
       filterQueryBuilder.leftJoinAndSelect('a.castration', 'castration');
+      const count = await filterQueryBuilder.getCount();
 
-      return await filterQueryBuilder.getMany();
+      if (querys.page && querys.limit) {
+        filterQueryBuilder.skip((querys.page - 1) * querys.limit);
+        filterQueryBuilder.take(querys.limit);
+      }
+      return await [await filterQueryBuilder.getMany(), count];
     } else {
-      return await this.appointmentRepository.find({
+      return await this.appointmentRepository.findAndCount({
         relations: ['neighborhood', 'specie', 'reason'],
       });
     }
   }
+
   async createAppointmentsBulk(
     appointments: CreateAppointmentDTO[]
   ): Promise<Appointment[]> {
@@ -266,20 +280,21 @@ export class AppointmentService {
     updatedAppointment: UpdateAppointmentDto
   ) {
     try {
-      const {specie, reason, neighborhood, ...rest}= updatedAppointment
+      const { specie, reason, neighborhood, ...rest } = updatedAppointment;
       console.log(updatedAppointment);
-      const dataEntitiesUpdates: Record<string,Record<string, number>> = {};
-      if(specie) dataEntitiesUpdates['specie'] = {
-        ID_specie: updatedAppointment.specie
-      };
-      if(neighborhood) dataEntitiesUpdates['neighborhood'] = {
-        ID_neighborhood: updatedAppointment.neighborhood
-      };
-      if(reason) dataEntitiesUpdates['reason'] = {
-        ID_reason: updatedAppointment.reason
-      };
-
-      
+      const dataEntitiesUpdates: Record<string, Record<string, number>> = {};
+      if (specie)
+        dataEntitiesUpdates['specie'] = {
+          ID_specie: updatedAppointment.specie,
+        };
+      if (neighborhood)
+        dataEntitiesUpdates['neighborhood'] = {
+          ID_neighborhood: updatedAppointment.neighborhood,
+        };
+      if (reason)
+        dataEntitiesUpdates['reason'] = {
+          ID_reason: updatedAppointment.reason,
+        };
 
       let updateResult: UpdateResult;
       const appointment = await this.getAll({ id });
