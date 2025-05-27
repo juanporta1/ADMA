@@ -164,6 +164,7 @@ export function FilterAppointments() {
       );
 
       // Llama al hook para filtrar los turnos
+      console.log('Page:', actualPage);
       const data = await filter({ ...params, limit: 7, page: actualPage });
       if (!data) {
         setIsLoading('error');
@@ -178,7 +179,6 @@ export function FilterAppointments() {
     } catch (err) {
       setIsLoading('error');
       finishLoadingRows();
-      setPage(1);
       console.log(err);
       return {};
     }
@@ -187,13 +187,9 @@ export function FilterAppointments() {
   // Componente interno para renderizar las filas de la tabla de turnos
   const Rows = () => {
     // Calcula los datos a mostrar según la página actual
-    const paginationData = appointmentData.slice(
-      (actualPage - 1) * registersPerPage,
-      actualPage * registersPerPage
-    );
 
     // Mapea cada turno a una fila de la tabla
-    return paginationData.map((appointment) => (
+    return appointmentData.map((appointment) => (
       <AppointmentRow
         appointment={appointment}
         key={appointment.ID_appointment}
@@ -464,6 +460,7 @@ export function FilterAppointments() {
                           fullWidth
                           variant="filled"
                           color={mainColor}
+                          onClick={() => setPage(1)}
                         >
                           Listar
                         </Button>
@@ -506,7 +503,11 @@ export function FilterAppointments() {
                       style={{ minHeight: `${(registersPerPage + 1) * 45}px` }}
                     >
                       {/* Overlay de carga mientras se obtienen los datos */}
-                      <LoadingOverlay visible={loadingRows} zIndex={10} />
+                      <LoadingOverlay
+                        visible={loadingRows}
+                        zIndex={10}
+                        style={{ position: 'fixed' }}
+                      />
                       <Table>
                         <Table.Thead>
                           <Table.Tr>
@@ -538,7 +539,7 @@ export function FilterAppointments() {
                       }}
                     >
                       <Pagination
-                        total={totalRegisters / registersPerPage}
+                        total={Math.ceil(totalRegisters / registersPerPage)}
                         value={actualPage}
                         onChange={setPage}
                         color={mainColor}

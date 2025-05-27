@@ -1,12 +1,5 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import {
-  Brackets,
-  In,
-  LessThanOrEqual,
-  Not,
-  Repository,
-  UpdateResult,
-} from 'typeorm';
+import { Brackets, Repository, UpdateResult } from 'typeorm';
 import { CreateAppointmentDTO } from '../DTOs/create-appointment.dto';
 import { Appointment } from '../appointment.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -256,7 +249,8 @@ export class AppointmentService {
       return new HttpException('No se puede borrar este recurso', 403);
 
     try {
-      const deletedAppointment = await this.getAll({ id });
+      const res = await this.getAll({ id });
+      const deletedAppointment = res[0];
       const deleteResult = await this.appointmentRepository.delete(id);
       if (
         deleteResult.affected &&
@@ -297,7 +291,8 @@ export class AppointmentService {
         };
 
       let updateResult: UpdateResult;
-      const appointment = await this.getAll({ id });
+      const res = await this.getAll({ id });
+      const appointment = res[0];
       // console.log(updatedAppointment);
       if (
         ['Ausentado', 'Cancelado', 'No Realizado'].includes(
@@ -337,7 +332,7 @@ export class AppointmentService {
 
     await this.pdfService.generateHeader(doc, filters);
     if (filters.values)
-      this.pdfService.newTable(doc, registers, filters.values);
+      this.pdfService.newTable(doc, registers[0], filters.values);
     this.pdfService.generateFooter(doc);
   }
 }

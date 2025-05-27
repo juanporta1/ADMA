@@ -14,7 +14,7 @@ import { AppointmentService } from '../service/appointment.service';
 import { UpdateAppointmentDto } from '../DTOs/update-appointment.dto';
 import { FilterAppointmentDto } from '../DTOs/filter-appointment.dto';
 import PDFDocumentWithTables from 'pdfkit-table';
-
+import { type Response } from 'express';
 @Controller('appointment')
 export class AppointmentController {
   constructor(private appointmentService: AppointmentService) {}
@@ -24,12 +24,7 @@ export class AppointmentController {
     // console.log('Query Params:', querys);
 
     const [appointments, count] = await this.appointmentService.getAll(querys);
-    console.log(
-      'Total Appointments:',
-      appointments,
-      'Longitud',
-      appointments.lenght
-    );
+
     return {
       data: appointments,
       total: count,
