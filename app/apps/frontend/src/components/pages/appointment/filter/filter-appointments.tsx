@@ -506,7 +506,7 @@ export function FilterAppointments() {
                       <LoadingOverlay
                         visible={loadingRows}
                         zIndex={10}
-                        style={{ position: 'fixed' }}
+                        style={{ position: 'fixed', zIndex: 1000 }}
                       />
                       <Table>
                         <Table.Thead>

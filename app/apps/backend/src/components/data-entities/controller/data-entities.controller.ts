@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -14,6 +15,9 @@ import type { UpdateSettingDTO } from '../dto/update-setting.DTO';
 import type { CreateVeterinarianDTO } from '../dto/create-veterinarian.DTO';
 import type { UpdateVeterinarianDTO } from '../dto/update-veterinarian.DTO';
 import type { FindVeterinarianDTO } from '../dto/find-veterinarian.DTO';
+import type { FindCustomAppointmentScheduleDTO } from '../dto/find-custom-appointment-schedule.DTO';
+import type { CreateCustomAppointmentScheduleDTO } from '../dto/create-custom-appointment-schedule-DTO';
+import type { UpdateCustomAppointmentScheduleDTO } from '../dto/update-custom-appointment-schedule.DTO';
 
 @Controller('data-entities')
 export class DataEntitiesController {
@@ -52,6 +56,12 @@ export class DataEntitiesController {
     return await this.dataService.getVeterinarians(querys);
   }
 
+  @Get('appointment-schedule')
+  async getAppointmentSchedules(
+    @Query() querys: FindCustomAppointmentScheduleDTO
+  ) {
+    return await this.dataService.getAppointmentSchedules(querys);
+  }
   // ==================== MÉTODOS POST ====================
   @Post('specie')
   async createSpecie(@Body() body: { specie: string }) {
@@ -99,6 +109,12 @@ export class DataEntitiesController {
   async createVeterinarian(@Body() body: CreateVeterinarianDTO) {
     return await this.dataService.createVeterinarian(body);
   }
+  @Post('appointment-schedule')
+  async createAppointmentSchedule(
+    @Body() body: CreateCustomAppointmentScheduleDTO
+  ) {
+    return await this.dataService.createCustomAppointmentSchedule(body);
+  }
 
   // ==================== MÉTODOS PUT/PATCH ====================
   @Patch('neighborhood/:id')
@@ -114,7 +130,7 @@ export class DataEntitiesController {
     @Body() body: { specie?: string; inUse?: boolean },
     @Param('id') id: number
   ) {
-    this.dataService.updateSpecie(body, id);
+    return await this.dataService.updateSpecie(body, id);
   }
 
   @Patch('reason/:id')
@@ -123,7 +139,7 @@ export class DataEntitiesController {
     body: { reason?: string; inUse?: boolean; reasonSex?: 'a' | 'm' | 'h' },
     @Param('id') id: number
   ) {
-    this.dataService.updateReason(body, id);
+    return await this.dataService.updateReason(body, id);
   }
 
   @Patch('setting')
@@ -142,6 +158,14 @@ export class DataEntitiesController {
     return await this.dataService.updateVeterinarian(body, id);
   }
 
+  @Patch('appointment-schedule/:id')
+  async updateAppointmentSchedule(
+    @Body() body: UpdateCustomAppointmentScheduleDTO,
+    @Param('id') id: number
+  ) {
+    return await this.dataService.updateAppointmentSchedule(body, id);
+  }
+
   @Put('user/:id')
   async editUser(
     @Body() body: { email: string; role: string },
@@ -149,5 +173,11 @@ export class DataEntitiesController {
   ) {
     console.log(body);
     return await this.dataService.editUser(body, id);
+  }
+  // ==================== MÉTODOS DELETE ====================
+
+  @Delete('appointment-schedule/:id')
+  async deleteAppointmentSchedule(@Param('id') id: number) {
+    return await this.dataService.deleteAppointmentSchedule(id);
   }
 }

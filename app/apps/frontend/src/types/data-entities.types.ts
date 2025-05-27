@@ -52,6 +52,7 @@ export interface DataEntities {
   species: Specie[];
   neighborhoods: Neighborhood[];
   veterinarians: Veterinarian[];
+  appointmentSchedules: AppointmentSchedule[];
 }
 
 export interface editedNeighborhood {
@@ -81,4 +82,23 @@ export interface Setting {
   settingIntValue?: number | null;
   settingStringValue?: string | null;
   settingBooleanValue?: boolean | null;
+}
+
+export interface newAppointmentSchedule {
+  date: string;
+  hour: '8:00' | '10:00' | '12:00';
+  maxAppointments: number;
+}
+
+export interface AppointmentSchedule {
+  ID_appointmentSchedule: number;
+  date: string;
+  hour: '8:00' | '10:00' | '12:00';
+  maxAppointments: number;
+}
+
+export interface editedAppointmentSchedule {
+  date?: string;
+  hour?: '8:00' | '10:00' | '12:00';
+  maxAppointments?: number;
 }

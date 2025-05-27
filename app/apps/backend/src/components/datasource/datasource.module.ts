@@ -11,6 +11,7 @@ import { ResidualNumber } from '../data-entities/entities/residual-number.entity
 import { User } from '../data-entities/entities/user.entity';
 import { Setting } from '../data-entities/entities/setting.entity';
 import { Veterinarian } from '../data-entities/entities/veterinarian.entity';
+import { AppointmentSchedule } from '../data-entities/entities/appointment-schedule.entity';
 
 dotenv.config();
 
@@ -36,7 +37,8 @@ dotenv.config();
               ResidualNumber,
               User,
               Setting,
-              Veterinarian
+              Veterinarian,
+              AppointmentSchedule,
             ],
             synchronize: true,
           });

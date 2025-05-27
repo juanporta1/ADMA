@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { Neighborhood } from '../entities/neighborhood.entity';
 import { Specie } from '../entities/specie.entity';
 import { Reason } from '../entities/reason.entity';
-import { privateDecrypt } from 'crypto';
 import { ResidualNumber } from '../entities/residual-number.entity';
 import { User } from '../entities/user.entity';
 import { Setting } from '../entities/setting.entity';
@@ -14,6 +13,10 @@ import { Veterinarian } from '../entities/veterinarian.entity';
 import { CreateVeterinarianDTO } from '../dto/create-veterinarian.DTO';
 import { UpdateVeterinarianDTO } from '../dto/update-veterinarian.DTO';
 import { FindVeterinarianDTO } from '../dto/find-veterinarian.DTO';
+import { CreateCustomAppointmentScheduleDTO } from '../dto/create-custom-appointment-schedule-DTO';
+import { AppointmentSchedule } from '../entities/appointment-schedule.entity';
+import { FindCustomAppointmentScheduleDTO } from '../dto/find-custom-appointment-schedule.DTO';
+import { UpdateCustomAppointmentScheduleDTO } from '../dto/update-custom-appointment-schedule.DTO';
 
 @Injectable()
 export class DataEntitiesService {
@@ -31,7 +34,9 @@ export class DataEntitiesService {
     @InjectRepository(Setting)
     private settingRepository: Repository<Setting>,
     @InjectRepository(Veterinarian)
-    private veterinarianRepository: Repository<Veterinarian>
+    private veterinarianRepository: Repository<Veterinarian>,
+    @InjectRepository(AppointmentSchedule)
+    private appointmentScheduleRepository: Repository<AppointmentSchedule>
   ) {}
 
   // ==================== MÉTODOS GET ====================
@@ -70,6 +75,16 @@ export class DataEntitiesService {
     return await qb.getMany();
   }
 
+  async getAppointmentSchedules(querys: FindCustomAppointmentScheduleDTO) {
+    const qb = this.appointmentScheduleRepository.createQueryBuilder('as');
+    if (querys.date) {
+      qb.andWhere('as.date = :date', { date: querys.date });
+    }
+    if (querys.hour) {
+      qb.andWhere('as.hour = :hour', { hour: querys.hour });
+    }
+    return await qb.getMany();
+  }
   // ==================== MÉTODOS CREATE ====================
   async createSpecie(body: { specie: string }) {
     const existingSpecie = await this.specieRepository.findOne({
@@ -144,6 +159,16 @@ export class DataEntitiesService {
     const newVeterinarian = this.veterinarianRepository.create(body);
     return await this.veterinarianRepository.save(newVeterinarian);
   }
+
+  async createCustomAppointmentSchedule(
+    body: CreateCustomAppointmentScheduleDTO
+  ) {
+    const newAppointmentSchedule =
+      this.appointmentScheduleRepository.create(body);
+    return await this.appointmentScheduleRepository.save(
+      newAppointmentSchedule
+    );
+  }
   // ==================== MÉTODOS UPDATE ====================
   async updateNeighborhood(
     body: { neighborhood?: string; inUse?: boolean },
@@ -178,6 +203,13 @@ export class DataEntitiesService {
     return await this.userRepository.update(id, body);
   }
 
+  async updateAppointmentSchedule(
+    body: UpdateCustomAppointmentScheduleDTO,
+    id: number
+  ) {
+    return await this.appointmentScheduleRepository.update(id, body);
+  }
+
   // ==================== MÉTODOS DELETE ====================
   async deleteResidualNumber(id: number) {
     return await this.residualNumberRepository.delete(id);
@@ -185,5 +217,9 @@ export class DataEntitiesService {
 
   async deleteUser(id: number) {
     return await this.userRepository.delete(id);
+  }
+
+  async deleteAppointmentSchedule(id: number) {
+    return await this.appointmentScheduleRepository.delete(id);
   }
 }

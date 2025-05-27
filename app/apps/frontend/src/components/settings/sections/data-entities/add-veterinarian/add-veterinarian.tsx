@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
 import useDataEntities from '../../../../../hooks/general/use-data-entities/use-data-entities';
-import styles from './add-veterinarian.module.css';
 import {
   editedVeterinarian,
   newVeterinarian,
@@ -15,7 +14,6 @@ import {
   Flex,
   Grid,
   Modal,
-  Table,
   Text,
   Title,
 } from '@mantine/core';
@@ -23,7 +21,7 @@ import { MainColorContext } from '../../../../../contexts/color-context';
 import { UserContext } from '../../../../../contexts/user-context';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
-import { DataTable, DataTableValue } from 'primereact/datatable';
+import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import FormColumn from '../../../../utilities/form-column/form-column';
 
@@ -144,8 +142,6 @@ export function AddVeterinarian() {
   useEffect(() => {
     if (editModal || createModal) form.reset();
   }, [editModal, createModal]);
-
-  useEffect(() => console.log(veterinarians), [veterinarians]);
 
   // Sincronizar el formulario de edición con el veterinario seleccionado
   useEffect(() => {

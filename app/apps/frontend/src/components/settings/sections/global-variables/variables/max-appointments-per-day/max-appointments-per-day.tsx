@@ -28,25 +28,26 @@ export function MaxAppointmentsPerDay() {
   };
 
   const updateValue = async () => {
-    if (currentUser?.role!=='main') return;
+    if (currentUser?.role !== 'main') return;
     if (inputValue === maxAppointmentsPerDay) return;
     if (inputValue === 0) return;
-    await updateSetting({settingName: 'maxAppointmentsPerDay', settingIntValue: inputValue});
+    await updateSetting({
+      settingName: 'maxAppointmentsPerDay',
+      settingIntValue: inputValue,
+    });
     getValue();
   };
 
   useEffect(() => {
     getValue();
   }, []);
-  useEffect(() => {
-    console.log(maxAppointmentsPerDay);
-  }, [maxAppointmentsPerDay]);
+
   return (
     <Flex direction={'column'} gap={'sm'} justify={'center'} align={'start'}>
       <Title order={2}>Cantidad Máxima de Turnos por Día</Title>
       <Text>
-        Este valor controla el numero total de turnos que pueden dar los usuarios
-        no main en cualquier día en un horario en especifico.
+        Este valor controla el numero total de turnos que pueden dar los
+        usuarios no main en cualquier día en un horario en especifico.
       </Text>
       <TextInput
         ref={input}
@@ -67,7 +68,9 @@ export function MaxAppointmentsPerDay() {
       <Button
         color={mainColor}
         disabled={
-          currentUser?.role !== 'main' || inputValue === maxAppointmentsPerDay || inputValue === 0
+          currentUser?.role !== 'main' ||
+          inputValue === maxAppointmentsPerDay ||
+          inputValue === 0
         }
         onClick={updateValue}
       >

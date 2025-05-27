@@ -9,6 +9,7 @@ import AddReason from './sections/data-entities/add-reason/add-reason';
 import AddSpecie from './sections/data-entities/add-specie/add-specie';
 import GlobalVariables from './sections/global-variables/global-variables';
 import AddVeterinarian from './sections/data-entities/add-veterinarian/add-veterinarian';
+import { AddappointmentSchedule } from './sections/data-entities/add-custom-appointment-schedule/add-custom-appointment-schedule';
 
 export function Settings() {
   const mainColor = useContext(MainColorContext);
@@ -51,6 +52,7 @@ export function Settings() {
         <AddReason />
         <AddSpecie />
         <AddVeterinarian />
+        <AddappointmentSchedule />
         <GlobalVariables />
         <Sesion />
       </Flex>
