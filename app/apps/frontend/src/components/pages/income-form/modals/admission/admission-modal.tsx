@@ -1,17 +1,21 @@
 import { Button, Grid, Modal } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { Appointment } from '../../../appointment/filter/filter-appointments';
+import { Appointment } from '../../../../../types/entities.types';
 import FormColumn from '../../../../utilities/form-column/form-column';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { MainColorContext } from '../../../../../contexts/color-context';
 import useIncomeForm from '../../../../../hooks/income-form/use-income-form/use-income-form';
 import useAppointment from '../../../../../hooks/appointment/use-appointment/use-appointment';
+import { SelectData } from '../../../../../types/utilities.types';
+import useDataEntities from '../../../../../hooks/general/use-data-entities/use-data-entities';
 
 interface props {
   admissionModal: boolean;
   closeAdmissionModal: () => void;
   actualAppointment: Appointment | null;
   fetch: () => void;
+  veterinarians: SelectData[];
+  actualVeterinarian: string;
 }
 
 export function AdmissionModal({
@@ -19,11 +23,15 @@ export function AdmissionModal({
   closeAdmissionModal,
   actualAppointment,
   fetch,
+  veterinarians,
+  actualVeterinarian,
 }: props) {
   const mainColor = useContext(MainColorContext);
+
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: {
+      veterinarian: actualVeterinarian,
       age: '',
       weight: '',
       animalName: '',
@@ -49,8 +57,9 @@ export function AdmissionModal({
     if (!actualAppointment) return;
     await editStatus(actualAppointment.ID_appointment, 'En Proceso');
     const editedWeight = v.weight.replace(',', '.');
-    const newIncome = await create({
+    await create({
       ID_appointment: actualAppointment.ID_appointment,
+      ID_veterinarian: Number(v.veterinarian) || null,
       age: v.age,
       animalName: v.animalName,
       features: v.features,
@@ -60,11 +69,17 @@ export function AdmissionModal({
     fetch();
   };
   useEffect(() => {
-    console.log(form.values)
-    if (admissionModal){
+    console.log(form.values);
+    if (admissionModal) {
       form.reset();
     }
-  }, [admissionModal])
+  }, [admissionModal]);
+
+  useEffect(() => {
+    form.setValues({
+      veterinarian: actualVeterinarian,
+    });
+  }, [admissionModal]);
   return (
     <Modal
       opened={admissionModal}
@@ -109,6 +124,16 @@ export function AdmissionModal({
             label="Ingrese Caractersiticas del animal: "
             placeholder="Caracteristicas del animal"
             span={12}
+          />
+          <FormColumn
+            inputType="select"
+            form={form}
+            name="veterinarian"
+            label="Seleccione un Veterinario: "
+            placeholder="Seleccione un Veterinario"
+            span={12}
+            data={veterinarians}
+            notRequired
           />
           <Grid.Col span={12}>
             <Button color={mainColor} variant="light" type="submit" fullWidth>

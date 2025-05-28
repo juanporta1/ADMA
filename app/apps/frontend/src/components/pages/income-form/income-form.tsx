@@ -2,17 +2,19 @@ import { Accordion, Box, Flex, Grid } from '@mantine/core';
 import styles from './income-form.module.css';
 import useIncomeForm from '../../../hooks/income-form/use-income-form/use-income-form';
 import FormColumn from '../../utilities/form-column/form-column';
-import { SelectData } from '../../../hooks/appointment/use-selects-data/use-selects-data';
+import { SelectData } from '../../../types/utilities.types';
 import useAppointment from '../../../hooks/appointment/use-appointment/use-appointment';
 import { useEffect, useState } from 'react';
 import StatusTable from './status-table/status-table';
-import { useDisclosure } from '@mantine/hooks';
+import { useDisclosure, useSet } from '@mantine/hooks';
 import CanceledModal from './modals/canceled/canceled-modal';
 import AdmissionModal from './modals/admission/admission-modal';
 import AbsenceModal from './modals/absence/absence-modal';
 import NotDoneModal from './modals/not-done/not-done-modal';
 import DoneModal from './modals/done/done-modal';
 import { Appointment } from '../../../types/entities.types';
+import { Veterinarian } from '../../../types/data-entities.types';
+import useDataEntities from '../../../hooks/general/use-data-entities/use-data-entities';
 
 export function IncomeForm() {
   const { form } = useIncomeForm();
@@ -21,6 +23,8 @@ export function IncomeForm() {
     { value: '10:00', text: '10:00' },
     { value: '12:00', text: '12:00' },
   ];
+  const { getData } = useDataEntities();
+  const [veterinarians, setVeterinarians] = useState<SelectData[]>([]);
   const { filter, editStatus } = useAppointment();
   const [actualAppointment, setActualAppointment] =
     useState<Appointment | null>(null);
@@ -126,6 +130,28 @@ export function IncomeForm() {
   };
 
   useEffect(() => {
+    const fetchVeterinarians = async () => {
+      const { veterinarians: vet } = await getData(['veterinarians']);
+      if (!vet) return;
+      const veterinariansData: SelectData[] = vet
+        .filter((v) => v.inUse)
+        .map((v) => {
+          const selectData: SelectData = {
+            value: v.ID_veterinarian.toString(),
+            text: `${v.lastName} ${v.name}`,
+          };
+          return selectData;
+        });
+      veterinariansData.unshift({
+        text: 'Seleccione un Veterinario',
+        value: '',
+      });
+      setVeterinarians(veterinariansData);
+    };
+    fetchVeterinarians();
+  }, []);
+
+  useEffect(() => {
     fetchAppointments();
   }, [form.values]);
 
@@ -151,6 +177,8 @@ export function IncomeForm() {
         closeAdmissionModal={closeAdmissionModal}
         actualAppointment={actualAppointment}
         fetch={fetchAppointments}
+        actualVeterinarian={form.values.veterinarian}
+        veterinarians={veterinarians}
       />
       <NotDoneModal
         actualAppointement={actualAppointment}
@@ -164,6 +192,8 @@ export function IncomeForm() {
         closeDoneModal={closeDoneModal}
         actualAppointment={actualAppointment}
         fetch={fetchAppointments}
+        veterinarians={veterinarians}
+        actualVeterinarian={form.values.veterinarian}
       />
       <Grid w={'30%'}>
         <FormColumn
@@ -181,6 +211,14 @@ export function IncomeForm() {
           label="Hora: "
           data={hourData}
           span={12}
+          notRequired
+        />
+        <FormColumn
+          inputType="select"
+          form={form}
+          name="veterinarian"
+          label="Veterinario"
+          data={veterinarians}
           notRequired
         />
       </Grid>

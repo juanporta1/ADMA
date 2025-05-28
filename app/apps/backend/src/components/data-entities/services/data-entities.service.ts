@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Not, Repository } from 'typeorm';
 import { Neighborhood } from '../entities/neighborhood.entity';
 import { Specie } from '../entities/specie.entity';
 import { Reason } from '../entities/reason.entity';
@@ -163,6 +163,18 @@ export class DataEntitiesService {
   async createCustomAppointmentSchedule(
     body: CreateCustomAppointmentScheduleDTO
   ) {
+    const existingSchedule = await this.appointmentScheduleRepository.findOne({
+      where: {
+        date: body.date,
+        hour: body.hour,
+      },
+    });
+    if (existingSchedule) {
+      return await this.appointmentScheduleRepository.update(
+        existingSchedule.ID_appointmentSchedule,
+        { maxAppointments: body.maxAppointments }
+      );
+    }
     const newAppointmentSchedule =
       this.appointmentScheduleRepository.create(body);
     return await this.appointmentScheduleRepository.save(
@@ -207,6 +219,27 @@ export class DataEntitiesService {
     body: UpdateCustomAppointmentScheduleDTO,
     id: number
   ) {
+    const current = await this.appointmentScheduleRepository.findOne({
+      where: { ID_appointmentSchedule: id },
+    });
+    if (!current) {
+      throw new Error('Appointment schedule not found');
+    }
+    const updated = { ...current, ...body };
+
+    const duplicate = await this.appointmentScheduleRepository.findOne({
+      where: {
+        date: updated.date,
+        hour: updated.hour,
+        ID_appointmentSchedule: Not(id), // importante: ignoramos el actual
+      },
+    });
+
+    if (duplicate) {
+      this.appointmentScheduleRepository.delete(
+        duplicate.ID_appointmentSchedule
+      );
+    }
     return await this.appointmentScheduleRepository.update(id, body);
   }
 

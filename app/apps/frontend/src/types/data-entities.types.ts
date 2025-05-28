@@ -1,5 +1,3 @@
-import { isNumberLike } from '@mantine/core';
-
 export interface Reason {
   ID_reason: number;
   reason: string;

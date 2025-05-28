@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateCastrationDTO } from '../DTOs/create-castration.DTO';
 import { Appointment } from '../../appointment/appointment.entity';
 import { IncomeForm } from '../../income-form/income-form.entity';
+import { Veterinarian } from '../../../data-entities/entities/veterinarian.entity';
 
 @Injectable()
 export class CastrationService {
@@ -14,15 +15,23 @@ export class CastrationService {
     @InjectRepository(Appointment)
     private appointmentRepository: Repository<Appointment>,
     @InjectRepository(IncomeForm)
-    private incomeFormRepository: Repository<IncomeForm>
+    private incomeFormRepository: Repository<IncomeForm>,
+    @InjectRepository(Veterinarian)
+    private veterinarianRepository: Repository<Veterinarian>
   ) {}
 
   async createCastration(body: CreateCastrationDTO) {
     console.log('Desde CastrationService: ', body);
+    if (!body.ID_veterinarian) return new Error('Veterinarian ID is required');
     const appointment = await this.appointmentRepository.findOne({
       where: { ID_appointment: body.ID_appointment },
       relations: ['incomeForm'],
     });
+    const veterinarian = await this.veterinarianRepository.findOne({
+      where: { ID_veterinarian: body.ID_veterinarian },
+    });
+
+    if (!veterinarian) throw new Error('Veterinarian  not found');
     if (!appointment) throw new Error('Appointment not found');
     if (!appointment.incomeForm) throw new Error('IncomeFrom does not exist');
 
@@ -31,6 +40,7 @@ export class CastrationService {
       weight: Number(body.weight),
       animalName: body.animalName,
       features: body.features,
+      veterinarian: veterinarian,
     });
     await this.castrationRepository.save(newCastration);
 

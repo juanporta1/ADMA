@@ -4,4 +4,5 @@ export interface CreateIncomeDTO {
   weight?: string;
   animalName?: string;
   features?: string;
+  ID_veterinarian?: number;
 }

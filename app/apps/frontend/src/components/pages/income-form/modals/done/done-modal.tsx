@@ -1,28 +1,34 @@
 import { Button, Grid, Modal } from '@mantine/core';
-import { Appointment } from '../../../appointment/filter/filter-appointments';
-import styles from './done-modal.module.css';
+import { Appointment } from '../../../../../types/entities.types';
 import FormColumn from '../../../../utilities/form-column/form-column';
 import useAppointment from '../../../../../hooks/appointment/use-appointment/use-appointment';
 import useIncomeForm from '../../../../../hooks/income-form/use-income-form/use-income-form';
 import { useForm } from '@mantine/form';
 import { MainColorContext } from '../../../../../contexts/color-context';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { SelectData } from '../../../../../types/utilities.types';
+import useDataEntities from '../../../../../hooks/general/use-data-entities/use-data-entities';
 interface props {
   doneModal: boolean;
   closeDoneModal: () => void;
   actualAppointment: Appointment | null;
   fetch: () => void;
+  veterinarians: SelectData[];
+  actualVeterinarian: string;
 }
 export function DoneModal({
   actualAppointment,
   closeDoneModal,
   doneModal,
   fetch,
+  veterinarians,
+  actualVeterinarian,
 }: props) {
   const mainColor = useContext(MainColorContext);
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: {
+      veterinarian: actualVeterinarian,
       age: '',
       weight: '',
       animalName: '',
@@ -39,6 +45,7 @@ export function DoneModal({
           : 'Solo puedes ingresar números y una única coma o punto decimal.',
     },
   });
+
   const { createCastration } = useIncomeForm();
   const { editStatus } = useAppointment();
   const handleOnSubmit = async (v: typeof form.values) => {
@@ -49,6 +56,7 @@ export function DoneModal({
     const editedWeight = v.weight.replace(',', '.');
     await createCastration(
       {
+        ID_veterinarian: Number(v.veterinarian),
         ID_appointment: actualAppointment.ID_appointment,
         age: v.age,
         weight: editedWeight,
@@ -61,11 +69,6 @@ export function DoneModal({
     fetch();
   };
 
-  // useEffect(() => {
-  //   if (!doneModal) return;
-  //   form.reset();
-  // }, [doneModal]);
-
   useEffect(() => {
     if (!actualAppointment || !actualAppointment.incomeForm) return;
     form.setValues({
@@ -76,8 +79,10 @@ export function DoneModal({
           : String(actualAppointment.incomeForm.weight),
       animalName: actualAppointment.incomeForm.animalName,
       features: actualAppointment.incomeForm.features || '',
+      veterinarian: actualVeterinarian,
     });
   }, [actualAppointment]);
+
   return (
     <Modal
       opened={doneModal}
@@ -119,6 +124,15 @@ export function DoneModal({
             label="Ingrese Caractersiticas del animal: "
             placeholder="Caracteristicas del animal"
             span={12}
+          />
+          <FormColumn
+            inputType="select"
+            form={form}
+            name="veterinarian"
+            label="Seleccione un Veterinario: "
+            placeholder="Seleccione un Veterinario"
+            span={12}
+            data={veterinarians}
           />
           <Grid.Col span={12}>
             <Button color={mainColor} variant="light" type="submit" fullWidth>

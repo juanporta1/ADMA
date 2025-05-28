@@ -229,6 +229,7 @@ export function AddappointmentSchedule() {
               inputType="date"
               name="date"
               form={form}
+              minDate={new Date()}
               placeholder="Fecha"
               label="Ingrese la Fecha: "
             />
@@ -254,7 +255,6 @@ export function AddappointmentSchedule() {
               inputType="text"
               name="maxAppointments"
               form={form}
-              minDate={new Date()}
               placeholder="Cantidad maxima de turnos"
               label="Ingrese la Cantidad maxima de turnos: "
             />
