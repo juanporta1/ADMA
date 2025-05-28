@@ -52,7 +52,7 @@ export function AddSpecie() {
   const { currentUser } = useContext(UserContext);
   const mainColor = useContext(MainColorContext);
   const getSpecies = async () => {
-    const { species } = await getData();
+    const { species } = await getData(['species']);
     if (species) {
       setSpecie(species);
     }

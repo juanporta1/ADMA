@@ -74,7 +74,7 @@ export function AddVeterinarian() {
 
   //Functions
   const getVeterinarians = async () => {
-    const { veterinarians } = await getData();
+    const { veterinarians } = await getData(['veterinarians']);
     if (veterinarians) {
       setVeterinarians(veterinarians);
     }

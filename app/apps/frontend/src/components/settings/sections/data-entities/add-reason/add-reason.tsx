@@ -57,7 +57,7 @@ export function AddReason() {
   const mainColor = useContext(MainColorContext);
   const [actualReason, setActualReason] = useState<Reason | null>(null);
   const getReasons = async () => {
-    const { reasons } = await getData();
+    const { reasons } = await getData(['reasons']);
     if (reasons) {
       setReasons(reasons);
     }

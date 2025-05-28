@@ -2,6 +2,7 @@ import axios, { AxiosResponse } from 'axios';
 import { useContext } from 'react';
 import { ApiHostContext } from '../../../contexts/api-host-context';
 import {
+  AppointmentSchedule,
   DataEntities,
   editedAppointmentSchedule,
   editedNeighborhood,
@@ -17,9 +18,23 @@ import {
 } from '../../../types/data-entities.types';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
+interface AppointmentScheduleFilters {
+  ID_appointmentSchedule?: number;
+  date?: Date;
+  hour?: string;
+}
+type EntityType =
+  | 'neighborhoods'
+  | 'species'
+  | 'reasons'
+  | 'veterinarians'
+  | 'appointmentSchedules';
 
 export interface UseDataEntities {
-  getData: () => Promise<DataEntities>;
+  getData: (entities: EntityType[]) => Promise<DataEntities>;
+  filterAppointmentSchedules: (
+    filters: AppointmentScheduleFilters
+  ) => Promise<AppointmentSchedule[]>;
   createNewData: (
     data:
       | newNeighborhood
@@ -109,29 +124,72 @@ export function useDataEntities(): UseDataEntities {
     }
   };
 
-  const getData = async () => {
-    const [
-      neighborhoods,
-      species,
-      reasons,
-      veterinarians,
-      appointmentSchedules,
-    ] = await Promise.all([
-      getNeighborhoods(),
-      getSpecies(),
-      getReasons(),
-      getVeterinarians(),
-      getAppointmentSchedules(),
-    ]);
-    return {
-      neighborhoods,
-      species,
-      reasons,
-      veterinarians,
-      appointmentSchedules,
-    };
+  type EntityType =
+    | 'neighborhoods'
+    | 'species'
+    | 'reasons'
+    | 'veterinarians'
+    | 'appointmentSchedules';
+
+  const entityFunctionMap: Record<EntityType, () => Promise<any>> = {
+    neighborhoods: getNeighborhoods,
+    species: getSpecies,
+    reasons: getReasons,
+    veterinarians: getVeterinarians,
+    appointmentSchedules: getAppointmentSchedules,
   };
 
+  const getData = async (entities: EntityType[] = []) => {
+    if (!entities.length) {
+      const [
+        neighborhoods,
+        species,
+        reasons,
+        veterinarians,
+        appointmentSchedules,
+      ] = await Promise.all([
+        getNeighborhoods(),
+        getSpecies(),
+        getReasons(),
+        getVeterinarians(),
+        getAppointmentSchedules(),
+      ]);
+      return {
+        neighborhoods,
+        species,
+        reasons,
+        veterinarians,
+        appointmentSchedules,
+      } as DataEntities;
+    } else {
+      // Ejecuta solo las funciones necesarias
+      const results = await Promise.all(
+        entities.map((entity) => entityFunctionMap[entity]())
+      );
+      // Devuelve un objeto con los resultados
+      return entities.reduce((acc, entity, idx) => {
+        acc[entity] = results[idx];
+        return acc;
+      }, {} as DataEntities);
+    }
+  };
+
+  const filterAppointmentSchedules = async (
+    filters: AppointmentScheduleFilters
+  ) => {
+    try {
+      const res = await axios.get(
+        `${host}/data-entities/appointment-schedule`,
+        {
+          params: filters,
+        }
+      );
+      return res.data as AppointmentSchedule[];
+    } catch (err) {
+      console.log(err);
+      return [];
+    }
+  };
   const createNewData = async (
     data:
       | newNeighborhood
@@ -146,20 +204,19 @@ export function useDataEntities(): UseDataEntities {
       | 'veterinarian'
       | 'appointment-schedule'
   ) => {
-    const res = await axios.post(`${host}/data-entities/${type}`, data);
-    console.log(res);
+    await axios.post(`${host}/data-entities/${type}`, data);
   };
 
   const deleteData = async (type: 'appointment-schedule', id: number) => {
     try {
-      const res = await axios.delete(`${host}/data-entities/${type}/${id}`);
+      await axios.delete(`${host}/data-entities/${type}/${id}`);
     } catch (err) {
       console.log(err);
       throw new Error('Error deleting data');
     }
   };
 
-  const stopUsingData = async (
+  const editData = async (
     type:
       | 'neighborhood'
       | 'specie'
@@ -174,9 +231,15 @@ export function useDataEntities(): UseDataEntities {
       | editedVeterinarian
       | editedAppointmentSchedule
   ) => {
-    const res = await axios.patch(`${host}/data-entities/${type}/${id}`, data);
+    await axios.patch(`${host}/data-entities/${type}/${id}`, data);
   };
-  return { getData, createNewData, editData: stopUsingData, deleteData };
+  return {
+    getData,
+    filterAppointmentSchedules,
+    createNewData,
+    editData,
+    deleteData,
+  };
 }
 
 export default useDataEntities;

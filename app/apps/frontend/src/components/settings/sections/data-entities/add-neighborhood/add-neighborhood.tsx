@@ -54,7 +54,7 @@ export function AddNeighborhood() {
   const { currentUser } = useContext(UserContext);
   const mainColor = useContext(MainColorContext);
   const getNeighborhoods = async () => {
-    const { neighborhoods } = await getData();
+    const { neighborhoods } = await getData(['neighborhoods']);
     if (neighborhoods) {
       setNeighborhoods(neighborhoods);
     }

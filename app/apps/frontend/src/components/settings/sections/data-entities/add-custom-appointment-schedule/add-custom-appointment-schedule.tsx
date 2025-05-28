@@ -30,7 +30,7 @@ export function AddappointmentSchedule() {
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: {
-      date: '',
+      date: null as Date | null,
       hour: '',
       maxAppointments: 0,
     },
@@ -57,20 +57,20 @@ export function AddappointmentSchedule() {
 
   //Functions
   const getAppointmentSchedules = async () => {
-    const { appointmentSchedules } = await getData();
+    const { appointmentSchedules } = await getData(['appointmentSchedules']);
     if (appointmentSchedules) {
       setAppointmentSchedules(appointmentSchedules);
       console.log('appointmentSchedules', appointmentSchedules);
     }
   };
   const handleOnCreate = async (values: {
-    date: string;
+    date: Date | null;
     hour: string;
     maxAppointments: number;
   }) => {
     await createNewData(
       values as newAppointmentSchedule,
-      'appointmentSchedule'
+      'appointment-schedule'
     );
     closeCreate();
     await getAppointmentSchedules();
@@ -80,7 +80,7 @@ export function AddappointmentSchedule() {
     if (!actualAppointmentSchedule) return;
     console.log('actualappointmentSchedule', actualAppointmentSchedule);
     await editData(
-      'appointmentSchedule',
+      'appointment-schedule',
       actualAppointmentSchedule.ID_appointmentSchedule,
       values
     );
@@ -136,16 +136,22 @@ export function AddappointmentSchedule() {
     if (editModal || createModal) form.reset();
   }, [editModal, createModal]);
 
+  // Si
+  useEffect(() => {
+    if (editModal || createModal) form.reset();
+  }, [editModal, createModal]);
+
   useEffect(() => console.log(appointmentSchedules), [appointmentSchedules]);
 
   // Sincronizar el formulario de edición con el veterinario seleccionado
   useEffect(() => {
     if (editModal && actualAppointmentSchedule) {
       form.setValues({
-        date: actualAppointmentSchedule.date,
+        date: new Date(actualAppointmentSchedule.date),
         hour: actualAppointmentSchedule.hour,
         maxAppointments: actualAppointmentSchedule.maxAppointments,
       });
+      console.log(actualAppointmentSchedule);
     }
   }, [editModal, actualAppointmentSchedule]);
 
@@ -188,7 +194,7 @@ export function AddappointmentSchedule() {
             />
             <FormColumn
               inputType="text"
-              name="date"
+              name="maxAppointments"
               form={form}
               span={12}
               placeholder="Cantidad maxima de turnos"
@@ -246,7 +252,7 @@ export function AddappointmentSchedule() {
             />
             <FormColumn
               inputType="text"
-              name="date"
+              name="maxAppointments"
               form={form}
               minDate={new Date()}
               placeholder="Cantidad maxima de turnos"

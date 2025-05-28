@@ -50,7 +50,6 @@ interface props {
 export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
   // Inicialización de hooks y estados
   const { form } = useEditForm(); // Formulario personalizado
-  const [formReady, setFormReady] = useState<boolean>(false);
   const mainColor = useContext(MainColorContext); // Color principal de la app
   const [actualStatus, setActualStatus] = useState<string>(appointment.status);
   const [actualDate, setActualDate] = useState<DateValue | null>(null);
@@ -95,7 +94,7 @@ export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
         const data = await getSelectData(appointment);
         setSelectsData(data);
         const dateWithoutTimezone = new Date(appointment.date + 'T00:00:00');
-        
+
         const settings: typeof form.values = {
           lastName: appointment.lastName,
           name: appointment.name,
@@ -113,7 +112,6 @@ export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
         };
         form.setValues(settings);
         setActualDate(dateWithoutTimezone);
-
       } catch (err) {
         console.log(err);
       }

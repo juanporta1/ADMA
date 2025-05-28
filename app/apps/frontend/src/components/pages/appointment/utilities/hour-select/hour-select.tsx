@@ -7,7 +7,8 @@ import useAppointment from '../../../../../hooks/appointment/use-appointment/use
 import FormColumn from '../../../../utilities/form-column/form-column';
 import useSettings from '../../../../../hooks/settings/use-settings/use-settings';
 import { SelectData } from '../../../../../types/utilities.types';
-import { register } from 'module';
+import { AppointmentSchedule } from '../../../../../types/data-entities.types';
+import useDataEntities from '../../../../../hooks/general/use-data-entities/use-data-entities';
 interface props {
   dateValue: DateValue;
   form: UseFormReturnType<any>;
@@ -17,6 +18,10 @@ export function HourSelect(props: props) {
   const { countPerDay, filter } = useAppointment();
   const lastNotification = useRef<string | null>(null);
   const [appointment, setAppointment] = useState<Appointment | null>(null);
+  const { filterAppointmentSchedules } = useDataEntities();
+  const [appointmentSchedules, setAppointmentSchedule] = useState<
+    AppointmentSchedule[]
+  >([]);
   const [counts, setCounts] = useState<Record<string, number>>({});
   const { getSetting } = useSettings();
   const [maxAppointments, setMaxAppointments] = useState(0);
@@ -31,10 +36,20 @@ export function HourSelect(props: props) {
     setCounts(counts);
   };
 
+  const getAppointmentSchedule = async (date: Date) => {
+    const schedules = await filterAppointmentSchedules({
+      date,
+    });
+
+    setAppointmentSchedule(schedules);
+  };
+
   const getMaxAppointments = async () => {
     if (props.registerId) {
-      const appointment = await filter({ id: props.registerId });
-      setAppointment(appointment ? appointment[0] : null);
+      const res = await filter({ id: props.registerId });
+      if (!res) return;
+      const appointment = res.data[0];
+      setAppointment(appointment ? appointment : null);
     }
     const maxAppointments = await getSetting('maxAppointmentsPerDay');
     if (maxAppointments.length == 0) return;
@@ -48,6 +63,7 @@ export function HourSelect(props: props) {
       props.dateValue.getMonth() + 1
     }-${props.dateValue.getDate()}`;
     getCounts(stringDate);
+    getAppointmentSchedule(props.dateValue);
   }, [props.dateValue]);
 
   useEffect(() => {
@@ -77,7 +93,15 @@ export function HourSelect(props: props) {
     if (!props.registerId) {
       if (counts) {
         hours.forEach((hour, i) => {
-          if (counts[hour] < maxAppointments) selects[i].disabled = false;
+          const schedule = appointmentSchedules.filter((s) => s.hour === hour);
+          let comparision = maxAppointments;
+          if (schedule.length > 0) {
+            comparision = schedule[0].maxAppointments;
+          }
+
+          console.log('schedule', schedule[0]?.date);
+          console.log('Comparision', comparision, 'En: ', hour);
+          if (counts[hour] < comparision) selects[i].disabled = false;
         });
       }
     } else {
@@ -85,8 +109,13 @@ export function HourSelect(props: props) {
         if (!appointment) return;
 
         hours.forEach((hour, i) => {
+          const schedule = appointmentSchedules.filter((s) => s.hour === hour);
+          let comparision = maxAppointments;
+          if (schedule.length > 0) {
+            comparision = schedule[0].maxAppointments;
+          }
           if (
-            counts[hour] < maxAppointments ||
+            counts[hour] < comparision ||
             (appointment.date === date && appointment.hour === hour)
           )
             selects[i].disabled = false;
