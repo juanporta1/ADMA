@@ -1,12 +1,11 @@
-import { useState, useCallback } from 'react';
 import {
   ButtonFunctions,
   Buttons,
   ExtraColumns,
 } from '../../../components/pages/income-form/income-row/income-row';
-import { Table, Button, ActionIcon, Tooltip } from '@mantine/core';
+import { Table, ActionIcon, Tooltip } from '@mantine/core';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Appointment } from '../../../components/pages/appointment/filter/filter-appointments';
+import { Appointment } from '../../../types/entities.types';
 import {
   faBan,
   faCheck,
@@ -15,7 +14,6 @@ import {
   faX,
 } from '@fortawesome/free-solid-svg-icons';
 
-// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface UseIncomeData {
   buttons: () => Buttons | void;
   extraColumns: () => ExtraColumns | void;
@@ -130,8 +128,15 @@ export function useIncomeData({
         animalName: (
           <Table.Td>{appointment.incomeForm?.animalName || '-'}</Table.Td>
         ),
+        veterinarian: (
+          <Table.Td>
+            {appointment.incomeForm?.veterinarian
+              ? `${appointment.incomeForm?.veterinarian?.name} ${appointment.incomeForm?.veterinarian?.lastName} `
+              : '-'}
+          </Table.Td>
+        ),
       };
-    }else if (['Realizado'].includes(appointment.status)) {
+    } else if (['Realizado'].includes(appointment.status)) {
       return {
         surgeryNumber: <Table.Td>{appointment.surgeryNumber}</Table.Td>,
         weight: (
@@ -143,6 +148,13 @@ export function useIncomeData({
         age: <Table.Td>{appointment.castration?.age || '-'}</Table.Td>,
         animalName: (
           <Table.Td>{appointment.castration?.animalName || '-'}</Table.Td>
+        ),
+        veterinarian: (
+          <Table.Td>
+            {appointment.castration?.veterinarian
+              ? `${appointment.castration?.veterinarian?.name} ${appointment.castration?.veterinarian?.lastName} `
+              : '-'}
+          </Table.Td>
         ),
       };
     } else if (['Esperando Actualización'].includes(appointment.status)) {

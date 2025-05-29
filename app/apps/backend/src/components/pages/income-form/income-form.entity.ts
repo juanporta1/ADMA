@@ -14,7 +14,7 @@ export class IncomeForm {
   @PrimaryGeneratedColumn()
   ID_income!: number;
 
-  @OneToOne(() => Appointment)
+  @OneToOne(() => Appointment, (appointment) => appointment.incomeForm)
   appointment!: Appointment;
 
   @ManyToOne(() => Veterinarian, (veterinarian) => veterinarian.income, {

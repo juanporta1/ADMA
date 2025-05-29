@@ -1,17 +1,14 @@
-import { Button, Table } from '@mantine/core';
+import { Table } from '@mantine/core';
 import React from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCircleCheck } from '@fortawesome/free-regular-svg-icons';
-import {
-  faBan,
-  faPersonCircleQuestion,
-} from '@fortawesome/free-solid-svg-icons';
+
 import useIncomeData from '../../../../hooks/income-form/use-income-data/use-income-data';
 import { Appointment } from '../../../../types/entities.types';
+import { Veterinarian } from '../../../../types/data-entities.types';
 
 interface props {
   appointment: Appointment;
   buttonFunctions: ButtonFunctions;
+  veterinarian?: Veterinarian | null;
 }
 
 export interface ExtraColumns {
@@ -21,6 +18,7 @@ export interface ExtraColumns {
   animalName?: React.ReactNode;
   status?: React.ReactNode;
   reason?: React.ReactNode;
+  veterinarian?: React.ReactNode;
 }
 
 export interface Buttons {
@@ -38,8 +36,10 @@ export interface ButtonFunctions {
 }
 
 export function IncomeRow({ appointment, buttonFunctions }: props) {
-  
-  const { buttons, extraColumns } = useIncomeData({ appointment, buttonFunctions });
+  const { buttons, extraColumns } = useIncomeData({
+    appointment,
+    buttonFunctions,
+  });
 
   return (
     <Table.Tr>
@@ -55,6 +55,7 @@ export function IncomeRow({ appointment, buttonFunctions }: props) {
       {extraColumns()?.weight}
       {extraColumns()?.status}
       {extraColumns()?.reason}
+      {extraColumns()?.veterinarian}
       {buttons()?.button1}
       {buttons()?.button2}
       {buttons()?.button3}

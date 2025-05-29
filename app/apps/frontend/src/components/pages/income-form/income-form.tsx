@@ -217,7 +217,7 @@ export function IncomeForm() {
           inputType="select"
           form={form}
           name="veterinarian"
-          label="Veterinario"
+          label="Veterinario: "
           data={veterinarians}
           notRequired
         />

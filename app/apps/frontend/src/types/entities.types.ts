@@ -1,11 +1,17 @@
-import { Neighborhood, Reason, Specie } from './data-entities.types';
+import {
+  Neighborhood,
+  Reason,
+  Specie,
+  Veterinarian,
+} from './data-entities.types';
 
 export interface IncomeForm {
   ID_income: number;
   age: string;
   weight: number;
-  features: string;
+  features?: string;
   animalName: string;
+  veterinarian: Veterinarian | null;
 }
 
 export interface Castration {
@@ -14,6 +20,7 @@ export interface Castration {
   weight: number;
   features?: string | null;
   animalName: string;
+  veterinarian: Veterinarian | null;
 }
 // Interfaz para la estructura de un turno
 export interface Appointment {

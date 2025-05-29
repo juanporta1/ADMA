@@ -13,7 +13,7 @@ export class Castration {
   @PrimaryGeneratedColumn()
   ID_castration!: number;
 
-  @OneToOne(() => Appointment)
+  @OneToOne(() => Appointment, (a) => a.castration)
   appointment!: Appointment;
 
   @ManyToOne(() => Veterinarian, (veterinarian) => veterinarian.castrations)

@@ -8,6 +8,7 @@ import { FilterAppointmentDto } from '../DTOs/filter-appointment.dto';
 import PDFDocumentWithTables from 'pdfkit-table';
 import { PdfService } from './pdf-service/pdf-service.service';
 import { DataEntitiesService } from '../../../data-entities/services/data-entities.service';
+import { filter } from 'rxjs';
 @Injectable()
 export class AppointmentService {
   constructor(
@@ -139,22 +140,40 @@ export class AppointmentService {
 
       if (querys.byHour)
         filterQueryBuilder.andWhere(`a.hour = :hour`, { hour: querys.byHour });
-
+      console.log('Paso los queries');
       filterQueryBuilder.leftJoinAndSelect('a.neighborhood', 'neighborhood');
       filterQueryBuilder.leftJoinAndSelect('a.specie', 'specie');
       filterQueryBuilder.leftJoinAndSelect('a.reason', 'reason');
       filterQueryBuilder.leftJoinAndSelect('a.incomeForm', 'incomeForm');
+      filterQueryBuilder.leftJoinAndSelect(
+        'incomeForm.veterinarian',
+        'iVeterinarian'
+      );
       filterQueryBuilder.leftJoinAndSelect('a.castration', 'castration');
-      const count = await filterQueryBuilder.getCount();
-
+      filterQueryBuilder.leftJoinAndSelect(
+        'castration.veterinarian',
+        'cVeterinarian'
+      );
+      const [count, appointments] = await Promise.all([
+        filterQueryBuilder.getCount(),
+        filterQueryBuilder.getMany(),
+      ]);
       if (querys.page && querys.limit) {
         filterQueryBuilder.skip((querys.page - 1) * querys.limit);
         filterQueryBuilder.take(querys.limit);
       }
-      return await [await filterQueryBuilder.getMany(), count];
+      return [appointments, count];
     } else {
       return await this.appointmentRepository.findAndCount({
-        relations: ['neighborhood', 'specie', 'reason'],
+        relations: [
+          'neighborhood',
+          'specie',
+          'reason',
+          'castration',
+          'incomeForm',
+          'incomeForm.veterinarian',
+          'castration.veterinarian',
+        ],
       });
     }
   }

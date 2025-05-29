@@ -5,9 +5,8 @@ import useAppointment from '../../../../../hooks/appointment/use-appointment/use
 import useIncomeForm from '../../../../../hooks/income-form/use-income-form/use-income-form';
 import { useForm } from '@mantine/form';
 import { MainColorContext } from '../../../../../contexts/color-context';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { SelectData } from '../../../../../types/utilities.types';
-import useDataEntities from '../../../../../hooks/general/use-data-entities/use-data-entities';
 interface props {
   doneModal: boolean;
   closeDoneModal: () => void;

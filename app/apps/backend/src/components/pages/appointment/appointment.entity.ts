@@ -1,5 +1,13 @@
-import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
-import { Status, Sex, Size,  Hours} from './DTOs/appointment.enum';
+import {
+  BeforeInsert,
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Status, Sex, Size, Hours } from './DTOs/appointment.enum';
 import { Reason } from '../../data-entities/entities/reason.entity';
 import { Specie } from '../../data-entities/entities/specie.entity';
 import { Neighborhood } from '../../data-entities/entities/neighborhood.entity';
@@ -14,7 +22,7 @@ export class Appointment {
 
   @Column({ type: 'varchar', length: 150 })
   name!: string;
-  
+
   @Column({ type: 'varchar', length: 150 })
   lastName!: string;
 
@@ -33,22 +41,22 @@ export class Appointment {
   @Column({ type: 'date' })
   date!: Date;
 
-  @Column({type: "enum", enum: Hours})
+  @Column({ type: 'enum', enum: Hours })
   hour!: string;
 
-  @Column({ type: 'enum', enum: Size  })
+  @Column({ type: 'enum', enum: Size })
   size!: string;
 
   @Column({ type: 'enum', enum: Sex })
   sex!: string;
 
   @ManyToOne(() => Specie, (specie) => specie.appointments)
-  specie!: Specie; 
+  specie!: Specie;
 
   @Column({ type: 'enum', default: 'Pendiente', enum: Status })
   status!: string;
 
-  @Column({type: "varchar", length: 800, nullable: true})
+  @Column({ type: 'varchar', length: 800, nullable: true })
   observations?: string;
 
   @ManyToOne(() => Reason, (reasons) => reasons.appointments)
@@ -57,14 +65,14 @@ export class Appointment {
   @Column({ type: 'int', nullable: true })
   surgeryNumber?: number | null;
 
-  @OneToOne(() => IncomeForm,{nullable: true})
+  @OneToOne(() => IncomeForm, (i) => i.appointment, { nullable: true })
   @JoinColumn()
   incomeForm?: IncomeForm | null;
 
-  @OneToOne(() => Castration, {nullable: true})
+  @OneToOne(() => Castration, (c) => c.appointment, { nullable: true })
   @JoinColumn()
   castration?: Castration;
 
-  @ManyToOne(() => User, user => user.appointment)
+  @ManyToOne(() => User, (user) => user.appointment)
   user!: User;
 }

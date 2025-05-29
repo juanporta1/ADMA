@@ -4,10 +4,7 @@ import IncomeRow, {
   ButtonFunctions,
   ExtraColumns,
 } from '../income-row/income-row';
-import {
-  FontawesomeObject,
-  IconDefinition,
-} from '@fortawesome/fontawesome-svg-core';
+import { IconDefinition } from '@fortawesome/fontawesome-svg-core';
 import {
   faBan,
   faClock,
@@ -19,14 +16,9 @@ import { Appointment } from '../../../../types/entities.types';
 
 interface props {
   appointments: Appointment[];
-  
-  buttonFunctions: ButtonFunctions;  
+  buttonFunctions: ButtonFunctions;
 }
-export function StatusTable({
-  appointments,
- 
-  buttonFunctions,
-}: props) {
+export function StatusTable({ appointments, buttonFunctions }: props) {
   const Rows = appointments.map((a, i) => (
     <IncomeRow
       key={a.ID_appointment}
@@ -34,8 +26,6 @@ export function StatusTable({
       buttonFunctions={buttonFunctions}
     />
   ));
-
-  const statusType = appointments[0].status;
 
   let bgColor: string;
   let title: string | null = null;
@@ -55,7 +45,7 @@ export function StatusTable({
   } else if (appointments[0].status === 'En Proceso') {
     bgColor = '#aaaaaaaa';
     icon = faClock;
-  }else {
+  } else {
     bgColor = '#fff';
     icon = faClock;
   }
@@ -67,6 +57,7 @@ export function StatusTable({
         weight: <Table.Th>Peso</Table.Th>,
         age: <Table.Th>Edad</Table.Th>,
         animalName: <Table.Th>Nombre del Paciente</Table.Th>,
+        veterinarian: <Table.Th>Veterinario</Table.Th>,
       };
     } else if (['Esperando Actualización'].includes(appointments[0].status)) {
       return {
@@ -105,6 +96,7 @@ export function StatusTable({
               {extraColumns()?.weight}
               {extraColumns()?.status}
               {extraColumns()?.reason}
+              {extraColumns()?.veterinarian}
             </Table.Tr>
           </Table.Thead>
           <Table.Tbody>{Rows}</Table.Tbody>

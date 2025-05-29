@@ -378,6 +378,7 @@ export function FilterAppointments() {
                       label="Ingresar: "
                       notRequired
                     />
+
                     {/* Selector de sexo */}
                     <FormColumn
                       span={4}
