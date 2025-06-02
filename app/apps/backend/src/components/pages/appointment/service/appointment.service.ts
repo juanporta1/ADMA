@@ -50,7 +50,7 @@ export class AppointmentService {
   }
 
   async getAll(querys: FilterAppointmentDto): Promise<[Appointment[], number]> {
-    // console.log(querys);
+    console.log(querys);
     if (Object.keys(querys).length != 0) {
       const filterQueryBuilder =
         this.appointmentRepository.createQueryBuilder('a');
@@ -154,14 +154,16 @@ export class AppointmentService {
         'castration.veterinarian',
         'cVeterinarian'
       );
+
+      if (querys.page && querys.limit) {
+        console.log('Paso los queries de paginacion');
+        filterQueryBuilder.skip((querys.page - 1) * querys.limit);
+        filterQueryBuilder.take(querys.limit);
+      }
       const [count, appointments] = await Promise.all([
         filterQueryBuilder.getCount(),
         filterQueryBuilder.getMany(),
       ]);
-      if (querys.page && querys.limit) {
-        filterQueryBuilder.skip((querys.page - 1) * querys.limit);
-        filterQueryBuilder.take(querys.limit);
-      }
       return [appointments, count];
     } else {
       return await this.appointmentRepository.findAndCount({

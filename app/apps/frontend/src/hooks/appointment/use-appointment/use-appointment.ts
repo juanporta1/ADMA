@@ -174,9 +174,26 @@ export function useAppointment(): UseAppointment {
     values: string[]
   ): Promise<void> {
     try {
+      const orderedList = [
+        'Dueño',
+        'Fecha',
+        'Hora',
+        'DNI',
+        'Teléfono',
+        'Barrio',
+        'Domicilio',
+        'Sexo',
+        'Tamaño',
+        'Especie',
+        'Estado',
+        'Razón',
+        'Observaciones',
+      ];
+
+      const orderedUpdatedList = orderedList.filter((i) => values.includes(i));
       const res = await axios.get(`${host}/appointment/pdf`, {
         responseType: 'blob',
-        params: { ...filters, values: values },
+        params: { ...filters, values: orderedUpdatedList },
       });
 
       const blob = res.data;
