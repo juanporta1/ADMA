@@ -60,10 +60,14 @@ export function HourSelect(props: props) {
   useEffect(() => {
     if (!props.dateValue) return;
     const stringDate = `${props.dateValue.getFullYear()}-${
-      props.dateValue.getMonth() + 1
-    }-${props.dateValue.getDate()}`;
+      props.dateValue.getMonth() + 1 < 10 ? '0' : ''
+    }${props.dateValue.getMonth() + 1}-${
+      props.dateValue.getDate() < 10 ? '0' : ''
+    }${props.dateValue.getDate()}`;
     getCounts(stringDate);
     getAppointmentSchedule(props.dateValue);
+    console.log(appointment?.date, stringDate);
+    if (stringDate !== appointment?.date) props.form.setValues({ hour: '' });
   }, [props.dateValue]);
 
   useEffect(() => {
