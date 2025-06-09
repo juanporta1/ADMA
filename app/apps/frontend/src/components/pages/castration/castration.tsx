@@ -141,7 +141,7 @@ export function Castration() {
       console.log(params);
 
       // Llama al hook para filtrar los turnos
-      const data = await filter(params);
+      const data = await filter({ ...params, status: 'Realizado' });
       if (!data) {
         setIsLoading('error');
         finishLoadingRows();
