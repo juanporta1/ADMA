@@ -12,6 +12,7 @@ export interface IncomeForm {
   features?: string;
   animalName: string;
   veterinarian: Veterinarian | null;
+  observations?: string | null;
 }
 
 export interface Castration {
@@ -21,6 +22,7 @@ export interface Castration {
   features?: string | null;
   animalName: string;
   veterinarian: Veterinarian | null;
+  observations?: string | null;
 }
 // Interfaz para la estructura de un turno
 export interface Appointment {
