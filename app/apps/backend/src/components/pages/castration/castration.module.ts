@@ -5,17 +5,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Castration } from './castration.entity';
 import { Appointment } from '../appointment/appointment.entity';
 import { IncomeForm } from '../income-form/income-form.entity';
-import { Veterinarian } from '../../data-entities/entities/veterinarian.entity';
 
 @Module({
-  imports: [
-    TypeOrmModule.forFeature([
-      Castration,
-      Appointment,
-      IncomeForm,
-      Veterinarian,
-    ]),
-  ],
+  imports: [TypeOrmModule.forFeature([Castration, Appointment, IncomeForm])],
   providers: [CastrationService],
   controllers: [CastrationController],
   exports: [TypeOrmModule],
