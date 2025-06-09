@@ -33,4 +33,7 @@ export class IncomeForm {
 
   @Column({ type: 'varchar', length: 200, nullable: true })
   features?: string | null;
+  
+  @Column({ type: 'varchar',  nullable: true })
+  observations?: string | null;
 }
