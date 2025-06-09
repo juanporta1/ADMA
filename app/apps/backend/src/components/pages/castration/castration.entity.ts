@@ -30,4 +30,7 @@ export class Castration {
 
   @Column({ type: 'varchar', length: 200, nullable: true })
   features?: string;
+
+  @Column({ type: 'varchar', nullable: true })
+  observations?: string;
 }
