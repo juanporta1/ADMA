@@ -33,4 +33,5 @@ export class FilterAppointmentDto {
   dateFilterWay?: 'all' | 'onlyOne' | 'interval';
   page?: number;
   limit?: number;
+  animalName?: string;
 }

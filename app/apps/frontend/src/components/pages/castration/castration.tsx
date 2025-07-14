@@ -307,7 +307,7 @@ export function Castration() {
                 />
                 {/* Selector de sexo */}
                 <FormColumn
-                  span={4}
+                  span={5}
                   name="sex"
                   label="Sexo"
                   form={form}
@@ -318,7 +318,7 @@ export function Castration() {
 
                 {/* Selector de especie */}
                 <FormColumn
-                  span={4}
+                  span={5}
                   name="specie"
                   label="Especie"
                   form={form}
@@ -328,7 +328,7 @@ export function Castration() {
                 />
                 {/* Selector de tamaño */}
                 <FormColumn
-                  span={4}
+                  span={5}
                   name="size"
                   label="Tamaño"
                   form={form}
@@ -338,7 +338,7 @@ export function Castration() {
                 />
                 {/* Selector de barrio */}
                 <FormColumn
-                  span={4}
+                  span={5}
                   name="neighborhood"
                   label="Barrio"
                   form={form}
@@ -346,16 +346,7 @@ export function Castration() {
                   data={selectsData.neighborhood}
                   notRequired
                 />
-                {/* Selector de estado */}
-                <FormColumn
-                  span={4}
-                  name="status"
-                  label="Estado"
-                  form={form}
-                  inputType="select"
-                  data={selectsData.filterStatus}
-                  notRequired
-                />
+
                 {/* Selector para ordenar por campo */}
                 <FormColumn
                   span={4}
@@ -378,35 +369,12 @@ export function Castration() {
                 />
 
                 <FormColumn
-                  inputType="text"
-                  form={form}
-                  name="weight"
-                  span={2}
-                  label="Peso: "
-                  notRequired
-                />
-                <FormColumn
-                  span={2}
-                  name="age"
-                  label="Edad"
-                  form={form}
-                  inputType="text"
-                  notRequired
-                />
-                <FormColumn
                   span={4}
                   name="animalName"
                   label="Nombre de la Mascota:"
                   form={form}
                   inputType="text"
-                  notRequired
-                />
-                <FormColumn
-                  span={4}
-                  name="features"
-                  label="Características:"
-                  form={form}
-                  inputType="text"
+                  placeholder="Buscar"
                   notRequired
                 />
                 <Grid.Col span={12}></Grid.Col>
@@ -505,6 +473,3 @@ export function Castration() {
 }
 
 export default Castration;
-function handleOnSubmit() {
-  throw new Error('Function not implemented.');
-}

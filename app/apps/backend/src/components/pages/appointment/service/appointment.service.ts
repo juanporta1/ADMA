@@ -9,6 +9,7 @@ import PDFDocumentWithTables from 'pdfkit-table';
 import { PdfService } from './pdf-service/pdf-service.service';
 import { DataEntitiesService } from '../../../data-entities/services/data-entities.service';
 import { filter } from 'rxjs';
+
 @Injectable()
 export class AppointmentService {
   constructor(
@@ -141,6 +142,14 @@ export class AppointmentService {
       if (querys.byHour)
         filterQueryBuilder.andWhere(`a.hour = :hour`, { hour: querys.byHour });
       console.log('Paso los queries');
+
+      filterQueryBuilder.leftJoinAndSelect('a.castration', 'castration');
+
+      if (querys.animalName) {
+        filterQueryBuilder.andWhere('castration.animalName ILIKE :animalName', {
+          animalName: `%${querys.animalName}%`,
+        });
+      }
       filterQueryBuilder.leftJoinAndSelect('a.neighborhood', 'neighborhood');
       filterQueryBuilder.leftJoinAndSelect('a.specie', 'specie');
       filterQueryBuilder.leftJoinAndSelect('a.reason', 'reason');
@@ -149,7 +158,6 @@ export class AppointmentService {
         'incomeForm.veterinarian',
         'iVeterinarian'
       );
-      filterQueryBuilder.leftJoinAndSelect('a.castration', 'castration');
       filterQueryBuilder.leftJoinAndSelect(
         'castration.veterinarian',
         'cVeterinarian'
