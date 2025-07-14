@@ -9,31 +9,43 @@ import { MainColorContext } from '../../../../contexts/color-context';
 import useDataEntities from '../../../../hooks/general/use-data-entities/use-data-entities';
 import { UserContext } from '../../../../contexts/user-context';
 
-interface props{
-    clickSeeFeaturesFunc: () => void,
-  clickSeeObservationFunc: () => void,
-  appointment: Appointment,
+interface props {
+  clickSeeFeaturesFunc: () => void;
+  clickSeeObservationFunc: () => void;
+  appointment: Appointment;
 }
 
 // Renderiza una fila de turno con botones de editar y borrar, según el estado del turno
-export function CastrationRow({appointment, clickSeeObservationFunc, clickSeeFeaturesFunc}: props) {
-  
-
+export function CastrationRow({
+  appointment,
+  clickSeeObservationFunc,
+  clickSeeFeaturesFunc,
+}: props) {
   // Determina si se puede borrar el turno
   const canDelete = appointment.status === 'Pendiente' ? false : true;
   const deleteLabel = !canDelete ? 'Borrar' : 'No puede borrar este registro';
-  const featuresLabel = appointment.castration?.features ? "Ver características" : 'Este registro no tiene características';
-  const observationLabel = appointment.castration?.observations ? "Ver observaciones" : 'Este registro no tiene observaciones';
+  const featuresLabel = appointment.castration?.features
+    ? 'Ver características'
+    : 'Este registro no tiene características';
+  const observationLabel = appointment.castration?.observations
+    ? 'Ver observaciones'
+    : 'Este registro no tiene observaciones';
   const mainColor = useContext(MainColorContext);
-  const {currentUser} = useContext(UserContext)
+  const { currentUser } = useContext(UserContext);
   return (
-    <Table.Tr  key={appointment.ID_appointment}>
+    <Table.Tr key={appointment.ID_appointment}>
       <Table.Td>{appointment.date.toString()}</Table.Td>
       <Table.Td>{appointment.hour}</Table.Td>
       <Table.Td>{appointment.lastName}</Table.Td>
       <Table.Td>{appointment.name}</Table.Td>
       <Table.Td>{appointment.dni}</Table.Td>
-      <Table.Td>{appointment.phone ? appointment.phone : <Text c={"#aaaa"}>Sin Teléfono</Text>}</Table.Td>
+      <Table.Td>
+        {appointment.phone ? (
+          appointment.phone
+        ) : (
+          <Text c={'#aaaa'}>Sin Teléfono</Text>
+        )}
+      </Table.Td>
       <Table.Td>{appointment.home}</Table.Td>
       <Table.Td>{appointment.neighborhood.neighborhood}</Table.Td>
       <Table.Td>{appointment.specie.specie}</Table.Td>
@@ -42,7 +54,7 @@ export function CastrationRow({appointment, clickSeeObservationFunc, clickSeeFea
       <Table.Td>{appointment.castration?.animalName}</Table.Td>
       <Table.Td>{appointment.castration?.weight}KG</Table.Td>
       <Table.Td>{appointment.castration?.age}</Table.Td>
-      
+
       {/* Botón para editar el turno */}
       <Table.Td>
         <Tooltip label={featuresLabel}>
@@ -55,7 +67,7 @@ export function CastrationRow({appointment, clickSeeObservationFunc, clickSeeFea
           </ActionIcon>
         </Tooltip>
       </Table.Td>
-       <Table.Td>
+      <Table.Td>
         <Tooltip label={observationLabel}>
           <ActionIcon
             onClick={clickSeeObservationFunc}

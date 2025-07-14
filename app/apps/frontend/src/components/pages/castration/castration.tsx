@@ -52,14 +52,13 @@ export function Castration() {
   const [isLoading, setIsLoading] = useState<string | null>(null);
   // Estado para la página actual de la paginación
   const [actualPage, setPage] = useState(1);
+  const [totalRegisters, setTotalRegisters] = useState(0);
   const [dateFilterWay, setDateFilterWay] = useState<
     'all' | 'interval' | 'onlyOne'
   >('all');
   // Estado y funciones para mostrar/ocultar el overlay de carga de filas
   const [loadingRows, { open: startLoadingRows, close: finishLoadingRows }] =
     useDisclosure(false);
-  // Hook para navegar entre rutas
-  const navigate = useNavigate();
   //Estado y funciones para mostrar/ocultar el modal de eliminación y edicion
   const [
     featuresModal,
@@ -141,15 +140,21 @@ export function Castration() {
       console.log(params);
 
       // Llama al hook para filtrar los turnos
-      const data = await filter({ ...params, status: 'Realizado' });
+      const data = await filter({
+        ...params,
+        limit: 7,
+        page: actualPage,
+        status: 'Realizado',
+      });
       if (!data) {
         setIsLoading('error');
         finishLoadingRows();
         return params;
       }
       setAppointmentData(data.data);
+      setTotalRegisters(data.total);
+      console.log(data.data);
       finishLoadingRows();
-      setPage(1);
       setIsLoading('loaded');
       return params;
     } catch (err) {
@@ -164,13 +169,9 @@ export function Castration() {
   // Componente interno para renderizar las filas de la tabla de turnos
   const Rows = () => {
     // Calcula los datos a mostrar según la página actual
-    const paginationData = appointmentData.slice(
-      (actualPage - 1) * registersPerPage,
-      actualPage * registersPerPage
-    );
 
     // Mapea cada turno a una fila de la tabla
-    return paginationData.map((appointment) => (
+    return appointmentData.map((appointment) => (
       <CastrationRow
         appointment={appointment}
         key={appointment.ID_appointment}
@@ -216,6 +217,9 @@ export function Castration() {
 
   // Renderizado principal del componente
 
+  useEffect(() => {
+    handleOnSubmit();
+  }, [actualPage]);
   if (form) {
     return (
       <Box>
@@ -386,6 +390,7 @@ export function Castration() {
                       fullWidth
                       variant="filled"
                       color={mainColor}
+                      onClick={() => setPage(1)}
                     >
                       Listar
                     </Button>
@@ -458,7 +463,7 @@ export function Castration() {
                 }}
               >
                 <Pagination
-                  total={Math.ceil(appointmentData.length / registersPerPage)}
+                  total={Math.ceil(totalRegisters / registersPerPage)}
                   value={actualPage}
                   onChange={setPage}
                   color={mainColor}
