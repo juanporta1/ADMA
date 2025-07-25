@@ -20,7 +20,7 @@ import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
 
 export function IncomeForm() {
   const mainColor = useContext(MainColorContext);
-  const { form } = useIncomeForm();
+  const { form, generatePDF } = useIncomeForm();
   const hourData: SelectData[] = [
     { value: '8:00', text: '8:00' },
     { value: '10:00', text: '10:00' },
@@ -229,6 +229,14 @@ export function IncomeForm() {
             leftSection={<FontAwesomeIcon icon={faFilePdf} />}
             color={mainColor}
             fullWidth
+            onClick={() => {
+              generatePDF({
+                date: new Date(form.getValues().date),
+                byHour: form.getValues().hour,
+                dateFilterWay: 'onlyOne',
+              });
+              console.log('Toco boton');
+            }}
           >
             Imprimir Planilla de Ingreso
           </Button>

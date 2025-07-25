@@ -4,6 +4,7 @@ import { features } from 'process';
 import { useState, useCallback, useContext } from 'react';
 import { ApiHostContext } from '../../../contexts/api-host-context';
 import { Veterinarian } from '../../../types/data-entities.types';
+import { FilterParams } from '../../../components/pages/castration/castration';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface UseIncomeForm {
@@ -13,6 +14,7 @@ export interface UseIncomeForm {
     income: DoneIncome,
     id: number
   ) => Promise<void | AxiosResponse<any, any>>;
+  generatePDF: (filters: FilterParams) => Promise<void>;
 }
 
 export interface Income {
@@ -76,7 +78,28 @@ export function useIncomeForm(): UseIncomeForm {
     }
   };
 
-  return { form, create, createCastration };
+  async function generatePDF(filters: FilterParams): Promise<void> {
+    try {
+      if (!filters.byHour || !filters.date)
+        throw new Error('Debe seleccionar una fecha y hora');
+      const res = await axios.get(`${host}/income-form/pdf`, {
+        responseType: 'blob',
+        params: { ...filters },
+      });
+
+      const blob = res.data;
+      const link = document.createElement('a');
+      const url = window.URL.createObjectURL(blob);
+      link.href = url;
+      link.download = `PlanillaDeIngreso-${
+        filters.date.toISOString().split('T')[0]
+      }-${filters.byHour}.pdf`;
+      link.click();
+    } catch (err) {
+      throw err;
+    }
+  }
+  return { form, create, createCastration, generatePDF };
 }
 
 export default useIncomeForm;

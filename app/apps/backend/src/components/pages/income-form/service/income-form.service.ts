@@ -7,6 +7,10 @@ import { CreateIncomeDTO } from '../DTOs/create-income.DTO';
 import { Appointment } from '../../appointment/appointment.entity';
 import { DoneIncomeDTO } from '../DTOs/done-income.DTO';
 import { Veterinarian } from '../../../data-entities/entities/veterinarian.entity';
+import PDFDocumentWithTables from 'pdfkit-table';
+import { FilterAppointmentDto } from '../../appointment/DTOs/filter-appointment.dto';
+import { PdfServiceIncome } from './pdf-service/pdf-service.service';
+import { AppointmentService } from '../../appointment/service/appointment.service';
 
 @Injectable()
 export class IncomeFormService {
@@ -16,7 +20,9 @@ export class IncomeFormService {
     @InjectRepository(Appointment)
     private appointmentRepository: Repository<Appointment>,
     @InjectRepository(Veterinarian)
-    private veterinarianRepository: Repository<Veterinarian>
+    private veterinarianRepository: Repository<Veterinarian>,
+    private readonly pdfService: PdfServiceIncome,
+    private readonly appointmentService: AppointmentService
   ) {}
   async getIncomeForm(querys: FilterIncomeDTO) {
     const filterQuery = this.incomeFormRepository
@@ -68,5 +74,27 @@ export class IncomeFormService {
       }
     );
     return updatedIncome;
+  }
+
+  async generatePDF(doc: PDFDocumentWithTables, filters: FilterAppointmentDto) {
+    const registers = await this.appointmentService.getAll(filters);
+    console.log(filters, 'Filters');
+    console.log(registers, 'Registers');
+
+    this.addFooter(doc);
+    doc.on('pageAdded', () => {
+      this.addFooter(doc);
+    });
+    await this.pdfService.generateHeader(doc);
+    this.pdfService.newTable(doc, registers[0], this.addFooter);
+  }
+  addFooter(doc: PDFDocumentWithTables) {
+    const footerText = 'Documento confidencial - ADMA';
+    const y = doc.page.height + 30;
+
+    doc.fontSize(9).fillColor('black').text(footerText, 0, y, {
+      align: 'center',
+      width: doc.page.width,
+    });
   }
 }

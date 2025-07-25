@@ -12,7 +12,7 @@ interface TextElement {
   value: string;
 }
 @Injectable()
-export class PdfService {
+export class PdfServiceAppointment {
   constructor(
     @InjectRepository(Neighborhood)
     private readonly nRepo: Repository<Neighborhood>,
@@ -52,7 +52,7 @@ export class PdfService {
         value: `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`,
       });
     }
-    if(filters.date){
+    if (filters.date) {
       const date = new Date(filters.date);
       textsList.push({
         title: 'Son unicamente del día',
@@ -118,16 +118,19 @@ export class PdfService {
     if (values.includes('Fecha')) columns.push(appointment.date.toString());
     if (values.includes('Hora')) columns.push(appointment.hour);
     if (values.includes('DNI')) columns.push(appointment.dni);
-    if (values.includes('Teléfono')) columns.push(appointment?.phone || "-");
-    if (values.includes('Barrio')) columns.push(appointment.neighborhood.neighborhood);
+    if (values.includes('Teléfono')) columns.push(appointment?.phone || '-');
+    if (values.includes('Barrio'))
+      columns.push(appointment.neighborhood.neighborhood);
     if (values.includes('Domicilio')) columns.push(appointment.home);
     if (values.includes('Sexo')) columns.push(appointment.sex);
     if (values.includes('Tamaño')) columns.push(appointment.size);
     if (values.includes('Especie')) columns.push(appointment.specie.specie);
     if (values.includes('Estado')) columns.push(appointment.status);
-    if (values.includes('Razón')) columns.push(appointment.reason?.reason || "-");
-    if (values.includes('Observaciones')) columns.push(appointment?.observations || "-");
-    console.log(columns, "Columnas")
+    if (values.includes('Razón'))
+      columns.push(appointment.reason?.reason || '-');
+    if (values.includes('Observaciones'))
+      columns.push(appointment?.observations || '-');
+    console.log(columns, 'Columnas');
     return columns;
   }
 
@@ -136,10 +139,14 @@ export class PdfService {
     registers: Appointment[],
     values: string[]
   ) {
-    const headers = [{label: "N°"}, {label: "Apellido"}, {label: "Nombre"}]
+    const headers = [
+      { label: 'N°' },
+      { label: 'Apellido' },
+      { label: 'Nombre' },
+    ];
     values.map((c, i) => {
-      if(c != "Dueño") headers.push({label: c})
-    })
+      if (c != 'Dueño') headers.push({ label: c });
+    });
     doc.table(
       {
         headers: headers,

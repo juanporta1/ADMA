@@ -6,16 +6,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { UpdateAppointmentDto } from '../DTOs/update-appointment.dto';
 import { FilterAppointmentDto } from '../DTOs/filter-appointment.dto';
 import PDFDocumentWithTables from 'pdfkit-table';
-import { PdfService } from './pdf-service/pdf-service.service';
+import { PdfServiceAppointment } from './pdf-service/pdf-service.service';
 import { DataEntitiesService } from '../../../data-entities/services/data-entities.service';
-import { filter } from 'rxjs';
 
 @Injectable()
 export class AppointmentService {
   constructor(
     @InjectRepository(Appointment)
     private appointmentRepository: Repository<Appointment>,
-    private pdfService: PdfService,
+    private pdfService: PdfServiceAppointment,
     private dataEntitiesService: DataEntitiesService
   ) {}
 
