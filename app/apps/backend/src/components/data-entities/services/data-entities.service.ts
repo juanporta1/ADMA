@@ -1,6 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Not, Repository } from 'typeorm';
+import { Not, QueryBuilder, Repository } from 'typeorm';
 import { Neighborhood } from '../entities/neighborhood.entity';
 import { Specie } from '../entities/specie.entity';
 import { Reason } from '../entities/reason.entity';
@@ -41,11 +41,17 @@ export class DataEntitiesService {
 
   // ==================== MÉTODOS GET ====================
   async getSpecies() {
-    return await this.specieRepository.find();
+    const qb = this.specieRepository.createQueryBuilder('s');
+    qb.orderBy('s.specie', 'ASC');
+    qb.where('s.inUse = true'); // Solo devuelve las especies que están en uso
+    return await qb.getMany();
   }
 
   async getNeighborhoods() {
-    return await this.neighborhoodRepository.find();
+    const qb = this.neighborhoodRepository.createQueryBuilder('n');
+    qb.orderBy('n.neighborhood', 'ASC');
+    qb.where('n.inUse = true'); // Solo devuelve los barrios que están en uso
+    return await qb.getMany();
   }
 
   async getReasons() {

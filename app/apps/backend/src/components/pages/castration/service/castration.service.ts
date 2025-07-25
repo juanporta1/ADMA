@@ -41,6 +41,7 @@ export class CastrationService {
       animalName: body.animalName,
       features: body.features,
       veterinarian: veterinarian,
+      observations: body.observations,
     });
     await this.castrationRepository.save(newCastration);
 

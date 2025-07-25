@@ -5,4 +5,5 @@ export interface CreateCastrationDTO {
   animalName: string;
   features: string;
   age: string;
+  observations?: string;
 }

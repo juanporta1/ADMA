@@ -1,5 +1,5 @@
 // Componente para renderizar una fila de la tabla de turnos con acciones de editar y borrar
-import { ActionIcon, Table, Text, Tooltip } from '@mantine/core';
+import { ActionIcon, Table, TableTd, Text, Tooltip } from '@mantine/core';
 import { Appointment } from '../../../../types/entities.types';
 import { useContext } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -34,18 +34,12 @@ export function CastrationRow({
   const { currentUser } = useContext(UserContext);
   return (
     <Table.Tr key={appointment.ID_appointment}>
+      <Table.Td>{appointment.surgeryNumber}</Table.Td>
       <Table.Td>{appointment.date.toString()}</Table.Td>
       <Table.Td>{appointment.hour}</Table.Td>
       <Table.Td>{appointment.lastName}</Table.Td>
-      <Table.Td>{appointment.name}</Table.Td>
       <Table.Td>{appointment.dni}</Table.Td>
-      <Table.Td>
-        {appointment.phone ? (
-          appointment.phone
-        ) : (
-          <Text c={'#aaaa'}>Sin Teléfono</Text>
-        )}
-      </Table.Td>
+
       <Table.Td>{appointment.home}</Table.Td>
       <Table.Td>{appointment.neighborhood.neighborhood}</Table.Td>
       <Table.Td>{appointment.specie.specie}</Table.Td>

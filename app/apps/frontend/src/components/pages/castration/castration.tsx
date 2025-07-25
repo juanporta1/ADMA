@@ -434,12 +434,11 @@ export function Castration() {
                 <Table>
                   <Table.Thead>
                     <Table.Tr>
+                      <Table.Th>N° de Cirugía</Table.Th>
                       <Table.Th>Fecha</Table.Th>
                       <Table.Th>Hora</Table.Th>
                       <Table.Th>Apellido</Table.Th>
-                      <Table.Th>Nombre</Table.Th>
                       <Table.Th>DNI</Table.Th>
-                      <Table.Th>Telefono</Table.Th>
                       <Table.Th>Domicilio</Table.Th>
                       <Table.Th>Barrio</Table.Th>
                       <Table.Th>Especie</Table.Th>
@@ -467,6 +466,7 @@ export function Castration() {
                   value={actualPage}
                   onChange={setPage}
                   color={mainColor}
+                  style={{ marginBottom: '10px' }}
                 />
               </div>
             </div>

@@ -24,6 +24,7 @@ export function DoneModal({
   actualVeterinarian,
 }: props) {
   const mainColor = useContext(MainColorContext);
+  console.log('ActualVeterinarian desde IncomeRow: ', actualVeterinarian);
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: {
@@ -32,6 +33,7 @@ export function DoneModal({
       weight: '',
       animalName: '',
       features: '',
+      observations: '',
     },
     validate: {
       animalName: (value: string) =>
@@ -61,6 +63,7 @@ export function DoneModal({
         weight: editedWeight,
         animalName: v.animalName,
         features: v.features || null,
+        observations: v.observations || null,
       },
       actualAppointment.incomeForm.ID_income
     );
@@ -78,7 +81,9 @@ export function DoneModal({
           : String(actualAppointment.incomeForm.weight),
       animalName: actualAppointment.incomeForm.animalName,
       features: actualAppointment.incomeForm.features || '',
-      veterinarian: actualVeterinarian,
+      veterinarian: actualAppointment?.incomeForm?.veterinarian?.ID_veterinarian
+        ? actualAppointment.incomeForm.veterinarian?.ID_veterinarian
+        : actualVeterinarian,
     });
   }, [actualAppointment]);
 
@@ -122,6 +127,14 @@ export function DoneModal({
             name="features"
             label="Ingrese Caractersiticas del animal: "
             placeholder="Caracteristicas del animal"
+            span={12}
+          />
+          <FormColumn
+            inputType="textarea"
+            form={form}
+            name="observations"
+            label="Ingrese Observaciones: "
+            placeholder="Observaciones sobre la castracion"
             span={12}
           />
           <FormColumn

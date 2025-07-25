@@ -1,22 +1,25 @@
-import { Accordion, Box, Flex, Grid } from '@mantine/core';
+import { Accordion, Box, Button, Flex, Grid } from '@mantine/core';
 import styles from './income-form.module.css';
 import useIncomeForm from '../../../hooks/income-form/use-income-form/use-income-form';
 import FormColumn from '../../utilities/form-column/form-column';
 import { SelectData } from '../../../types/utilities.types';
 import useAppointment from '../../../hooks/appointment/use-appointment/use-appointment';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import StatusTable from './status-table/status-table';
-import { useDisclosure, useSet } from '@mantine/hooks';
+import { useDisclosure } from '@mantine/hooks';
 import CanceledModal from './modals/canceled/canceled-modal';
 import AdmissionModal from './modals/admission/admission-modal';
 import AbsenceModal from './modals/absence/absence-modal';
 import NotDoneModal from './modals/not-done/not-done-modal';
 import DoneModal from './modals/done/done-modal';
 import { Appointment } from '../../../types/entities.types';
-import { Veterinarian } from '../../../types/data-entities.types';
 import useDataEntities from '../../../hooks/general/use-data-entities/use-data-entities';
+import { MainColorContext } from '../../../contexts/color-context';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
 
 export function IncomeForm() {
+  const mainColor = useContext(MainColorContext);
   const { form } = useIncomeForm();
   const hourData: SelectData[] = [
     { value: '8:00', text: '8:00' },
@@ -155,7 +158,7 @@ export function IncomeForm() {
     fetchAppointments();
   }, [form.values]);
 
-  // useEffect(() => console.log(appointments), [appointments]);
+  useEffect(() => console.log(appointments), [appointments]);
   // useEffect(() => console.log(actualAppointment), [actualAppointment]);
   return (
     <Flex h={'100%'} direction={'row'} gap={'lg'}>
@@ -221,6 +224,15 @@ export function IncomeForm() {
           data={veterinarians}
           notRequired
         />
+        <Grid.Col span={12}>
+          <Button
+            leftSection={<FontAwesomeIcon icon={faFilePdf} />}
+            color={mainColor}
+            fullWidth
+          >
+            Imprimir Planilla de Ingreso
+          </Button>
+        </Grid.Col>
       </Grid>
       <Box style={{ border: '1px solid #aaaa', width: '100%' }}>
         <Accordion variant="contained" classNames={{ panel: styles.row }}>

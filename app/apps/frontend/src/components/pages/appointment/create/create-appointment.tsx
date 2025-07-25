@@ -85,6 +85,10 @@ export function CreateAppointment() {
     }
   };
 
+  useEffect(() => {
+    setActualDate(new Date());
+  }, []);
+
   // Inicialización de valores del formulario
   useEffect(() => {
     const fetchData = async () => {

@@ -31,6 +31,7 @@ export interface DoneIncome {
   weight: string;
   animalName: string;
   features?: string | null;
+  observations?: string | null;
 }
 
 export function useIncomeForm(): UseIncomeForm {
