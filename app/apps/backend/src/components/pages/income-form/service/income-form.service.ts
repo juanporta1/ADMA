@@ -81,20 +81,31 @@ export class IncomeFormService {
     console.log(filters, 'Filters');
     console.log(registers, 'Registers');
 
-    this.addFooter(doc);
     doc.on('pageAdded', () => {
-      this.addFooter(doc);
+      this.addLegalText(doc); // dibuja texto legal en cada página
     });
-    await this.pdfService.generateHeader(doc);
-    this.pdfService.newTable(doc, registers[0], this.addFooter);
-  }
-  addFooter(doc: PDFDocumentWithTables) {
-    const footerText = 'Documento confidencial - ADMA';
-    const y = doc.page.height + 30;
 
-    doc.fontSize(9).fillColor('black').text(footerText, 0, y, {
-      align: 'center',
-      width: doc.page.width,
+    this.addLegalText(doc); // primera página
+
+    await this.pdfService.generateHeader(doc);
+    await this.pdfService.newTable(doc, registers[0]);
+
+    // Footer para última página
+    // this.addFooter(doc);
+  }
+  addLegalText(doc: PDFDocumentWithTables) {
+    if (!doc.page) return;
+
+    const text =
+      'Con mi firma, declaro bajo juramento no poseer los medios económicos para solventar los costos de esterilización de mi mascota en forma privada. Dejo constancia de conocer los riesgos posibles presentes en todo tipo de intervención quirúrgica. Asumo toda la responsabilidad autorizando al M. Veterinario del Programa de Salud Animal a realizar dicha intervención, comprometiéndome a no realizar demanda o juicio alguno contra la Fundación Amigos del Mejor Amigo, Municipalidad de Alta Gracia, ni al profesional Veterinario actualmente. Adjunto a la presente fotocopia de mi DNI.';
+
+    const textWidth =
+      doc.page.width - doc.page.margins.left - doc.page.margins.right;
+
+    doc.fontSize(7).fillColor('black').text(text, doc.page.margins.left, 25, {
+      // 25 es la altura desde arriba
+      width: textWidth,
+      align: 'justify',
     });
   }
 }

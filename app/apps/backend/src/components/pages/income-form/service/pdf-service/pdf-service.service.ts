@@ -8,19 +8,17 @@ export class PdfServiceIncome {
   constructor() {}
 
   async generateHeader(doc: PDFDocumnetWithTables) {
+    doc.x = 15;
     doc.fontSize(11);
     doc.font('Helvetica');
 
-    doc.image('./apps/backend/src/assets/logo.png', 690, 15, { width: 110 });
-    doc.image('./apps/backend/src/assets/logo2.png', 30, 10, { width: 100 });
+    doc.image('./apps/backend/src/assets/logo.png', 690, 60, { width: 110 });
+    doc.image('./apps/backend/src/assets/logo2.png', 30, 45, { width: 100 });
     doc.moveDown(2);
-
-    doc.x = 15;
   }
 
   async generateFooter(doc: PDFDocumnetWithTables) {
     const date = new Date();
-    doc.moveDown(1);
     doc.text(
       `Este registro fue generado el dia ${date.getDate()}/${
         date.getMonth() + 1
@@ -81,11 +79,7 @@ export class PdfServiceIncome {
     return columns;
   }
 
-  async newTable(
-    doc: PDFDocumnetWithTables,
-    registers: Appointment[],
-    addFooter: (doc: PDFDocumentWithTables) => void
-  ) {
+  async newTable(doc: PDFDocumnetWithTables, registers: Appointment[]) {
     const headers = [
       { label: 'N°', property: 'id', width: 20 },
       { label: 'N° Cirugía', property: 'surgeryNumber', width: 60 },
@@ -124,6 +118,8 @@ export class PdfServiceIncome {
         ],
       },
       {
+        y: 120,
+        x: doc.page.margins.left,
         minRowHeight: 30,
         padding: [1, 1, 1, 1],
       }

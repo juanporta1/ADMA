@@ -37,12 +37,13 @@ export class IncomeFormController {
       layout: 'landscape',
       size: 'A4',
       margins: {
-        top: 25,
-        bottom: 25,
+        top: 65,
+        bottom: 10,
         left: 15,
         right: 15,
       },
     });
+
     doc.moveDown(2);
     res.setHeader('Content-Type', 'application/pdf');
     res.setHeader('Content-Disposition', 'attachment; filename=ADMA.pdf');
