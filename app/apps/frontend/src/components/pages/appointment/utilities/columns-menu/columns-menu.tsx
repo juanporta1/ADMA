@@ -8,9 +8,10 @@ import { useDisclosure } from '@mantine/hooks';
 interface props {
   values: string[];
   setValues: (values: string[]) => void;
+  castration?: boolean;
 }
 
-export function ColumnsMenu(props: props) {
+export function ColumnsMenu({ values, setValues, castration = false }: props) {
   const mainColor = useContext(MainColorContext);
   const [opened, { toggle, close }] = useDisclosure(false);
   return (
@@ -28,8 +29,8 @@ export function ColumnsMenu(props: props) {
         </Text>
 
         <Checkbox.Group
-          defaultValue={props.values}
-          onChange={props.setValues}
+          defaultValue={values}
+          onChange={setValues}
           style={{ gap: '10px' }}
         >
           <Flex
@@ -41,20 +42,45 @@ export function ColumnsMenu(props: props) {
               label="Nombre y Apellido"
               value={'Dueño'}
               color={mainColor}
-              disabled
-              checked
             />
             <Checkbox label="Fecha" value={'Fecha'} color={mainColor} />
             <Checkbox label="Hora" value={'Hora'} color={mainColor} />
             <Checkbox label="DNI" value={'DNI'} color={mainColor} />
-            <Checkbox label="Teléfono" value={'Teléfono'} color={mainColor} />
+            {!castration ? (
+              <Checkbox label="Teléfono" value={'Teléfono'} color={mainColor} />
+            ) : null}
             <Checkbox label="Barrio" value={'Barrio'} color={mainColor} />
             <Checkbox label="Domicilio" value={'Domicilio'} color={mainColor} />
             <Checkbox label="Sexo" value={'Sexo'} color={mainColor} />
             <Checkbox label="Tamaño" value={'Tamaño'} color={mainColor} />
             <Checkbox label="Especie" value={'Especie'} color={mainColor} />
-            <Checkbox label="Estado" value={'Estado'} color={mainColor} />
-            <Checkbox label="Razón" value={'Razón'} color={mainColor} />
+            {castration ? (
+              <Checkbox
+                label="Nombre del Animal"
+                value={'Paciente'}
+                color={mainColor}
+              />
+            ) : null}
+            {castration ? (
+              <Checkbox label="Peso" value={'Peso(KG)'} color={mainColor} />
+            ) : null}
+            {castration ? (
+              <Checkbox label="Edad" value={'Edad'} color={mainColor} />
+            ) : null}
+            {!castration ? (
+              <Checkbox label="Estado" value={'Estado'} color={mainColor} />
+            ) : null}
+            {!castration ? (
+              <Checkbox label="Razón" value={'Razón'} color={mainColor} />
+            ) : null}
+            {castration ? (
+              <Checkbox
+                label="Características"
+                value={'Características'}
+                color={mainColor}
+              />
+            ) : null}
+
             <Checkbox
               label="Observaciones"
               value={'Observaciones'}

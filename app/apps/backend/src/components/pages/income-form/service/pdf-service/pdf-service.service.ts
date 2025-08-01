@@ -1,13 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import PDFDocumnetWithTables from 'pdfkit-table';
 import { Appointment } from '../../../appointment/appointment.entity';
-import PDFDocumentWithTables from 'pdfkit-table';
 
 @Injectable()
 export class PdfServiceIncome {
   constructor() {}
 
-  async generateHeader(doc: PDFDocumnetWithTables) {
+  generateHeader(doc: PDFDocumnetWithTables) {
     doc.x = 15;
     doc.fontSize(11);
     doc.font('Helvetica');

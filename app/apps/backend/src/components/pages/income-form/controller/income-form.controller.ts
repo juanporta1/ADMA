@@ -37,7 +37,7 @@ export class IncomeFormController {
       layout: 'landscape',
       size: 'A4',
       margins: {
-        top: 65,
+        top: 120,
         bottom: 10,
         left: 15,
         right: 15,

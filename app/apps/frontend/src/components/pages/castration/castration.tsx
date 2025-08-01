@@ -11,6 +11,7 @@ import {
   Pagination,
   Table,
   Text,
+  Tooltip,
 } from '@mantine/core';
 import Title from '../../utilities/title/title';
 import { AppointmentContext } from '../../../contexts/appointment-context';
@@ -25,6 +26,9 @@ import CastrationRow from './utilities/castration-row';
 import useGetLoadingText from '../../../hooks/appointment/filter/get-loading-text/get-loading-text';
 import { Appointment } from '../../../types/entities.types';
 import { AppoinmentSelects } from '../../../types/utilities.types';
+import ColumnsMenu from '../appointment/utilities/columns-menu/columns-menu';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
 
 export interface FilterParams {
   sex?: string; // Sexo de la mascota
@@ -46,6 +50,8 @@ export interface FilterParams {
 // Interfaz para la estructura de un turno
 
 export function Castration() {
+  const { generatePDF } = useAppointment();
+
   // Estado para almacenar los turnos obtenidos
   const [appointmentData, setAppointmentData] = useState<Appointment[]>([]);
   // Estado para controlar el texto de carga
@@ -73,16 +79,16 @@ export function Castration() {
   const [actualRegister, setActualRegister] = useState<Appointment>();
 
   const [columnsValues, setColumnsValues] = useState<string[]>([
-    'Dueño',
     'Fecha',
     'Hora',
     'DNI',
-    'Teléfono',
     'Barrio',
-    'Domicilio',
     'Sexo',
     'Tamaño',
     'Especie',
+    'Peso(KG)',
+    'Edad',
+    'Paciente',
   ]);
 
   // Cantidad de registros por página
@@ -263,6 +269,28 @@ export function Castration() {
           <Flex direction="row" justify="space-between">
             <Title text="Castraciones" c={mainColor} />
             {/*Acá se pueden agregar botonciotos y algún piripipi*/}
+            <Flex gap={'md'}>
+              <Tooltip label="Generar PDF en base a los filtros actuales">
+                <Button
+                  onClick={async () => {
+                    const filterParams = await handleOnSubmit();
+                    console.log(filterParams);
+                    generatePDF(filterParams, columnsValues, true);
+                  }}
+                  leftSection={<FontAwesomeIcon icon={faFilePdf} />}
+                  color={mainColor}
+                  variant="filled"
+                  style={{ width: '150px' }}
+                >
+                  Generar PDF
+                </Button>
+              </Tooltip>
+              <ColumnsMenu
+                values={columnsValues}
+                setValues={setColumnsValues}
+                castration={true}
+              />
+            </Flex>
           </Flex>
 
           <Box bd="1px #aaa solid" p="sm">

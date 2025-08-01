@@ -82,12 +82,12 @@ export class IncomeFormService {
     console.log(registers, 'Registers');
 
     doc.on('pageAdded', () => {
-      this.addLegalText(doc); // dibuja texto legal en cada página
+      this.addLegalText(doc);
+      this.pdfService.generateHeader(doc);
     });
 
     this.addLegalText(doc); // primera página
-
-    await this.pdfService.generateHeader(doc);
+    this.pdfService.generateHeader(doc);
     await this.pdfService.newTable(doc, registers[0]);
 
     // Footer para última página
@@ -107,5 +107,31 @@ export class IncomeFormService {
       width: textWidth,
       align: 'justify',
     });
+    const date = new Date();
+
+    doc
+      .fontSize(7)
+      .fillColor('black')
+      .text(
+        `Fecha: ${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`,
+        doc.page.margins.left,
+        12,
+        {
+          // 25 es la altura desde arriba
+          width: textWidth,
+          align: 'justify',
+        }
+      );
+
+    doc
+      .font('Helvetica-Bold')
+      .fontSize(14)
+      .fillColor('black')
+      .text(`Planilla de Cirugía`, doc.page.margins.left, 70, {
+        // 25 es la altura desde arriba
+        width: textWidth,
+        align: 'center',
+        fill: true,
+      });
   }
 }

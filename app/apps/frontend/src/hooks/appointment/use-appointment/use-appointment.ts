@@ -15,7 +15,11 @@ export interface UseAppointment {
   edit: (appointment: EditFormValues, id: number) => Promise<void>;
   remove: (id: number) => void;
   create: (values: FormValues) => void;
-  generatePDF: (filters: FilterParams, values: string[]) => Promise<void>;
+  generatePDF: (
+    filters: FilterParams,
+    values: string[],
+    castration?: boolean
+  ) => Promise<void>;
   editStatus: (
     id: number,
     status: string,
@@ -171,41 +175,77 @@ export function useAppointment(): UseAppointment {
   }
   async function generatePDF(
     filters: FilterParams,
-    values: string[]
+    values: string[],
+    castration: boolean = false
   ): Promise<void> {
     try {
-      const orderedList = [
-        'Dueño',
-        'Fecha',
-        'Hora',
-        'DNI',
-        'Teléfono',
-        'Barrio',
-        'Domicilio',
-        'Sexo',
-        'Tamaño',
-        'Especie',
-        'Estado',
-        'Razón',
-        'Observaciones',
-      ];
+      if (!castration) {
+        const orderedList = [
+          'Dueño',
+          'Fecha',
+          'Hora',
+          'DNI',
+          'Teléfono',
+          'Barrio',
+          'Domicilio',
+          'Sexo',
+          'Tamaño',
+          'Especie',
+          'Estado',
+          'Razón',
+          'Observaciones',
+        ];
 
-      const orderedUpdatedList = orderedList.filter((i) => values.includes(i));
-      const res = await axios.get(`${host}/appointment/pdf`, {
-        responseType: 'blob',
-        params: { ...filters, values: orderedUpdatedList },
-      });
+        const orderedUpdatedList = orderedList.filter((i) =>
+          values.includes(i)
+        );
+        const res = await axios.get(`${host}/appointment/pdf`, {
+          responseType: 'blob',
+          params: { ...filters, values: orderedUpdatedList },
+        });
+        const blob = res.data;
+        const link = document.createElement('a');
+        const url = window.URL.createObjectURL(blob);
+        link.href = url;
+        link.download = 'Turnos.pdf';
+        link.click();
+      } else {
+        const orderedList = [
+          'Dueño',
+          'Fecha',
+          'Hora',
+          'DNI',
+          'Barrio',
+          'Domicilio',
+          'Paciente',
+          'Edad',
+          'Peso(KG)',
+          'Sexo',
+          'Tamaño',
+          'Especie',
+          'Características',
+          'Observaciones',
+        ];
 
-      const blob = res.data;
-      const link = document.createElement('a');
-      const url = window.URL.createObjectURL(blob);
-      link.href = url;
-      link.download = 'ADMA.pdf';
-      link.click();
+        const orderedUpdatedList = orderedList.filter((i) =>
+          values.includes(i)
+        );
+        const res = await axios.get(`${host}/castration/pdf`, {
+          responseType: 'blob',
+          params: { ...filters, values: orderedUpdatedList },
+        });
+        const blob = res.data;
+        const link = document.createElement('a');
+        const url = window.URL.createObjectURL(blob);
+        link.href = url;
+        link.download = 'Castraciones.pdf';
+        link.click();
+      }
     } catch (err) {
       throw err;
     }
   }
+
   async function editStatus(
     id: number,
     status: string,

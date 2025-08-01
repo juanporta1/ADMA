@@ -24,7 +24,12 @@ export function DoneModal({
   actualVeterinarian,
 }: props) {
   const mainColor = useContext(MainColorContext);
-  console.log('ActualVeterinarian desde IncomeRow: ', actualVeterinarian);
+  const finalVeterinarians: SelectData[] = veterinarians.map((v, i) => ({
+    value: String(v.value),
+    text: v.text,
+    disabled: i == 0 ? true : false,
+  }));
+  console.log('Actual Veterinarian desde IncomeRow: ', actualVeterinarian);
   const form = useForm({
     mode: 'uncontrolled',
     initialValues: {
@@ -144,7 +149,7 @@ export function DoneModal({
             label="Seleccione un Veterinario: "
             placeholder="Seleccione un Veterinario"
             span={12}
-            data={veterinarians}
+            data={finalVeterinarians}
           />
           <Grid.Col span={12}>
             <Button color={mainColor} variant="light" type="submit" fullWidth>

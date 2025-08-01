@@ -238,7 +238,7 @@ export function IncomeForm() {
               console.log('Toco boton');
             }}
           >
-            Imprimir Planilla de Ingreso
+            Imprimir Planilla de Cirugía
           </Button>
         </Grid.Col>
       </Grid>

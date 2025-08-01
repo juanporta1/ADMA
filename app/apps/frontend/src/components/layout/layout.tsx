@@ -38,7 +38,7 @@ export function Layout() {
           breakpoint: 'sm',
           collapsed: { mobile: !opened },
         }}
-        style={{ height: "100vh" }}
+        style={{ height: '100vh' }}
         padding="md"
       >
         <AppShell.Header style={{ backgroundColor: '#8b7a9a', border: 'none' }}>
@@ -55,10 +55,8 @@ export function Layout() {
                 src={
                   'https://altagracia.gob.ar//wp-content/uploads/2022/11/SALUD_ANIMAL_LOGO-removebg-preview.png'
                 }
-
                 style={{
                   height: '100%',
-
                 }}
               />
               <img
@@ -124,7 +122,7 @@ export function Layout() {
               <NavLinksContainer
                 mainNavLink={{
                   goTo: '/planilla-de-ingreso',
-                  label: 'Planilla de ingreso',
+                  label: 'Planilla de Cirugía',
                   icon: <FontAwesomeIcon icon={faTableList} />,
                 }}
                 childrenNavs={[]}
@@ -156,10 +154,8 @@ export function Layout() {
             </Text>
           </Stack>
         </AppShell.Navbar>
-        <AppShell.Main h={"100%"} w={"100%"}>
-
+        <AppShell.Main h={'100%'} w={'100%'}>
           <Outlet />
-
         </AppShell.Main>
       </AppShell>
     </MantineProvider>
