@@ -224,6 +224,17 @@ export function CreateAppointment() {
                   span={12}
                   notRequired
                 />
+                <FormColumn
+                  inputType="select"
+                  form={form}
+                  name="mobile"
+                  data={[
+                    { text: 'Sí', value: 'true' },
+                    { text: 'No', value: 'false' },
+                  ]}
+                  label="¿Es un turno para Quirófano Móvil?"
+                  span={2}
+                />
                 {/* Botones de acción */}
                 <Grid.Col span={12}>
                   <Button fullWidth color={mainColor} type="submit">

@@ -51,4 +51,5 @@ export interface Appointment {
   incomeForm: IncomeForm | null;
   castration: Castration | null;
   surgeryNumber: number | null;
+  mobile: boolean; // Indica si es un turno de quirófano móvil
 }

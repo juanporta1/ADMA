@@ -64,6 +64,8 @@ export class Appointment {
 
   @Column({ type: 'int', nullable: true })
   surgeryNumber?: number | null;
+  @Column({ type: 'bool', default: false })
+  mobile!: boolean;
 
   @OneToOne(() => IncomeForm, (i) => i.appointment, { nullable: true })
   @JoinColumn()

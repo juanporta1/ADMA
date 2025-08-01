@@ -41,6 +41,7 @@ interface FormValues {
   date: Date;
   observations: string;
   hour: string;
+  mobile: string;
 }
 
 interface NewAppointment {
@@ -59,6 +60,7 @@ interface NewAppointment {
   status?: string;
   reason?: number;
   user?: number;
+  mobile?: boolean;
 }
 
 export function useAppointment(): UseAppointment {
@@ -80,6 +82,7 @@ export function useAppointment(): UseAppointment {
       hour: values.hour,
       observations: values.observations ? values.observations?.trim() : null,
       user: Number(user.currentUser?.ID_user),
+      mobile: values.mobile == 'true' ? true : false,
     };
 
     const response = await axios.post(`${host}/appointment`, newAppointment);
@@ -163,6 +166,7 @@ export function useAppointment(): UseAppointment {
         sex: appointment.sex,
         specie: Number(appointment.specie),
         size: appointment.size,
+        mobile: appointment.mobile == 'true' ? true : false,
       };
       const res = await axios.put(
         `${host}/appointment/${id}`,

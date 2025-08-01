@@ -39,6 +39,7 @@ export interface EditFormValues {
     | 'Realizado'
     | 'No Realizado'; // Hora del turno
   reason: string;
+  mobile: string;
 }
 
 interface props {
@@ -109,6 +110,7 @@ export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
           hour: appointment.hour,
           observations: appointment.observations || '',
           status: appointment.status,
+          mobile: appointment.mobile ? 'true' : 'false',
         };
         form.setValues(settings);
         setActualDate(dateWithoutTimezone);
@@ -273,6 +275,17 @@ export function EditAppointment({ appointment, cancelFunc, onSubmit }: props) {
                 ) : (
                   <></>
                 )}
+                <FormColumn
+                  inputType="select"
+                  name="mobile"
+                  form={form}
+                  data={[
+                    { value: 'true', text: 'Sí' },
+                    { value: 'false', text: 'No' },
+                  ]}
+                  label="¿Es un turno de Quirófano Móvil?"
+                  span={4}
+                />
 
                 {/* Botones de acción */}
                 <Grid.Col span={12}>
