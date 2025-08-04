@@ -93,6 +93,7 @@ export function StatusTable({ appointments, buttonFunctions }: props) {
               {extraColumns()?.age}
               <Table.Th>Especie</Table.Th>
               <Table.Th>Sexo</Table.Th>
+              <Table.Th>Movil</Table.Th>
               {extraColumns()?.weight}
               {extraColumns()?.status}
               {extraColumns()?.reason}

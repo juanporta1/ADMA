@@ -523,6 +523,7 @@ export function FilterAppointments() {
                             <Table.Th>Especie</Table.Th>
                             <Table.Th>Sexo</Table.Th>
                             <Table.Th>Tamaño</Table.Th>
+                            <Table.Th>Móvil</Table.Th>
                             <Table.Th>Estado</Table.Th>
                             <Table.Th>Razón</Table.Th>
                           </Table.Tr>

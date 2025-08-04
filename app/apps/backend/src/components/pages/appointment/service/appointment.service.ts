@@ -133,6 +133,12 @@ export class AppointmentService {
           filterQueryBuilder.orderBy('a.ID_appointment', 'DESC');
       }
 
+      if (querys.mobile !== undefined) {
+        filterQueryBuilder.andWhere('a.mobile = :mobile', {
+          mobile: querys.mobile,
+        });
+      }
+
       if (querys.status)
         filterQueryBuilder.andWhere('a.status = :status', {
           status: querys.status,
@@ -355,12 +361,15 @@ export class AppointmentService {
   }
 
   async generatePDF(doc: PDFDocumentWithTables, filters: FilterAppointmentDto) {
-    const registers = await this.getAll(filters);
-    // console.log(filters.values);
-
+    const registers = await this.getAll({
+      ...filters,
+    });
+    console.log(filters.values);
+    doc.on('pageAdded', () => {
+      this.pdfService.generateHeader(doc, filters, true);
+    });
     await this.pdfService.generateHeader(doc, filters);
     if (filters.values)
       this.pdfService.newTable(doc, registers[0], filters.values);
-    this.pdfService.generateFooter(doc);
   }
 }

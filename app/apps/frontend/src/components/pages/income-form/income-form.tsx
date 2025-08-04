@@ -233,14 +233,32 @@ export function IncomeForm() {
               generatePDF({
                 date: new Date(form.getValues().date),
                 byHour: form.getValues().hour,
+                mobile: 0,
                 dateFilterWay: 'onlyOne',
               });
               console.log('Toco boton');
             }}
           >
-            Imprimir Planilla de Cirugía
+            Planilla de Cirugía
           </Button>
         </Grid.Col>
+        <Grid.Col span={12}></Grid.Col>
+        <Button
+          leftSection={<FontAwesomeIcon icon={faFilePdf} />}
+          color={mainColor}
+          fullWidth
+          onClick={() => {
+            generatePDF({
+              date: new Date(form.getValues().date),
+              byHour: form.getValues().hour,
+              mobile: 1,
+              dateFilterWay: 'onlyOne',
+            });
+            console.log('Toco boton');
+          }}
+        >
+          Planilla de Cirugía Para Quirofano Móvil
+        </Button>
       </Grid>
       <Box style={{ border: '1px solid #aaaa', width: '100%' }}>
         <Accordion variant="contained" classNames={{ panel: styles.row }}>

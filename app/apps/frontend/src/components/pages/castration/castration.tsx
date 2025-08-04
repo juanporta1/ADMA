@@ -29,6 +29,7 @@ import { AppoinmentSelects } from '../../../types/utilities.types';
 import ColumnsMenu from '../appointment/utilities/columns-menu/columns-menu';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faFilePdf } from '@fortawesome/free-solid-svg-icons';
+import { useForm } from '@mantine/form';
 
 export interface FilterParams {
   sex?: string; // Sexo de la mascota
@@ -45,6 +46,7 @@ export interface FilterParams {
   findBy?: 'dni' | 'owner'; // Buscar por DNI o dueño
   dateFilterWay?: 'all' | 'onlyOne' | 'interval';
   date?: Date;
+  mobile?: number; // Filtrar por si el turno es móvil
 }
 
 // Interfaz para la estructura de un turno
@@ -94,7 +96,26 @@ export function Castration() {
   // Cantidad de registros por página
   const registersPerPage = 7;
   // Contexto del formulario de filtros
-  const form = useContext(AppointmentContext);
+  const form = useForm({
+    mode: 'uncontrolled',
+    initialValues: {
+      sex: '',
+      specie: '',
+      size: '',
+      neighborhood: '',
+      startDate: null,
+      endDate: null,
+      input: '',
+      status: '',
+      orderBy: 'id-desc',
+      byHour: '',
+      findBy: 'dni',
+      dateFilterWay: 'all',
+      date: null,
+      all: '',
+      mobile: '',
+    },
+  });
 
   // Contexto para el color principal de la aplicación
   const mainColor = useContext(MainColorContext);
@@ -409,6 +430,20 @@ export function Castration() {
                   placeholder="Buscar"
                   notRequired
                 />
+
+                <FormColumn
+                  span={4}
+                  name="mobile"
+                  inputType="select"
+                  form={form}
+                  label="¿Quirófano Móvil?"
+                  notRequired
+                  data={[
+                    { text: 'Todos', value: '' },
+                    { text: 'Sí', value: 1 },
+                    { text: 'No', value: 0 },
+                  ]}
+                />
                 <Grid.Col span={12}></Grid.Col>
                 {/* Botón para listar los turnos filtrados */}
                 <Grid.Col span={4}>
@@ -475,6 +510,7 @@ export function Castration() {
                       <Table.Th>Nombre del Animal</Table.Th>
                       <Table.Th>Peso</Table.Th>
                       <Table.Th>Edad</Table.Th>
+                      <Table.Th>Movil</Table.Th>
                     </Table.Tr>
                   </Table.Thead>
                   {/* Renderizado de filas de la tabla */}

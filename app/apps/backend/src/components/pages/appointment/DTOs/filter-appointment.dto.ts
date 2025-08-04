@@ -34,4 +34,5 @@ export class FilterAppointmentDto {
   page?: number;
   limit?: number;
   animalName?: string;
+  mobile?: boolean; // Filtrar por si el turno es móvil
 }

@@ -56,6 +56,7 @@ export function AppointmentRow({
       <Table.Td>{appointment.specie.specie}</Table.Td>
       <Table.Td>{appointment.sex}</Table.Td>
       <Table.Td>{appointment.size}</Table.Td>
+      <Table.Td>{appointment.mobile ? 'Sí' : 'No'}</Table.Td>
       <Table.Td>{appointment.status}</Table.Td>
       <Table.Td c={appointment.reason ? '#000' : '#aaaa'}>
         {appointment.reason ? appointment.reason.reason : 'Sin Razon'}

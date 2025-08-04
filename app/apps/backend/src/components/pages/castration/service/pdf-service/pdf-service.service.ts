@@ -6,6 +6,7 @@ import { Neighborhood } from '../../../../data-entities/entities/neighborhood.en
 import { Specie } from '../../../../data-entities/entities/specie.entity';
 import { FilterAppointmentDto } from '../../../appointment/DTOs/filter-appointment.dto';
 import { Appointment } from '../../../appointment/appointment.entity';
+import { text } from 'pdfkit';
 
 interface TextElement {
   title: string;
@@ -37,6 +38,12 @@ export class PdfServiceCastration {
         where: { ID_specie: filters.specie },
       });
       textsList.push({ title: 'Especie', value: specie[0].specie });
+    }
+    if (filters.mobile) {
+      textsList.push({
+        title: 'Movil',
+        value: filters.mobile == 1 ? 'Sí' : 'No',
+      });
     }
     if (filters.startDate) {
       const date = new Date(filters.startDate);
@@ -70,28 +77,27 @@ export class PdfServiceCastration {
     filters: FilterAppointmentDto,
     withoutFilter: boolean = false
   ) {
-    if (!withoutFilter)
-      doc
-        .font('Helvetica-Bold')
-        .fontSize(14)
-        .fillColor('black')
-        .text(`Registro de Castraciones`, doc.page.margins.left, 70, {
-          // 25 es la altura desde arriba
-          align: 'center',
-          fill: true,
-        });
+    doc
+      .font('Helvetica-Bold')
+      .fontSize(14)
+      .fillColor('black')
+      .text(`Registro de Castraciones`, doc.page.margins.left, 70, {
+        // 25 es la altura desde arriba
+        align: 'center',
+        fill: true,
+      });
+    doc.image('./apps/backend/src/assets/logo.png', 690, 15, { width: 110 });
+    doc.image('./apps/backend/src/assets/logo2.png', 30, 10, { width: 100 });
     const listElements = await this.createFilterText(filters);
     const date = new Date();
 
     doc.fontSize(11);
     doc.font('Helvetica');
 
-    doc.image('./apps/backend/src/assets/logo.png', 690, 15, { width: 110 });
-    doc.image('./apps/backend/src/assets/logo2.png', 30, 10, { width: 100 });
     doc.moveDown(1);
 
     doc.x = 15;
-    if (!withoutFilter) return;
+    if (withoutFilter) return;
 
     if (listElements.length) {
       doc.text(

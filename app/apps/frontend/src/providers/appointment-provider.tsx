@@ -20,10 +20,10 @@ export function AppointmentProvider({ children }: props) {
       orderBy: 'id-desc',
       byHour: '',
       findBy: 'dni',
-      dateFilterWay: "all",
+      dateFilterWay: 'all',
       date: null,
-      all: ""
-    }
+      all: '',
+    },
   });
   return (
     <AppointmentContext.Provider value={form}>

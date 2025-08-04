@@ -52,10 +52,13 @@ export function IncomeRow({ appointment, buttonFunctions }: props) {
       {extraColumns()?.age}
       <Table.Td>{appointment.specie.specie}</Table.Td>
       <Table.Td>{appointment.sex}</Table.Td>
+      <Table.Td>{appointment.mobile ? 'Sí' : 'No'}</Table.Td>
+
       {extraColumns()?.weight}
       {extraColumns()?.status}
       {extraColumns()?.reason}
       {extraColumns()?.veterinarian}
+
       {buttons()?.button1}
       {buttons()?.button2}
       {buttons()?.button3}

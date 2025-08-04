@@ -70,17 +70,30 @@ export class PdfServiceAppointment {
 
   async generateHeader(
     doc: PDFDocumnetWithTables,
-    filters: FilterAppointmentDto
+    filters: FilterAppointmentDto,
+    withoutFilter: boolean = false
   ) {
+    doc
+      .font('Helvetica-Bold')
+      .fontSize(14)
+      .fillColor('black')
+      .text(`Registro de Turnos`, doc.page.margins.left, 55, {
+        // 25 es la altura desde arriba
+        align: 'center',
+        fill: true,
+      });
+    doc.image('./apps/backend/src/assets/logo.png', 690, 15, { width: 110 });
+    doc.image('./apps/backend/src/assets/logo2.png', 30, 10, { width: 100 });
+    doc.moveDown(1);
     const listElements = await this.createFilterText(filters);
+    const date = new Date();
+
     doc.fontSize(11);
     doc.font('Helvetica');
 
-    doc.image('./apps/backend/src/assets/logo.png', 690, 15, { width: 110 });
-    doc.image('./apps/backend/src/assets/logo2.png', 30, 10, { width: 100 });
-    doc.moveDown(2);
-
     doc.x = 15;
+    if (withoutFilter) return;
+
     if (listElements.length) {
       doc.text(
         'Todos los registros de esta planilla comparten las siguientes caracteristicas: '

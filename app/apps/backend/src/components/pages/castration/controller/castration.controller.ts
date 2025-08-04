@@ -26,7 +26,7 @@ export class CastrationController {
       layout: 'landscape',
       size: 'A4',
       margins: {
-        top: 80,
+        top: 110,
         bottom: 25,
         left: 15,
         right: 15,
