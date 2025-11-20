@@ -67,7 +67,7 @@ export function AppointmentRow({
           <ActionIcon
             onClick={clickSeeObservationFunc}
             color={mainColor}
-            disabled={appointment.observations ? false : true}
+            //disabled={appointment.observations ? false : true}
           >
             <FontAwesomeIcon icon={faComment} />
           </ActionIcon>
@@ -78,7 +78,7 @@ export function AppointmentRow({
           <ActionIcon
             onClick={clickEditFunc}
             color={mainColor}
-            disabled={canEdit}
+            //disabled={canEdit}
           >
             <FontAwesomeIcon icon={faPenToSquare} />
           </ActionIcon>
@@ -90,7 +90,7 @@ export function AppointmentRow({
           <ActionIcon
             onClick={clickDeleteFunc}
             color={mainColor}
-            disabled={canEdit}
+            //disabled={canEdit}
           >
             <FontAwesomeIcon icon={faTrash} />
           </ActionIcon>

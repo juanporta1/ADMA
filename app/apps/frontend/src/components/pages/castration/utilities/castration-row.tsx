@@ -48,6 +48,7 @@ export function CastrationRow({
       <Table.Td>{appointment.castration?.animalName}</Table.Td>
       <Table.Td>{appointment.castration?.weight}KG</Table.Td>
       <Table.Td>{appointment.castration?.age}</Table.Td>
+      <Table.Td>{appointment.castration?.veterinarian?.name}</Table.Td>
       <Table.Td>{appointment.mobile ? 'Sí' : 'No'}</Table.Td>
       {/* Botón para editar el turno */}
       <Table.Td>

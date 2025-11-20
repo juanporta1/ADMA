@@ -510,6 +510,7 @@ export function Castration() {
                       <Table.Th>Nombre del Animal</Table.Th>
                       <Table.Th>Peso</Table.Th>
                       <Table.Th>Edad</Table.Th>
+                      <Table.Th>Veterinario</Table.Th>
                       <Table.Th>Movil</Table.Th>
                     </Table.Tr>
                   </Table.Thead>

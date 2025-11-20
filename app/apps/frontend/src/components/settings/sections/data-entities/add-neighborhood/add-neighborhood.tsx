@@ -38,14 +38,6 @@ export function AddNeighborhood() {
     initialValues: {
       neighborhood: '',
     },
-    validate: {
-      neighborhood: (value: string) => {
-        if (!value.match(/^[a-zA-ZáéíóúüñÁÉÍÓÚÜÑ \s]*$/)) {
-          return 'Ingreso un caracter no valido';
-        }
-        return null;
-      },
-    },
   });
   const [actualNeig, setActualNeig] = useState<Neighborhood | null>(null);
   const { neighborhoodList } = useContext(SettingsContext);

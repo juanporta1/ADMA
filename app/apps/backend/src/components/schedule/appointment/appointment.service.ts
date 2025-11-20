@@ -11,7 +11,7 @@ export class AppointmentService {
     private readonly appointmentRepository: Repository<Appointment>
   ) {}
 
-  @Cron(CronExpression.EVERY_10_MINUTES)
+  @Cron(CronExpression.EVERY_DAY_AT_8AM)
   async updateStatus() {
     console.log('Actualizando status de citas...');
     const today = new Date();

@@ -78,6 +78,8 @@ export function DoneModal({
 
   useEffect(() => {
     if (!actualAppointment || !actualAppointment.incomeForm) return;
+    if (!actualVeterinarian)
+      actualVeterinarian = veterinarians[0].value.toString();
     form.setValues({
       age: actualAppointment.incomeForm.age,
       weight:
